@@ -1,0 +1,7 @@
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Client\obj\Debug\Client.csprojResolveAssemblyReference.cache
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Client\obj\Debug\Client.csproj.CoreCompileInputs.cache
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Client.net.dll.config
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Client\obj\Debug\Client.net.dll
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Client\obj\Debug\Client.net.pdb
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Client.net.dll
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Client.net.pdb

@@ -1,0 +1,9 @@
+E:\Servers\fivem\server-data\resources\[IgiCore]\playerServer.net.dll
+E:\Servers\fivem\server-data\resources\[IgiCore]\playerServer.net.pdb
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerServer\obj\Debug\playerServer.csprojResolveAssemblyReference.cache
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerServer\obj\Debug\playerServer.csproj.CoreCompileInputs.cache
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerServer\obj\Debug\playerServer.net.dll
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerServer\obj\Debug\playerServer.net.pdb
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerServer.net.dll
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerServer.net.pdb
+E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\PlayerServer.net.dll.config
