@@ -1,6 +1,0 @@
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Core\obj\Debug\Core.csprojResolveAssemblyReference.cache
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Core\obj\Debug\Core.csproj.CoreCompileInputs.cache
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Core\obj\Debug\Core.net.dll
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Core\obj\Debug\Core.net.pdb
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Core.net.dll
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore\Core.net.pdb

@@ -1,15 +1,15 @@
-﻿using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
-using Citizen = CitizenFX.Core.Player;
-using IgiCore.Client;
+using System;
+using CitizenFX.Core;
 using IgiCore.Core.Models;
 using Newtonsoft.Json;
-using System;
+using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Client.Models
 {
     public class Character : ICharacter
     {
+        private readonly object saveLock = new object();
+
         public Guid Id { get; set; }
         public Guid UserId { get; set; }
         public IUser User { get; set; }
@@ -19,30 +19,43 @@ namespace IgiCore.Client.Models
         public float PosY { get; set; }
         public float PosZ { get; set; }
 
-        public object Lock = new object();
+        [JsonIgnore]
+        public Vector3 Position {
+            get => new Vector3(PosX, PosY, PosZ);
+            set
+            {
+                PosX = value.X;
+                PosY = value.Y;
+                PosZ = value.Z;
+            }
+        }
 
-        public static Character Load(string json) => JsonConvert.DeserializeObject<Character>(json);
+        public static Character Load(string json)
+        {
+            return JsonConvert.DeserializeObject<Character>(json);
+        }
 
         public void Respawn(Citizen citizen)
         {
-            Vector3 spawnLocation = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
-            citizen.Character.Position = spawnLocation;
+            citizen.Character.Position =  new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
 
-            this.PosX = citizen.Character.Position.X;
-            this.PosY = citizen.Character.Position.Y;
-            this.PosZ = citizen.Character.Position.Z;
+            Position = citizen.Character.Position;
             Alive = true;
-            Save();
 
-            
+            Save();
         }
 
         public void Save()
         {
-            lock (Lock)
+            lock (saveLock)
             {
                 BaseScript.TriggerServerEvent("igi:character:save", JsonConvert.SerializeObject(this));
-            };
+            }
+        }
+
+        public override string ToString()
+        {
+            return $"Character [{Id}]: {Name}, {(Alive ? "Alive" : "Dead")}";
         }
     }
 }
