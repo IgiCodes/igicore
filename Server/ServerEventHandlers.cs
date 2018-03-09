@@ -60,9 +60,7 @@ namespace IgiCore.Server
                 case "/char":
                     Debug.WriteLine("char command called");
 
-                    Guid charId = Guid.Parse(args[0]);
-
-                    TriggerClientEvent(citizen, "igi:character:load", JsonConvert.SerializeObject(GetCharCommand(citizen, charId)));
+                    TriggerClientEvent(citizen, "igi:character:load", JsonConvert.SerializeObject(GetCharCommand(citizen, args[0])));
 
                     break;
                 case "/gps":

@@ -45,6 +45,13 @@ namespace IgiCore.Server
             return character;
         }
 
+        private Character GetCharCommand(Citizen citizen, string name)
+        {
+            User user = User.GetOrCreate(citizen);
+
+            return user.Characters.FirstOrDefault(c => c.Name == name);
+        }
+
         private Character GetCharCommand(Citizen citizen, Guid charId)
         {
             User user = User.GetOrCreate(citizen);
