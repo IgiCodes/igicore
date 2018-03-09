@@ -80,5 +80,10 @@ namespace IgiCore.Server.Models
             Db.Characters.AddOrUpdate(newChar);
             Db.SaveChanges();
         }
+
+        public override string ToString()
+        {
+            return $"Character [{Id}]: {Name}, {(Alive ? "Alive" : "Dead")}";
+        }
     }
 }

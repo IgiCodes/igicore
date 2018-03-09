@@ -36,7 +36,7 @@ namespace IgiCore.Server.Models
 
                 if (!users.Any())
                 {
-                    Debug.WriteLine($"User not found, creating new user for steamid: {citizen.Identifiers["steam"]}  with name: {citizen.Name}");
+                    //Debug.WriteLine($"User not found, creating new user for steamid: {citizen.Identifiers["steam"]}  with name: {citizen.Name}");
 
                     user = new User { SteamId = citizen.Identifiers["steam"], Name = citizen.Name };
                     Db.Users.Add(user);
@@ -46,7 +46,7 @@ namespace IgiCore.Server.Models
                 {
                     user = users.First();
 
-                    Debug.WriteLine($"User found for steamid: {user.SteamId}  with name: {user.Name}  and ID: {user.Id}");
+                    //Debug.WriteLine($"User found for steamid: {user.SteamId}  with name: {user.Name}  and ID: {user.Id}");
                 }
 
                 transaction.Commit();

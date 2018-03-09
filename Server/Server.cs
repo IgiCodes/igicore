@@ -37,7 +37,7 @@ namespace IgiCore.Server
         {
             User user = User.GetOrCreate(citizen);
 
-            Character character = new Character {UserId = user.Id, Name = charName};
+            Character character = new Character { UserId = user.Id, Name = charName };
 
             Db.Characters.Add(character);
             Db.SaveChanges();

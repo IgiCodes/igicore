@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using CitizenFX.Core;
 using IgiCore.Server.Models;
@@ -12,17 +11,17 @@ namespace IgiCore.Server
     {
         private void ResourceStarting(string resourceName)
         {
-            Debug.WriteLine($"Starting resource: {resourceName}");
+            //Debug.WriteLine($"Starting resource: {resourceName}");
         }
 
         private void ResourceStart(string resourceName)
         {
-            Debug.WriteLine($"Start resource: {resourceName}");
+            //Debug.WriteLine($"Start resource: {resourceName}");
         }
 
         private void ResourceStop(string resourceName)
         {
-            Debug.WriteLine($"Stopping resource: {resourceName}");
+            //Debug.WriteLine($"Stopping resource: {resourceName}");
         }
 
         private void OnPlayerConnecting([FromSource] Citizen citizen, string playerName, CallbackDelegate kickReason)
@@ -32,7 +31,7 @@ namespace IgiCore.Server
 
         private void OnPlayerDropped([FromSource] Citizen citizen, string disconnectMessage, CallbackDelegate kickReason)
         {
-            Debug.WriteLine($"Disconnected: {citizen.Name}");
+            //Debug.WriteLine($"Disconnected: {citizen.Name}");
         }
 
         private void OnChatMessage(int playerId, string playerName, string message)
@@ -50,27 +49,25 @@ namespace IgiCore.Server
             switch (command)
             {
                 case "/newchar":
-                    Debug.WriteLine("newchar command called");
+                    Debug.WriteLine("[SERVER]: /newchar command called");
 
-                    string charName = args[0];
-
-                    TriggerClientEvent(citizen, "igi:character:new", JsonConvert.SerializeObject(NewCharCommand(citizen, charName)));
+                    TriggerClientEvent(citizen, "igi:character:new", JsonConvert.SerializeObject(NewCharCommand(citizen, args[0])));
 
                     break;
                 case "/char":
-                    Debug.WriteLine("char command called");
-
+                    Debug.WriteLine("[SERVER]: /char command called");
+                    
                     TriggerClientEvent(citizen, "igi:character:load", JsonConvert.SerializeObject(GetCharCommand(citizen, args[0])));
 
                     break;
                 case "/gps":
-                    Debug.WriteLine("gps command called");
+                    Debug.WriteLine("[SERVER]: /gps command called");
 
                     TriggerClientEvent(citizen, "igi:user:gps");
 
                     break;
                 default:
-                    Debug.WriteLine("Unknown command");
+                    Debug.WriteLine("[SERVER]: Unknown command");
 
                     break;
             }
