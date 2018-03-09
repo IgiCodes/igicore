@@ -82,9 +82,7 @@ namespace IgiCore.Client
             {
                 Debug.WriteLine("=========== Autosaving Character ===========");
 
-                Character.PosX = LocalPlayer.Character.Position.X;
-                Character.PosY = LocalPlayer.Character.Position.Y;
-                Character.PosZ = LocalPlayer.Character.Position.Z;
+                Character.Position = LocalPlayer.Character.Position;
                 Character.Save();
             }
 

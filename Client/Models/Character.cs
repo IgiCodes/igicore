@@ -19,6 +19,17 @@ namespace IgiCore.Client.Models
         public float PosY { get; set; }
         public float PosZ { get; set; }
 
+        [JsonIgnore]
+        public Vector3 Position {
+            get => new Vector3(PosX, PosY, PosZ);
+            set
+            {
+                PosX = value.X;
+                PosY = value.Y;
+                PosZ = value.Z;
+            }
+        }
+
         public static Character Load(string json)
         {
             return JsonConvert.DeserializeObject<Character>(json);
@@ -26,13 +37,9 @@ namespace IgiCore.Client.Models
 
         public void Respawn(Citizen citizen)
         {
-            Vector3 spawnLocation = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
+            citizen.Character.Position =  new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
 
-            citizen.Character.Position = spawnLocation;
-
-            PosX = citizen.Character.Position.X;
-            PosY = citizen.Character.Position.Y;
-            PosZ = citizen.Character.Position.Z;
+            Position = citizen.Character.Position;
             Alive = true;
 
             Save();
