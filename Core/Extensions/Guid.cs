@@ -3,7 +3,7 @@
 namespace IgiCore.Core.Extensions
 {
     /// <summary>
-    /// Used for generating UUID based on RFC 4122.
+    ///     Used for generating UUID based on RFC 4122.
     /// </summary>
     /// <seealso href="http://www.ietf.org/rfc/rfc4122.txt">RFC 4122 - A Universally Unique IDentifier (UUID) URN Namespace</seealso>
 
@@ -16,7 +16,7 @@ namespace IgiCore.Core.Extensions
         Random = 0x04
     }
 
-    public static partial class GuidGenerator
+    public static class GuidGenerator
     {
         // number of bytes in guid
         public const int ByteArraySize = 16;
@@ -48,7 +48,7 @@ namespace IgiCore.Core.Extensions
             DefaultClockSequence = new byte[2];
             DefaultNode = new byte[6];
 
-            var random = new Random();
+            Random random = new Random();
             random.NextBytes(DefaultClockSequence);
             random.NextBytes(DefaultNode);
         }
@@ -149,5 +149,4 @@ namespace IgiCore.Core.Extensions
             return new Guid(guid);
         }
     }
-
 }

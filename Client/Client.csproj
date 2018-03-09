@@ -63,8 +63,6 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientExtentions.cs" />
-    <Compile Include="Extensions.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Client.cs" />
