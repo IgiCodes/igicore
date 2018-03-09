@@ -1,9 +1,0 @@
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\bin\x64\Release\PlayerClient.net.dll
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\bin\x64\Release\PlayerClient.net.pdb
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\bin\x64\Release\CitizenFX.Client.dll
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\bin\x64\Release\Newtonsoft.Json.dll
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\bin\x64\Release\Newtonsoft.Json.xml
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\obj\x64\Release\PlayerClient.csprojResolveAssemblyReference.cache
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\obj\x64\Release\PlayerClient.csproj.CoreCompileInputs.cache
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\obj\x64\Release\PlayerClient.net.dll
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\obj\x64\Release\PlayerClient.net.pdb

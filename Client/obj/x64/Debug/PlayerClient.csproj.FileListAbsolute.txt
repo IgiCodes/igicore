@@ -1,6 +1,0 @@
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\obj\x64\Debug\PlayerClient.csproj.CoreCompileInputs.cache
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\obj\x64\Debug\PlayerClient.net.dll
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\obj\x64\Debug\PlayerClient.net.pdb
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\playerClient\obj\x64\Debug\PlayerClient.csprojResolveAssemblyReference.cache
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\PlayerClient.net.dll
-E:\Servers\fivem\server-data\resources\[IgiCore]\igicore-player\PlayerClient.net.pdb
