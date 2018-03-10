@@ -28,11 +28,6 @@ namespace IgiCore.Client
             TriggerServerEvent("igi:user:load");
         }
 
-        protected void HandleEvent(string eventName, Action action)
-        {
-            EventHandlers[eventName] += action;
-        }
-
         protected void HandleJsonEvent<T>(string eventName, Action<T> action)
         {
             EventHandlers[eventName] += new Action<string>(json =>
@@ -59,7 +54,7 @@ namespace IgiCore.Client
 
         private void RegisterEvents()
         {
-            HandleJsonEvent<User>("igi:user:load", new Action<User>(u => this.user = u ));
+            HandleJsonEvent<User>("igi:user:load", u => this.user = u);
 
             EventHandlers["igi:character:new"] += new Action<string>(NewCharacter);
             HandleJsonEvent<Character>("igi:character:load", LoadCharacter);
