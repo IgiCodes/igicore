@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Client.Models;
+using IgiCore.Core.Models.Appearance;
 using Newtonsoft.Json;
 using Citizen = CitizenFX.Core.Player;
 
@@ -119,8 +120,8 @@ namespace IgiCore.Client
             {
                 this.character = character;
 
-                EventHandlers["igi:character:component:set"] += new Action<int, int>(character.SetComponent);
-                EventHandlers["igi:character:prop:set"] += new Action<int, int>(character.SetProp);
+                EventHandlers["igi:character:component:set"] += new Action<ComponentTypes, int, int>(character.SetComponent);
+                EventHandlers["igi:character:prop:set"] += new Action<PropTypes, int, int>(character.SetProp);
 
                 Citizen.Character.Position = new Vector3 { X = character.PosX, Y = character.PosY, Z = character.PosZ };
             }
