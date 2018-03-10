@@ -12,8 +12,8 @@ namespace IgiCore.Client
         private static readonly int AutoSaveInterval = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
         private readonly object autosaveLock = new object();
 
-        public Character Character { get; set; }
-        public User User { get; set; }
+        private User user;
+        private Character character;
 
         public Citizen Citizen => LocalPlayer;
 
@@ -58,7 +58,7 @@ namespace IgiCore.Client
 
         private void RegisterEvents()
         {
-            HandleJsonEvent<User>("igi:user:load", new Action<User>(u => this.User = u ));
+            HandleJsonEvent<User>("igi:user:load", new Action<User>(u => this.user = u ));
 
             EventHandlers["igi:character:new"] += new Action<string>(NewCharacter);
             HandleJsonEvent<Character>("igi:character:load", LoadCharacter);
@@ -76,7 +76,7 @@ namespace IgiCore.Client
 
         private async Task ClientTickAutoSave()
         {
-            if (Character == null)
+            if (character == null)
             {
                 await Delay(AutoSaveInterval);
                 return;
@@ -86,8 +86,8 @@ namespace IgiCore.Client
             {
                 Debug.WriteLine("=========== Autosaving Character ===========");
 
-                Character.Position = LocalPlayer.Character.Position;
-                Character.Save();
+                character.Position = LocalPlayer.Character.Position;
+                character.Save();
             }
 
             await Delay(AutoSaveInterval);
@@ -95,20 +95,20 @@ namespace IgiCore.Client
 
         private void CheckAlive()
         {
-            if (Character == null) return;
-            if (Character.Alive) return;
+            if (character == null) return;
+            if (character.Alive) return;
 
-            Character.Respawn(LocalPlayer);
+            character.Respawn(LocalPlayer);
         }
 
         private void LoadUser(User user)
         {
-            User = user;
+            this.user = user;
         }
 
         private void NewCharacter(string charJson)
         {
-            Character = Character.Load(charJson);
+            character = Character.Load(charJson);
         }
 
         private void LoadCharacter(Character character)
@@ -117,12 +117,12 @@ namespace IgiCore.Client
 
             lock (autosaveLock)
             {
-                Character = character;
+                this.character = character;
 
-                EventHandlers["igi:character:component:set"] += new Action<int, int>(Character.SetComponent);
-                EventHandlers["igi:character:prop:set"] += new Action<int, int>(Character.SetProp);
+                EventHandlers["igi:character:component:set"] += new Action<int, int>(character.SetComponent);
+                EventHandlers["igi:character:prop:set"] += new Action<int, int>(character.SetProp);
 
-                Citizen.Character.Position = new Vector3 { X = Character.PosX, Y = Character.PosY, Z = Character.PosZ };
+                Citizen.Character.Position = new Vector3 { X = character.PosX, Y = character.PosY, Z = character.PosZ };
             }
         }
 
