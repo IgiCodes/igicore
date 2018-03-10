@@ -3,6 +3,7 @@ description "IgiCore - Player Stuff"
 version "0.0.1"
 
 files {
+	"System.ComponentModel.DataAnnotations.dll",
 	"Newtonsoft.Json.dll",
 	"EntityFramework.dll",
 }

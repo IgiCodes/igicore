@@ -7,3 +7,4 @@ packages/
 /*.dll
 /*.config
 !System.Configuration.Install.dll
+!System.ComponentModel.DataAnnotations.dll

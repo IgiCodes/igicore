@@ -9,6 +9,7 @@ using IgiCore.Core.Models;
 using Newtonsoft.Json;
 using static IgiCore.Server.Server;
 
+
 namespace IgiCore.Server.Models
 {
     public class Character : ICharacter
@@ -20,6 +21,7 @@ namespace IgiCore.Server.Models
         public float PosX { get; set; }
         public float PosY { get; set; }
         public float PosZ { get; set; }
+        public virtual Core.Models.Appearance.Style Style { get; set; }
 
         public Character()
         {

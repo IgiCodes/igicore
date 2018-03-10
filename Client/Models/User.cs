@@ -8,5 +8,6 @@ namespace IgiCore.Client.Models
         public Guid Id { get; set; }
         public string SteamId { get; set; }
         public string Name { get; set; }
+
     }
 }

@@ -49,25 +49,37 @@ namespace IgiCore.Server
             switch (command)
             {
                 case "/newchar":
-                    Debug.WriteLine("[SERVER]: /newchar command called");
+                    Log("/newchar command called");
 
                     TriggerClientEvent(citizen, "igi:character:new", JsonConvert.SerializeObject(NewCharCommand(citizen, args[0])));
 
                     break;
                 case "/char":
-                    Debug.WriteLine("[SERVER]: /char command called");
-                    
+                    Log("/char command called");
+
                     TriggerClientEvent(citizen, "igi:character:load", JsonConvert.SerializeObject(GetCharCommand(citizen, args[0])));
 
                     break;
                 case "/gps":
-                    Debug.WriteLine("[SERVER]: /gps command called");
+                    Log("/gps command called");
 
                     TriggerClientEvent(citizen, "igi:user:gps");
 
                     break;
+                case "/component":
+                    Log("/component command called");
+
+                    TriggerClientEvent(citizen, "igi:character:component:set", int.Parse(args[0]), int.Parse(args[1]), int.Parse(args[2]));
+
+                    break;
+                case "/prop":
+                    Log("/prop command called");
+
+                    TriggerClientEvent(citizen, "igi:character:prop:set", int.Parse(args[0]), int.Parse(args[1]), int.Parse(args[2]));
+
+                    break;
                 default:
-                    Debug.WriteLine("[SERVER]: Unknown command");
+                    Log("Unknown command");
 
                     break;
             }

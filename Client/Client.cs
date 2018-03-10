@@ -12,8 +12,8 @@ namespace IgiCore.Client
         private static readonly int AutoSaveInterval = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
         private readonly object autosaveLock = new object();
 
-        public Character Character;
-        public User User;
+        public Character Character { get; set; }
+        public User User { get; set; }
 
         public Citizen Citizen => LocalPlayer;
 
@@ -23,6 +23,8 @@ namespace IgiCore.Client
             Tick += ClientTickAutoSave;
 
             RegisterEvents();
+
+            TriggerServerEvent("igi:user:load");
         }
 
         protected void HandleEvent(string eventName, Action action)
@@ -30,7 +32,7 @@ namespace IgiCore.Client
             EventHandlers[eventName] += action;
         }
 
-        protected void HandleEvent<T>(string eventName, Action<T> action)
+        protected void HandleJsonEvent<T>(string eventName, Action<T> action)
         {
             EventHandlers[eventName] += new Action<string>(json =>
             {
@@ -38,7 +40,7 @@ namespace IgiCore.Client
             });
         }
 
-        protected void HandleEvent<T1, T2>(string eventName, Action<T1, T2> action)
+        protected void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action)
         {
             EventHandlers[eventName] += new Action<string, string>((j1, j2) =>
             {
@@ -46,7 +48,7 @@ namespace IgiCore.Client
             });
         }
 
-        protected void HandleEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action)
+        protected void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action)
         {
             EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) =>
             {
@@ -56,11 +58,13 @@ namespace IgiCore.Client
 
         private void RegisterEvents()
         {
+            HandleJsonEvent<User>("igi:user:load", new Action<User>(u => this.User = u ));
+
             EventHandlers["igi:character:new"] += new Action<string>(NewCharacter);
-            //EventHandlers["igi:character:load"] += new Action<string>(LoadCharacter);
-            HandleEvent<Character>("igi:character:load", LoadCharacter);
+            HandleJsonEvent<Character>("igi:character:load", LoadCharacter);
 
             EventHandlers["igi:user:gps"] += new Action(UserGps);
+
         }
 
         private async Task ClientTick()
@@ -97,6 +101,11 @@ namespace IgiCore.Client
             Character.Respawn(LocalPlayer);
         }
 
+        private void LoadUser(User user)
+        {
+            User = user;
+        }
+
         private void NewCharacter(string charJson)
         {
             Character = Character.Load(charJson);
@@ -109,7 +118,11 @@ namespace IgiCore.Client
             lock (autosaveLock)
             {
                 Character = character;
-                LocalPlayer.Character.Position = new Vector3 { X = Character.PosX, Y = Character.PosY, Z = Character.PosZ };
+
+                EventHandlers["igi:character:component:set"] += new Action<int, int>(Character.SetComponent);
+                EventHandlers["igi:character:prop:set"] += new Action<int, int>(Character.SetProp);
+
+                Citizen.Character.Position = new Vector3 { X = Character.PosX, Y = Character.PosY, Z = Character.PosZ };
             }
         }
 

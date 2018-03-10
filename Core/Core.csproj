@@ -32,13 +32,21 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\Guid.cs" />
+    <Compile Include="Models\Appearance\Prop.cs" />
+    <Compile Include="Models\Appearance\Component.cs" />
+    <Compile Include="Models\Appearance\PropTypes.cs" />
+    <Compile Include="Models\Appearance\ComponentTypes.cs" />
+    <Compile Include="Models\Appearance\Style.cs" />
+    <Compile Include="Models\Clothes.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

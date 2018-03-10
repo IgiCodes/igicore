@@ -1,3 +1,4 @@
+using IgiCore.Core.Models.Appearance;
 using System;
 
 namespace IgiCore.Core.Models
@@ -11,5 +12,7 @@ namespace IgiCore.Core.Models
         float PosX { get; set; }
         float PosY { get; set; }
         float PosZ { get; set; }
+
+        Style Style { get; set; }
     }
 }

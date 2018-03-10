@@ -1,6 +1,7 @@
 using System;
 using CitizenFX.Core;
 using IgiCore.Core.Models;
+using IgiCore.Core.Models.Appearance;
 using Newtonsoft.Json;
 using Citizen = CitizenFX.Core.Player;
 
@@ -19,6 +20,10 @@ namespace IgiCore.Client.Models
         public float PosY { get; set; }
         public float PosZ { get; set; }
 
+        public Core.Models.Appearance.Style Style { get; set; }
+
+        [JsonIgnore]
+        public Citizen Citizen { get; set; }
         [JsonIgnore]
         public Vector3 Position {
             get => new Vector3(PosX, PosY, PosZ);
@@ -51,6 +56,16 @@ namespace IgiCore.Client.Models
             {
                 BaseScript.TriggerServerEvent("igi:character:save", JsonConvert.SerializeObject(this));
             }
+        }
+
+        public void SetComponent(ComponentTypes type, int index, int texture)
+        {
+            Debug.WriteLine($"SetComponent: Type = {type}  Index = {index}  texture = {texture}");
+        }
+
+        public void SetProp(PropTypes type, int index, int texture)
+        {
+            Debug.WriteLine($"SetProp: Type = {type}  Index = {index}  texture = {texture}");
         }
 
         public override string ToString()

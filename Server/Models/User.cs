@@ -8,6 +8,7 @@ using IgiCore.Core.Extensions;
 using IgiCore.Core.Models;
 using Citizen = CitizenFX.Core.Player;
 using static IgiCore.Server.Server;
+using Newtonsoft.Json;
 
 namespace IgiCore.Server.Models
 {
@@ -23,8 +24,14 @@ namespace IgiCore.Server.Models
             Id = GuidGenerator.GenerateTimeBasedGuid();
         }
 
+        public static void Load([FromSource]Citizen citizen)
+        {
+            BaseScript.TriggerClientEvent(citizen, "igi:user:load", JsonConvert.SerializeObject(GetOrCreate(citizen)));
+        }
+
         public static User GetOrCreate(Citizen citizen)
         {
+            Log("User GetOrCreate Called");
             User user = null;
 
             DbContextTransaction transaction = Db.Database.BeginTransaction();
@@ -58,6 +65,7 @@ namespace IgiCore.Server.Models
                 Debug.Write(ex.Message);
             }
 
+            Log("Returning User");
             return user;
         }
     }

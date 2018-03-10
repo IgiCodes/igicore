@@ -17,6 +17,7 @@ namespace IgiCore.Server
             Db.Database.CreateIfNotExists();
 
             RegisterEvents();
+
         }
 
         private void RegisterEvents()
@@ -30,7 +31,10 @@ namespace IgiCore.Server
 
             EventHandlers["chatMessage"] += new Action<int, string, string>(OnChatMessage);
 
+            EventHandlers["igi:user:load"] += new Action<Citizen>(User.Load);
+
             EventHandlers["igi:character:save"] += new Action<string>(Character.Save);
+            
         }
 
         private Character NewCharCommand(Citizen citizen, string charName)
@@ -47,8 +51,9 @@ namespace IgiCore.Server
 
         private Character GetCharCommand(Citizen citizen, string name)
         {
+            Server.Log("GetCharCommand called");
             User user = User.GetOrCreate(citizen);
-
+            Server.Log("GetCharCommand returning");
             return user.Characters.FirstOrDefault(c => c.Name == name);
         }
 
@@ -57,6 +62,11 @@ namespace IgiCore.Server
             User user = User.GetOrCreate(citizen);
 
             return user.Characters.FirstOrDefault(c => c.Id == charId);
+        }
+
+        public static void Log(string text)
+        {
+            Debug.WriteLine($"{DateTime.UtcNow:G} [SERVER]: {text}");
         }
     }
 }
