@@ -3,74 +3,96 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Client.Models;
 using Newtonsoft.Json;
-using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Client
 {
     public class Client : BaseScript
     {
-        public User User;
-        public Citizen Citizen => LocalPlayer;
+        public new event Func<Task> Tick;
 
-        public event Func<Task> CharTick;
+        public User User;
+
+        public new Player LocalPlayer => base.LocalPlayer;
 
         public Client()
         {
-            RegisterEvents();
+            // Forward tick event
+            base.Tick += () => this.Tick?.Invoke();
 
-            Tick += () => CharTick?.Invoke();
+            // Notify server that client is loaded
+            TriggerServerEvent("igi:client:ready");
 
+            HandleJsonEvent<User>("igi:user:load", UserLoad);
+
+            // Load the user
             TriggerServerEvent("igi:user:load");
         }
 
-        protected void HandleJsonEvent<T>(string eventName, Action<T> action)
+        private void UserLoad(User user)
         {
-            EventHandlers[eventName] += new Action<string>(json =>
-            {
-                Debug.Write(json);
-                action(JsonConvert.DeserializeObject<T>(json));
-            });
+            Log("UserLoad");
+
+            Assert(user != null, "User param is empty");
+            Assert(this.User == null, "User already loaded");
+
+            // Store the user
+            this.User = user;
+
+            //HandleJsonEvent<Character>("igi:character:new", CharacterLoad); // Does the client care?
+            HandleJsonEvent<Character>("igi:character:load", async c => await CharacterLoad(c));
         }
-        protected void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action)
+
+        private async Task CharacterLoad(Character character)
         {
-            EventHandlers[eventName] += new Action<string, string>((j1, j2) =>
+            Log("CharacterLoad");
+
+            Assert(this.User != null, "User is empty");
+            Assert(character != null, "Character param is empty");
+
+            if (this.User.Character != null)
             {
-                action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2));
-            });
+                Log("Unloading existing Character");
+
+                // Unload old character
+                this.User.Character.Dispose();
+            }
+            else
+            {
+                Log("Loading Character for first time");
+            }
+
+            // Store the character
+            this.User.Character = character;
+            await this.User.Character.Initialize(this); // Fake ctor
+
+            // Render new character
+            this.User.Character.Render();
         }
-        protected void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action)
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        protected static void Log(string message)
         {
-            EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) =>
-            {
-                action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2), JsonConvert.DeserializeObject<T3>(j3));
-            });
+            Debug.WriteLine($"{DateTime.UtcNow:s} [CLIENT]: {message}");
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        protected static void Assert(bool condition)
+        {
+            System.Diagnostics.Debug.Assert(condition);
+        }
+
+        [System.Diagnostics.Conditional("DEBUG")]
+        protected static void Assert(bool condition, string message)
+        {
+            System.Diagnostics.Debug.Assert(condition, message);
         }
 
         public void AddEventHandler(string name, Action action) => EventHandlers[name] += action;
         public void AddEventHandler<T1>(string name, Action<T1> action) => EventHandlers[name] += action;
         public void AddEventHandler<T1, T2>(string name, Action<T1, T2> action) => EventHandlers[name] += action;
         public void AddEventHandler<T1, T2, T3>(string name, Action<T1, T2, T3> action) => EventHandlers[name] += action;
-
-        private void RegisterEvents()
-        {
-            HandleJsonEvent<User>("igi:user:load", u => User.Load(this, u));
-
-            EventHandlers["igi:character:new"] += new Action<string>(NewCharacter);
-            HandleJsonEvent<Character>("igi:character:load", c => Character.Load(this, c));
-
-            EventHandlers["igi:user:gps"] += new Action(UserGps);
-        }
-
-
-
-        private void NewCharacter(string charJson)
-        {
-            User.Character = Character.Load(charJson);
-        }
-
-        public void UserGps()
-        {
-            Debug.WriteLine($"UserGps Called: {LocalPlayer.Character.Position}");
-        }
+        protected void HandleJsonEvent<T>(string eventName, Action<T> action) => EventHandlers[eventName] += new Action<string>(json => action(JsonConvert.DeserializeObject<T>(json)));
+        protected void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action) => EventHandlers[eventName] += new Action<string, string>((j1, j2) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2)));
+        protected void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action) => EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2), JsonConvert.DeserializeObject<T3>(j3)));
     }
 }

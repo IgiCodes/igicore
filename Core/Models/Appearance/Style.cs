@@ -1,7 +1,6 @@
 ﻿using IgiCore.Core.Extensions;
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IgiCore.Core.Models.Appearance
 {
@@ -32,7 +31,6 @@ namespace IgiCore.Core.Models.Appearance
         public Prop Unknown8 { get; set; }
         public Prop Unknown9 { get; set; }
 
-
         public Style()
         {
             Id = GuidGenerator.GenerateTimeBasedGuid();
@@ -61,6 +59,5 @@ namespace IgiCore.Core.Models.Appearance
             Unknown8 = new Prop();
             Unknown9 = new Prop();
         }
-
     }
 }
