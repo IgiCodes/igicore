@@ -87,12 +87,12 @@ namespace IgiCore.Client
             System.Diagnostics.Debug.Assert(condition, message);
         }
 
-        public void AddEventHandler(string name, Action action) => EventHandlers[name] += action;
-        public void AddEventHandler<T1>(string name, Action<T1> action) => EventHandlers[name] += action;
-        public void AddEventHandler<T1, T2>(string name, Action<T1, T2> action) => EventHandlers[name] += action;
-        public void AddEventHandler<T1, T2, T3>(string name, Action<T1, T2, T3> action) => EventHandlers[name] += action;
-        protected void HandleJsonEvent<T>(string eventName, Action<T> action) => EventHandlers[eventName] += new Action<string>(json => action(JsonConvert.DeserializeObject<T>(json)));
-        protected void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action) => EventHandlers[eventName] += new Action<string, string>((j1, j2) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2)));
-        protected void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action) => EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2), JsonConvert.DeserializeObject<T3>(j3)));
+        public void HandleEvent(string name, Action action) => EventHandlers[name] += action;
+        public void HandleEvent<T1>(string name, Action<T1> action) => EventHandlers[name] += action;
+        public void HandleEvent<T1, T2>(string name, Action<T1, T2> action) => EventHandlers[name] += action;
+        public void HandleEvent<T1, T2, T3>(string name, Action<T1, T2, T3> action) => EventHandlers[name] += action;
+        public void HandleJsonEvent<T>(string eventName, Action<T> action) => EventHandlers[eventName] += new Action<string>(json => action(JsonConvert.DeserializeObject<T>(json)));
+        public void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action) => EventHandlers[eventName] += new Action<string, string>((j1, j2) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2)));
+        public void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action) => EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2), JsonConvert.DeserializeObject<T3>(j3)));
     }
 }

@@ -48,8 +48,8 @@ namespace IgiCore.Client.Models
             // Swap model
             if (!await this.Client.LocalPlayer.ChangeModel(new Model(PedHash.FreemodeMale01))) throw new ExternalException("ChangeModel failed");
 
-            this.Client.AddEventHandler<int, int, int>("igi:character:component:set", SetComponent);
-            this.Client.AddEventHandler<int, int, int>("igi:character:prop:set", SetProp);
+            this.Client.HandleEvent<int, int, int>("igi:character:component:set", SetComponent);
+            this.Client.HandleEvent<int, int, int>("igi:character:prop:set", SetProp);
 
             this.Client.Tick += OnTick;
         }
