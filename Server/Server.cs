@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using CitizenFX.Core;
+using IgiCore.Core.Extensions;
 using IgiCore.Server.Models;
 using IgiCore.Server.Storage.MySql;
 using Citizen = CitizenFX.Core.Player;
@@ -34,35 +37,30 @@ namespace IgiCore.Server
             EventHandlers["igi:user:load"] += new Action<Citizen>(User.Load);
 
             EventHandlers["igi:character:save"] += new Action<string>(Character.Save);
-            
+
         }
 
         private Character NewCharCommand(Citizen citizen, string charName)
         {
             User user = User.GetOrCreate(citizen);
+            if (user.Characters == null) user.Characters = new List<Character>();
+            Character character = new Character
+            {
+                Name = charName,
+                Style = new Core.Models.Appearance.Style { Id = GuidGenerator.GenerateTimeBasedGuid() }
+            };
 
-            Character character = new Character { UserId = user.Id, Name = charName };
-
-            Db.Characters.Add(character);
+            user.Characters.Add(character);
+            Db.Users.AddOrUpdate(user);
             Db.SaveChanges();
 
             return character;
         }
 
-        private Character GetCharCommand(Citizen citizen, string name)
-        {
-            Server.Log("GetCharCommand called");
-            User user = User.GetOrCreate(citizen);
-            Server.Log("GetCharCommand returning");
-            return user.Characters.FirstOrDefault(c => c.Name == name);
-        }
+        private Character GetCharCommand(Citizen citizen, string name) => User.GetOrCreate(citizen).Characters.FirstOrDefault(c => c.Name == name);
 
-        private Character GetCharCommand(Citizen citizen, Guid charId)
-        {
-            User user = User.GetOrCreate(citizen);
+        private Character GetCharCommand(Citizen citizen, Guid charId) => User.GetOrCreate(citizen).Characters.FirstOrDefault(c => c.Id == charId);
 
-            return user.Characters.FirstOrDefault(c => c.Id == charId);
-        }
 
         public static void Log(string text)
         {

@@ -1,4 +1,5 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using IgiCore.Core.Models.Appearance;
 using IgiCore.Server.Migrations;
 using IgiCore.Server.Models;
@@ -11,10 +12,12 @@ namespace IgiCore.Server.Storage.MySql
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Character> Characters { get; set; }
+        public DbSet<Style> Styles { get; set; }
 
         public DB() : base(Config.MySqlConnString)
         {
             Database.SetInitializer(new MigrateDatabaseToLatestVersion<DB, Configuration>());
+            //Database.Log = Console.Write;
         }
     }
 }

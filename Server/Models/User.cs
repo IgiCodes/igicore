@@ -31,7 +31,6 @@ namespace IgiCore.Server.Models
 
         public static User GetOrCreate(Citizen citizen)
         {
-            Log("User GetOrCreate Called");
             User user = null;
 
             DbContextTransaction transaction = Db.Database.BeginTransaction();
@@ -43,7 +42,7 @@ namespace IgiCore.Server.Models
 
                 if (!users.Any())
                 {
-                    //Debug.WriteLine($"User not found, creating new user for steamid: {citizen.Identifiers["steam"]}  with name: {citizen.Name}");
+                    Debug.WriteLine($"User not found, creating new user for steamid: {citizen.Identifiers["steam"]}  with name: {citizen.Name}");
 
                     user = new User { SteamId = citizen.Identifiers["steam"], Name = citizen.Name };
                     Db.Users.Add(user);
@@ -52,8 +51,7 @@ namespace IgiCore.Server.Models
                 else
                 {
                     user = users.First();
-
-                    //Debug.WriteLine($"User found for steamid: {user.SteamId}  with name: {user.Name}  and ID: {user.Id}");
+                    Debug.WriteLine($"User found for steamid: {user.SteamId}  with name: {user.Name}  and ID: {user.Id}");
                 }
 
                 transaction.Commit();
@@ -61,11 +59,9 @@ namespace IgiCore.Server.Models
             catch (Exception ex)
             {
                 transaction.Rollback();
-
                 Debug.Write(ex.Message);
             }
 
-            Log("Returning User");
             return user;
         }
     }

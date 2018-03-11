@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Client.Models;
-using IgiCore.Core.Models.Appearance;
 using Newtonsoft.Json;
 using Citizen = CitizenFX.Core.Player;
 
@@ -10,20 +9,16 @@ namespace IgiCore.Client
 {
     public class Client : BaseScript
     {
-        private static readonly int AutoSaveInterval = (int)TimeSpan.FromSeconds(10).TotalMilliseconds;
-        private readonly object autosaveLock = new object();
-
-        private User user;
-        private Character character;
-
+        public User User;
         public Citizen Citizen => LocalPlayer;
+
+        public event Func<Task> CharTick;
 
         public Client()
         {
-            Tick += ClientTick;
-            Tick += ClientTickAutoSave;
-
             RegisterEvents();
+
+            Tick += () => CharTick?.Invoke();
 
             TriggerServerEvent("igi:user:load");
         }
@@ -32,10 +27,10 @@ namespace IgiCore.Client
         {
             EventHandlers[eventName] += new Action<string>(json =>
             {
+                Debug.Write(json);
                 action(JsonConvert.DeserializeObject<T>(json));
             });
         }
-
         protected void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action)
         {
             EventHandlers[eventName] += new Action<string, string>((j1, j2) =>
@@ -43,7 +38,6 @@ namespace IgiCore.Client
                 action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2));
             });
         }
-
         protected void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action)
         {
             EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) =>
@@ -52,74 +46,26 @@ namespace IgiCore.Client
             });
         }
 
+        public void AddEventHandler(string name, Action action) => EventHandlers[name] += action;
+        public void AddEventHandler<T1>(string name, Action<T1> action) => EventHandlers[name] += action;
+        public void AddEventHandler<T1, T2>(string name, Action<T1, T2> action) => EventHandlers[name] += action;
+        public void AddEventHandler<T1, T2, T3>(string name, Action<T1, T2, T3> action) => EventHandlers[name] += action;
+
         private void RegisterEvents()
         {
-            HandleJsonEvent<User>("igi:user:load", u => this.user = u);
+            HandleJsonEvent<User>("igi:user:load", u => User.Load(this, u));
 
             EventHandlers["igi:character:new"] += new Action<string>(NewCharacter);
-            HandleJsonEvent<Character>("igi:character:load", LoadCharacter);
+            HandleJsonEvent<Character>("igi:character:load", c => Character.Load(this, c));
 
             EventHandlers["igi:user:gps"] += new Action(UserGps);
-
         }
 
-        private async Task ClientTick()
-        {
-            CheckAlive();
 
-            await Delay(1);
-        }
-
-        private async Task ClientTickAutoSave()
-        {
-            if (character == null)
-            {
-                await Delay(AutoSaveInterval);
-                return;
-            }
-
-            lock (autosaveLock)
-            {
-                Debug.WriteLine("=========== Autosaving Character ===========");
-
-                character.Position = LocalPlayer.Character.Position;
-                character.Save();
-            }
-
-            await Delay(AutoSaveInterval);
-        }
-
-        private void CheckAlive()
-        {
-            if (character == null) return;
-            if (character.Alive) return;
-
-            character.Respawn(LocalPlayer);
-        }
-
-        private void LoadUser(User user)
-        {
-            this.user = user;
-        }
 
         private void NewCharacter(string charJson)
         {
-            character = Character.Load(charJson);
-        }
-
-        private void LoadCharacter(Character character)
-        {
-            Debug.WriteLine($"[CLIENT]: Loading character: {character}");
-
-            lock (autosaveLock)
-            {
-                this.character = character;
-
-                EventHandlers["igi:character:component:set"] += new Action<ComponentTypes, int, int>(character.SetComponent);
-                EventHandlers["igi:character:prop:set"] += new Action<PropTypes, int, int>(character.SetProp);
-
-                Citizen.Character.Position = new Vector3 { X = character.PosX, Y = character.PosY, Z = character.PosZ };
-            }
+            User.Character = Character.Load(charJson);
         }
 
         public void UserGps()
