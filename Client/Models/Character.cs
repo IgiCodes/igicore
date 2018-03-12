@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
@@ -44,9 +43,6 @@ namespace IgiCore.Client.Models
         {
             // Store client reference
             this.Client = client;
-
-            // Swap model
-            if (!await this.Client.LocalPlayer.ChangeModel(new Model(PedHash.FreemodeMale01))) throw new ExternalException("ChangeModel failed");
 
             this.Client.HandleEvent<int, int, int>("igi:character:component:set", SetComponent);
             this.Client.HandleEvent<int, int, int>("igi:character:prop:set", SetProp);

@@ -1,16 +1,19 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using CitizenFX.Core.UI;
 using IgiCore.Client.Models;
 using Newtonsoft.Json;
+using static CitizenFX.Core.Native.API;
 
 namespace IgiCore.Client
 {
     public class Client : BaseScript
     {
-        public new event Func<Task> Tick;
+        protected User User;
 
-        public User User;
+        public new event Func<Task> Tick;
 
         public new Player LocalPlayer => base.LocalPlayer;
 
@@ -28,10 +31,8 @@ namespace IgiCore.Client
             TriggerServerEvent("igi:user:load");
         }
 
-        private void UserLoad(User user)
+        protected async void UserLoad(User user)
         {
-            Log("UserLoad");
-
             Assert(user != null, "User param is empty");
             Assert(this.User == null, "User already loaded");
 
@@ -40,25 +41,76 @@ namespace IgiCore.Client
 
             //HandleJsonEvent<Character>("igi:character:new", CharacterLoad); // Does the client care?
             HandleJsonEvent<Character>("igi:character:load", async c => await CharacterLoad(c));
+
+            await SpawnPlayer();
         }
 
-        private async Task CharacterLoad(Character character)
+        protected void FreezePlayer(bool freeze)
         {
-            Log("CharacterLoad");
+            Assert(PlayerId() == this.LocalPlayer.Handle, "HANDLE 1");
+            Assert(GetPlayerPed(-1) == this.LocalPlayer.Character.Handle, "HANDLE 2");
 
+            Game.Player.CanControlCharacter = !freeze;
+
+            this.LocalPlayer.Character.IsVisible = !freeze;
+
+            if (!this.LocalPlayer.Character.IsInVehicle())
+            {
+                this.LocalPlayer.Character.IsCollisionEnabled = !freeze;
+            }
+
+            this.LocalPlayer.Character.IsPositionFrozen = freeze;
+
+            this.LocalPlayer.Character.IsInvincible = freeze;
+
+            if (!this.LocalPlayer.Character.IsDead && freeze)
+            {
+                this.LocalPlayer.Character.Task.ClearAllImmediately();
+            }
+        }
+
+        protected async Task SpawnPlayer()
+        {
+            Screen.Fading.FadeOut(500);
+            while (Screen.Fading.IsFadingOut) await Delay(10);
+
+            FreezePlayer(true);
+
+            // Swap model
+            if (!await this.LocalPlayer.ChangeModel(new Model(PedHash.FreemodeMale01))) throw new ExternalException("ChangeModel failed");
+
+            // Not naked
+            Game.Player.Character.Style.SetDefaultClothes();
+
+            LoadAllObjectsNow();
+
+            this.LocalPlayer.Character.Position = new Vector3(-802.311f, 175.056f, 72.8446f);
+            this.LocalPlayer.Character.Resurrect();
+            this.LocalPlayer.Character.Task.ClearAllImmediately();
+            this.LocalPlayer.Character.Weapons.Drop();
+            this.LocalPlayer.WantedLevel = 0;
+
+            this.LocalPlayer.Character.Weapons.Give(WeaponHash.AssaultRifle, 100, true, true);
+
+            ShutdownLoadingScreen();
+
+            Screen.Fading.FadeIn(500);
+            while (Screen.Fading.IsFadingIn) await Delay(10);
+
+            FreezePlayer(false);
+
+            Screen.ShowNotification($"{Game.Player.Name} connected at {DateTime.Now:s}");
+        }
+
+        protected async Task CharacterLoad(Character character)
+        {
             Assert(this.User != null, "User is empty");
             Assert(character != null, "Character param is empty");
 
             if (this.User.Character != null)
             {
-                Log("Unloading existing Character");
-
                 // Unload old character
                 this.User.Character.Dispose();
-            }
-            else
-            {
-                Log("Loading Character for first time");
             }
 
             // Store the character
@@ -67,12 +119,14 @@ namespace IgiCore.Client
 
             // Render new character
             this.User.Character.Render();
+
+            Screen.ShowNotification($"{this.User.Character.Name} loaded at {DateTime.Now:s}");
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
         protected static void Log(string message)
         {
-            Debug.WriteLine($"{DateTime.UtcNow:s} [CLIENT]: {message}");
+            Debug.WriteLine($"{DateTime.Now:s} [CLIENT]: {message}");
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
