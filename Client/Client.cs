@@ -82,8 +82,6 @@ namespace IgiCore.Client
             // Not naked
             Game.Player.Character.Style.SetDefaultClothes();
 
-            LoadAllObjectsNow();
-
             this.LocalPlayer.Character.Position = new Vector3(-802.311f, 175.056f, 72.8446f);
             this.LocalPlayer.Character.Resurrect();
             this.LocalPlayer.Character.Task.ClearAllImmediately();
