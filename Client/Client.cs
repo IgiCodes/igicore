@@ -2,6 +2,7 @@ using System;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Models;
 using Newtonsoft.Json;
@@ -29,6 +30,9 @@ namespace IgiCore.Client
 
             // Load the user
             TriggerServerEvent("igi:user:load");
+
+            // Set pause screen title
+            Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", "TEST");
         }
 
         protected async void UserLoad(User user)
