@@ -1,76 +1,154 @@
 using System;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using CitizenFX.Core.Native;
+using CitizenFX.Core.UI;
 using IgiCore.Client.Models;
 using Newtonsoft.Json;
-using Citizen = CitizenFX.Core.Player;
+using static CitizenFX.Core.Native.API;
 
 namespace IgiCore.Client
 {
     public class Client : BaseScript
     {
-        public User User;
-        public Citizen Citizen => LocalPlayer;
+        protected User User;
 
-        public event Func<Task> CharTick;
+        public new event Func<Task> Tick;
+
+        public new Player LocalPlayer => base.LocalPlayer;
 
         public Client()
         {
-            RegisterEvents();
+            // Forward tick event
+            base.Tick += () => this.Tick?.Invoke();
 
-            Tick += () => CharTick?.Invoke();
+            // Notify server that client is loaded
+            TriggerServerEvent("igi:client:ready");
 
+            HandleJsonEvent<User>("igi:user:load", UserLoad);
+
+            // Load the user
             TriggerServerEvent("igi:user:load");
+
+            // Set pause screen title
+            Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", "TEST");
         }
 
-        protected void HandleJsonEvent<T>(string eventName, Action<T> action)
+        protected async void UserLoad(User user)
         {
-            EventHandlers[eventName] += new Action<string>(json =>
+            Assert(user != null, "User param is empty");
+            Assert(this.User == null, "User already loaded");
+
+            // Store the user
+            this.User = user;
+
+            //HandleJsonEvent<Character>("igi:character:new", CharacterLoad); // Does the client care?
+            HandleJsonEvent<Character>("igi:character:load", async c => await CharacterLoad(c));
+
+            await SpawnPlayer();
+        }
+
+        protected void FreezePlayer(bool freeze)
+        {
+            Assert(PlayerId() == this.LocalPlayer.Handle, "HANDLE 1");
+            Assert(GetPlayerPed(-1) == this.LocalPlayer.Character.Handle, "HANDLE 2");
+
+            Game.Player.CanControlCharacter = !freeze;
+
+            this.LocalPlayer.Character.IsVisible = !freeze;
+
+            if (!this.LocalPlayer.Character.IsInVehicle())
             {
-                Debug.Write(json);
-                action(JsonConvert.DeserializeObject<T>(json));
-            });
-        }
-        protected void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action)
-        {
-            EventHandlers[eventName] += new Action<string, string>((j1, j2) =>
+                this.LocalPlayer.Character.IsCollisionEnabled = !freeze;
+            }
+
+            this.LocalPlayer.Character.IsPositionFrozen = freeze;
+
+            this.LocalPlayer.Character.IsInvincible = freeze;
+
+            if (!this.LocalPlayer.Character.IsDead && freeze)
             {
-                action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2));
-            });
+                this.LocalPlayer.Character.Task.ClearAllImmediately();
+            }
         }
-        protected void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action)
+
+        protected async Task SpawnPlayer()
         {
-            EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) =>
+            Screen.Fading.FadeOut(500);
+            while (Screen.Fading.IsFadingOut) await Delay(10);
+
+            FreezePlayer(true);
+
+            // Swap model
+            if (!await this.LocalPlayer.ChangeModel(new Model(PedHash.FreemodeMale01))) throw new ExternalException("ChangeModel failed");
+
+            // Not naked
+            Game.Player.Character.Style.SetDefaultClothes();
+
+            this.LocalPlayer.Character.Position = new Vector3(-802.311f, 175.056f, 72.8446f);
+            this.LocalPlayer.Character.Resurrect();
+            this.LocalPlayer.Character.Task.ClearAllImmediately();
+            this.LocalPlayer.Character.Weapons.Drop();
+            this.LocalPlayer.WantedLevel = 0;
+
+            this.LocalPlayer.Character.Weapons.Give(WeaponHash.AssaultRifle, 100, true, true);
+
+            ShutdownLoadingScreen();
+
+            Screen.Fading.FadeIn(500);
+            while (Screen.Fading.IsFadingIn) await Delay(10);
+
+            FreezePlayer(false);
+
+            Screen.ShowNotification($"{Game.Player.Name} connected at {DateTime.Now:s}");
+        }
+
+        protected async Task CharacterLoad(Character character)
+        {
+            Assert(this.User != null, "User is empty");
+            Assert(character != null, "Character param is empty");
+
+            if (this.User.Character != null)
             {
-                action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2), JsonConvert.DeserializeObject<T3>(j3));
-            });
+                // Unload old character
+                this.User.Character.Dispose();
+            }
+
+            // Store the character
+            this.User.Character = character;
+            await this.User.Character.Initialize(this); // Fake ctor
+
+            // Render new character
+            this.User.Character.Render();
+
+            Screen.ShowNotification($"{this.User.Character.Name} loaded at {DateTime.Now:s}");
         }
 
-        public void AddEventHandler(string name, Action action) => EventHandlers[name] += action;
-        public void AddEventHandler<T1>(string name, Action<T1> action) => EventHandlers[name] += action;
-        public void AddEventHandler<T1, T2>(string name, Action<T1, T2> action) => EventHandlers[name] += action;
-        public void AddEventHandler<T1, T2, T3>(string name, Action<T1, T2, T3> action) => EventHandlers[name] += action;
-
-        private void RegisterEvents()
+        [System.Diagnostics.Conditional("DEBUG")]
+        protected static void Log(string message)
         {
-            HandleJsonEvent<User>("igi:user:load", u => User.Load(this, u));
-
-            EventHandlers["igi:character:new"] += new Action<string>(NewCharacter);
-            HandleJsonEvent<Character>("igi:character:load", c => Character.Load(this, c));
-
-            EventHandlers["igi:user:gps"] += new Action(UserGps);
+            Debug.WriteLine($"{DateTime.Now:s} [CLIENT]: {message}");
         }
 
-
-
-        private void NewCharacter(string charJson)
+        [System.Diagnostics.Conditional("DEBUG")]
+        protected static void Assert(bool condition)
         {
-            User.Character = Character.Load(charJson);
+            System.Diagnostics.Debug.Assert(condition);
         }
 
-        public void UserGps()
+        [System.Diagnostics.Conditional("DEBUG")]
+        protected static void Assert(bool condition, string message)
         {
-            Debug.WriteLine($"UserGps Called: {LocalPlayer.Character.Position}");
+            System.Diagnostics.Debug.Assert(condition, message);
         }
+
+        public void HandleEvent(string name, Action action) => EventHandlers[name] += action;
+        public void HandleEvent<T1>(string name, Action<T1> action) => EventHandlers[name] += action;
+        public void HandleEvent<T1, T2>(string name, Action<T1, T2> action) => EventHandlers[name] += action;
+        public void HandleEvent<T1, T2, T3>(string name, Action<T1, T2, T3> action) => EventHandlers[name] += action;
+        public void HandleJsonEvent<T>(string eventName, Action<T> action) => EventHandlers[eventName] += new Action<string>(json => action(JsonConvert.DeserializeObject<T>(json)));
+        public void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action) => EventHandlers[eventName] += new Action<string, string>((j1, j2) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2)));
+        public void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action) => EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2), JsonConvert.DeserializeObject<T3>(j3)));
     }
 }
