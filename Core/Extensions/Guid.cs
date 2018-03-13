@@ -2,11 +2,6 @@
 
 namespace IgiCore.Core.Extensions
 {
-    /// <summary>
-    ///     Used for generating UUID based on RFC 4122.
-    /// </summary>
-    /// <seealso href="http://www.ietf.org/rfc/rfc4122.txt">RFC 4122 - A Universally Unique IDentifier (UUID) URN Namespace</seealso>
-
     // guid version types
     public enum GuidVersion
     {
@@ -16,6 +11,10 @@ namespace IgiCore.Core.Extensions
         Random = 0x04
     }
 
+    /// <summary>
+    ///     Used for generating UUID based on RFC 4122.
+    /// </summary>
+    /// <seealso href="http://www.ietf.org/rfc/rfc4122.txt">RFC 4122 - A Universally Unique IDentifier (UUID) URN Namespace</seealso>
     public static class GuidGenerator
     {
         // number of bytes in guid
@@ -39,10 +38,6 @@ namespace IgiCore.Core.Extensions
         // offset to move from 1/1/0001, which is 0-time for .NET, to gregorian 0-time of 10/15/1582
         private static readonly DateTimeOffset GregorianCalendarStart = new DateTimeOffset(1582, 10, 15, 0, 0, 0, TimeSpan.Zero);
 
-        // random clock sequence and node
-        public static byte[] DefaultClockSequence { get; set; }
-        public static byte[] DefaultNode { get; set; }
-
         static GuidGenerator()
         {
             DefaultClockSequence = new byte[2];
@@ -52,6 +47,10 @@ namespace IgiCore.Core.Extensions
             random.NextBytes(DefaultClockSequence);
             random.NextBytes(DefaultNode);
         }
+
+        // random clock sequence and node
+        public static byte[] DefaultClockSequence { get; set; }
+        public static byte[] DefaultNode { get; set; }
 
         public static GuidVersion GetVersion(this Guid guid)
         {
@@ -64,8 +63,8 @@ namespace IgiCore.Core.Extensions
             byte[] bytes = guid.ToByteArray();
 
             // reverse the version
-            bytes[VersionByte] &= (byte)VersionByteMask;
-            bytes[VersionByte] |= (byte)((byte)GuidVersion.TimeBased >> VersionByteShift);
+            bytes[VersionByte] &= VersionByteMask;
+            bytes[VersionByte] |= (byte)GuidVersion.TimeBased >> VersionByteShift;
 
             byte[] timestampBytes = new byte[8];
             Array.Copy(bytes, TimestampByte, timestampBytes, 0, 8);
@@ -113,17 +112,13 @@ namespace IgiCore.Core.Extensions
 
         public static Guid GenerateTimeBasedGuid(DateTimeOffset dateTime, byte[] clockSequence, byte[] node)
         {
-            if (clockSequence == null)
-                throw new ArgumentNullException("clockSequence");
+            if (clockSequence == null) throw new ArgumentNullException(nameof(clockSequence));
 
-            if (node == null)
-                throw new ArgumentNullException("node");
+            if (node == null) throw new ArgumentNullException(nameof(node));
 
-            if (clockSequence.Length != 2)
-                throw new ArgumentOutOfRangeException("clockSequence", "The clockSequence must be 2 bytes.");
+            if (clockSequence.Length != 2) throw new ArgumentOutOfRangeException(nameof(clockSequence), "The clockSequence must be 2 bytes.");
 
-            if (node.Length != 6)
-                throw new ArgumentOutOfRangeException("node", "The node must be 6 bytes.");
+            if (node.Length != 6) throw new ArgumentOutOfRangeException(nameof(node), "The node must be 6 bytes.");
 
             long ticks = (dateTime - GregorianCalendarStart).Ticks;
             byte[] guid = new byte[ByteArraySize];
@@ -139,12 +134,12 @@ namespace IgiCore.Core.Extensions
             Array.Copy(timestamp, 0, guid, TimestampByte, Math.Min(8, timestamp.Length));
 
             // set the variant
-            guid[VariantByte] &= (byte)VariantByteMask;
-            guid[VariantByte] |= (byte)VariantByteShift;
+            guid[VariantByte] &= VariantByteMask;
+            guid[VariantByte] |= VariantByteShift;
 
             // set the version
-            guid[VersionByte] &= (byte)VersionByteMask;
-            guid[VersionByte] |= (byte)((byte)GuidVersion.TimeBased << VersionByteShift);
+            guid[VersionByte] &= VersionByteMask;
+            guid[VersionByte] |= (byte)GuidVersion.TimeBased << VersionByteShift;
 
             return new Guid(guid);
         }

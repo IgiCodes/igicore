@@ -1,10 +1,11 @@
 ﻿namespace IgiCore.Core.Models.Objects.Vehicles
 {
+    // ReSharper disable once InconsistentNaming
     public enum VehicleClass
     {
         Compacts,
         Sedans,
-        SUVs,
+        SUVs, 
         Coupes,
         Muscle,
         SportsClassics,
@@ -23,6 +24,6 @@
         Emergency,
         Military,
         Commercial,
-        Trains,
+        Trains
     }
 }

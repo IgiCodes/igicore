@@ -1,28 +1,26 @@
-﻿using System.Drawing;
-
-namespace IgiCore.Core.Models.Objects.Vehicles
+﻿namespace IgiCore.Core.Models.Objects.Vehicles
 {
     public class VehicleColor
     {
-        private Color? _customColor;
+        private Color? customColor;
         public Color? CustomColor
         {
-            get => this._customColor;
+            get => this.customColor;
             set
             {
-                this._customColor = value;
-                Color = null;
+                this.customColor = value;
+                this.Color = null;
             }
         }
 
-        private VehicleStockColor? _color;
+        private VehicleStockColor? color;
         public VehicleStockColor? Color
         {
-            get => this._color;
+            get => this.color;
             set
             {
-                this._color = value;
-                CustomColor = null;
+                this.color = value;
+                this.CustomColor = null;
             }
         }
 

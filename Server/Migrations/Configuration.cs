@@ -6,8 +6,8 @@ namespace IgiCore.Server.Migrations
     {
         public Configuration()
         {
-            TargetDatabase = new System.Data.Entity.Infrastructure.DbConnectionInfo(Config.MySqlConnString, "MySql.Data.MySqlClient");
-            AutomaticMigrationsEnabled = true;
+            this.TargetDatabase = new System.Data.Entity.Infrastructure.DbConnectionInfo(Config.MySqlConnString, "MySql.Data.MySqlClient");
+            this.AutomaticMigrationsEnabled = true;
         }
 
         protected override void Seed(Storage.MySql.DB context)

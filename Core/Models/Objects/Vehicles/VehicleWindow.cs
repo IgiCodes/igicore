@@ -12,7 +12,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
 
         public VehicleWindow()
         {
-            Id = GuidGenerator.GenerateTimeBasedGuid();
+            this.Id = GuidGenerator.GenerateTimeBasedGuid();
         }
     }
 }

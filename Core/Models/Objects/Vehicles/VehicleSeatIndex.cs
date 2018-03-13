@@ -21,6 +21,6 @@
         ExtraSeat9 = 11,
         ExtraSeat10 = 12,
         ExtraSeat11 = 13,
-        ExtraSeat12 = 14,
+        ExtraSeat12 = 14
     }
 }

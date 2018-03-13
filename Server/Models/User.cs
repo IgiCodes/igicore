@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
 using CitizenFX.Core;
@@ -15,13 +16,14 @@ namespace IgiCore.Server.Models
     public class User : IUser
     {
         [Key] public Guid Id { get; set; }
-        public string SteamId { get; set; }
+
+        [Index(IsUnique = true)] public string SteamId { get; set; }
         public string Name { get; set; }
         public virtual List<Character> Characters { get; set; }
 
         public User()
         {
-            Id = GuidGenerator.GenerateTimeBasedGuid();
+            this.Id = GuidGenerator.GenerateTimeBasedGuid();
         }
 
         public static void Load([FromSource]Citizen citizen)

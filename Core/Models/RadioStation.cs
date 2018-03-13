@@ -21,6 +21,6 @@
         VinewoodBoulevardRadio = 16,
         SelfRadio = 17,
         TheLab = 18,
-        RadioOff = 255,
+        RadioOff = 255
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using CitizenFX.Core;
-using IgiCore.Core.Models.Player;
 
 namespace IgiCore.Core.Models.Objects.Vehicles
 {

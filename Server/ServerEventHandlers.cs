@@ -36,14 +36,10 @@ namespace IgiCore.Server
 
         private void OnChatMessage(int playerId, string playerName, string message)
         {
-            //Debug.WriteLine($"New Chat Message from: {playerId}...");
-            //Debug.WriteLine($"Player: {playerName}");
-            //Debug.WriteLine($"Message: {message}");
-            
-            Citizen citizen = Players[playerId];
+            Citizen citizen = this.Players[playerId];
 
             List<string> args = message.Split(' ').ToList();
-            string command = args.First();
+            string command = args.First().ToLowerInvariant();
             args = args.Skip(1).ToList();
 
             switch (command)

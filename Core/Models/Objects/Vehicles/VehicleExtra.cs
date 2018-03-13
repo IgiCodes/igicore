@@ -11,7 +11,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
 
         public VehicleExtra()
         {
-            Id = GuidGenerator.GenerateTimeBasedGuid();
+            this.Id = GuidGenerator.GenerateTimeBasedGuid();
         }
     }
 }

@@ -8,6 +8,6 @@
         LightSmoke,
         Stock,
         Limo,
-        Green,
+        Green
     }
 }

@@ -9,6 +9,6 @@
         StickPlayerInside = 4,
         CanBeBrokenInto = 7,
         CanBeBrokenIntoPersist = 8,
-        CannotBeTriedToEnter = 10,
+        CannotBeTriedToEnter = 10
     }
 }

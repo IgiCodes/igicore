@@ -11,6 +11,6 @@
         BikeWheels,
         HighEnd,
         BennysOriginals,
-        BennysBespoke,
+        BennysBespoke
     }
 }

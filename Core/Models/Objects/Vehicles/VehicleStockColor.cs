@@ -159,6 +159,6 @@
         DefaultAlloyColor = 156,
         EpsilonBlue = 157,
         PureGold = 158,
-        BrushedGold = 159,
+        BrushedGold = 159
     }
 }

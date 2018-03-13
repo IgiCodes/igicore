@@ -43,6 +43,6 @@
         Trim = 44,
         Tank = 45,
         Windows = 46,
-        Livery = 48,
+        Livery = 48
     }
 }

@@ -26,12 +26,12 @@ namespace IgiCore.Client.Models
         [JsonIgnore]
         public Vector3 Position
         {
-            get => new Vector3(PosX, PosY, PosZ);
+            get => new Vector3(this.PosX, this.PosY, this.PosZ);
             set
             {
-                PosX = value.X;
-                PosY = value.Y;
-                PosZ = value.Z;
+                this.PosX = value.X;
+                this.PosY = value.Y;
+                this.PosZ = value.Z;
             }
         }
 
@@ -55,7 +55,7 @@ namespace IgiCore.Client.Models
             // Autosave
             lock (this.AutosaveLock)
             {
-                Position = this.Client.LocalPlayer.Character.Position;
+                this.Position = this.Client.LocalPlayer.Character.Position;
 
                 BaseScript.TriggerServerEvent("igi:character:save", JsonConvert.SerializeObject(this));
             }
@@ -96,7 +96,7 @@ namespace IgiCore.Client.Models
 
         public override string ToString()
         {
-            return $"Character [{Id}]: {Name}, {(Alive ? "Alive" : "Dead")}";
+            return $"Character [{this.Id}]: {this.Name}, {(this.Alive ? "Alive" : "Dead")}";
         }
 
         protected static Style ConvertStyle(CitizenFX.Core.Style citStyle, Guid? styleId = null) => new Style
@@ -124,7 +124,7 @@ namespace IgiCore.Client.Models
             Watch = new Prop { Type = PropTypes.Watches, Index = citStyle[PedProps.Watches].Index, Texture = citStyle[PedProps.Watches].TextureIndex },
             Wristband = new Prop { Type = PropTypes.Wristbands, Index = citStyle[PedProps.Wristbands].Index, Texture = citStyle[PedProps.Wristbands].TextureIndex },
             Unknown8 = new Prop { Type = PropTypes.Unknown8, Index = citStyle[PedProps.Unknown8].Index, Texture = citStyle[PedProps.Unknown8].TextureIndex },
-            Unknown9 = new Prop { Type = PropTypes.Unknown9, Index = citStyle[PedProps.Unknown9].Index, Texture = citStyle[PedProps.Unknown9].TextureIndex },
+            Unknown9 = new Prop { Type = PropTypes.Unknown9, Index = citStyle[PedProps.Unknown9].Index, Texture = citStyle[PedProps.Unknown9].TextureIndex }
         };
 
         protected void ApplyStyle()

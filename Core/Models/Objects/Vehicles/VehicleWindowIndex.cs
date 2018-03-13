@@ -9,6 +9,6 @@
         ExtraWindow1,
         ExtraWindow2,
         ExtraWindow3,
-        ExtraWindow4,
+        ExtraWindow4
     }
 }

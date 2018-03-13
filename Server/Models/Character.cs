@@ -25,20 +25,20 @@ namespace IgiCore.Server.Models
         [JsonIgnore]
         public Vector3 Position
         {
-            get => new Vector3(PosX, PosY, PosZ);
+            get => new Vector3(this.PosX, this.PosY, this.PosZ);
             set
             {
-                PosX = value.X;
-                PosY = value.Y;
-                PosZ = value.Z;
+                this.PosX = value.X;
+                this.PosY = value.Y;
+                this.PosZ = value.Z;
             }
         }
 
         public Character()
         {
-            Id = GuidGenerator.GenerateTimeBasedGuid();
-            Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
-            Alive = false;
+            this.Id = GuidGenerator.GenerateTimeBasedGuid();
+            this.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
+            this.Alive = false;
         }
 
         public static Character GetOrCreate(User user, Guid charId)
@@ -48,7 +48,7 @@ namespace IgiCore.Server.Models
 
             try
             {
-                if (user.Characters == null || user.Characters.All(c => c.Id != charId))
+                if (user.Characters.Count == 0 || user.Characters.All(c => c.Id != charId))
                 {
                     Debug.WriteLine($"Character not found, creating new char for userid: {user.Id}  with id: {charId}");
 
@@ -88,7 +88,7 @@ namespace IgiCore.Server.Models
 
         public override string ToString()
         {
-            return $"Character [{Id}]: {Name}, {(Alive ? "Alive" : "Dead")}";
+            return $"Character [{this.Id}]: {this.Name}, {(this.Alive ? "Alive" : "Dead")}";
         }
     }
 }

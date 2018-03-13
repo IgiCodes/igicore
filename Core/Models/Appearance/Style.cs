@@ -1,6 +1,6 @@
-﻿using IgiCore.Core.Extensions;
-using System;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
+using IgiCore.Core.Extensions;
 
 namespace IgiCore.Core.Models.Appearance
 {
@@ -33,31 +33,31 @@ namespace IgiCore.Core.Models.Appearance
 
         public Style()
         {
-            Id = GuidGenerator.GenerateTimeBasedGuid();
+            this.Id = GuidGenerator.GenerateTimeBasedGuid();
 
-            Face = new Component();
-            Head = new Component();
-            Hair = new Component();
-            Torso = new Component();
-            Torso2 = new Component();
-            Legs = new Component();
-            Hands = new Component();
-            Shoes = new Component();
-            Special1 = new Component();
-            Special2 = new Component();
-            Special3 = new Component();
-            Textures = new Component();
+            this.Face = new Component();
+            this.Head = new Component();
+            this.Hair = new Component();
+            this.Torso = new Component();
+            this.Torso2 = new Component();
+            this.Legs = new Component();
+            this.Hands = new Component();
+            this.Shoes = new Component();
+            this.Special1 = new Component();
+            this.Special2 = new Component();
+            this.Special3 = new Component();
+            this.Textures = new Component();
 
-            Hat = new Prop();
-            Glasses = new Prop();
-            EarPiece = new Prop();
-            Unknown3 = new Prop();
-            Unknown4 = new Prop();
-            Unknown5 = new Prop();
-            Watch = new Prop();
-            Wristband = new Prop();
-            Unknown8 = new Prop();
-            Unknown9 = new Prop();
+            this.Hat = new Prop();
+            this.Glasses = new Prop();
+            this.EarPiece = new Prop();
+            this.Unknown3 = new Prop();
+            this.Unknown4 = new Prop();
+            this.Unknown5 = new Prop();
+            this.Watch = new Prop();
+            this.Wristband = new Prop();
+            this.Unknown8 = new Prop();
+            this.Unknown9 = new Prop();
         }
     }
 }

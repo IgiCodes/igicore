@@ -7,6 +7,6 @@
         BackLeftDoor,
         BackRightDoor,
         Hood,
-        Trunk,
+        Trunk
     }
 }

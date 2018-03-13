@@ -1,6 +1,6 @@
-﻿using IgiCore.Core.Models.Player;
-using System;
+﻿using System;
 using IgiCore.Core.Extensions;
+using IgiCore.Core.Models.Player;
 
 namespace IgiCore.Core.Models.Objects.Vehicles
 {
@@ -12,7 +12,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
 
         public VehicleSeat()
         {
-            Id = GuidGenerator.GenerateTimeBasedGuid();
+            this.Id = GuidGenerator.GenerateTimeBasedGuid();
         }
     }
 }

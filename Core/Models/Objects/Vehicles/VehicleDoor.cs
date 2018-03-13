@@ -13,7 +13,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
 
         public VehicleDoor()
         {
-            Id = GuidGenerator.GenerateTimeBasedGuid();
+            this.Id = GuidGenerator.GenerateTimeBasedGuid();
         }
     }
 }
