@@ -31,8 +31,15 @@ namespace IgiCore.Client
             // Load the user
             TriggerServerEvent("igi:user:load");
 
+            HandleEvent<string>("igi:vehicle:spawn", SpawnVehicle);
+
             // Set pause screen title
             Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", "TEST");
+        }
+
+        public async void SpawnVehicle(string vehicle)
+        {
+            Vehicle veh = await World.CreateVehicle(new Model(GetHashKey(vehicle)), this.LocalPlayer.Character.Position);
         }
 
         protected async void UserLoad(User user)
@@ -44,7 +51,7 @@ namespace IgiCore.Client
             this.User = user;
 
             //HandleJsonEvent<Character>("igi:character:new", CharacterLoad); // Does the client care?
-            HandleJsonEvent<Character>("igi:character:load", async c => await CharacterLoad(c));
+            HandleJsonEvent<Character>("igi:character:load", CharacterLoad);
 
             await SpawnPlayer();
         }
@@ -101,23 +108,31 @@ namespace IgiCore.Client
 
             FreezePlayer(false);
 
+            // Temporary respawning
+            this.Tick += async () =>
+            {
+                if (!this.LocalPlayer.Character.IsAlive)
+                {
+                    this.LocalPlayer.Character.Resurrect();
+                    this.LocalPlayer.WantedLevel = 0;
+                }
+                await Delay(10);
+            };
+
             Screen.ShowNotification($"{Game.Player.Name} connected at {DateTime.Now:s}");
         }
 
-        protected async Task CharacterLoad(Character character)
+        protected void CharacterLoad(Character character)
         {
             Assert(this.User != null, "User is empty");
             Assert(character != null, "Character param is empty");
 
-            if (this.User.Character != null)
-            {
-                // Unload old character
-                this.User.Character.Dispose();
-            }
+            // Unload old character
+            User.Character?.Dispose();
 
             // Store the character
             this.User.Character = character;
-            await this.User.Character.Initialize(this); // Fake ctor
+            this.User.Character.Initialize(this); // Fake ctor
 
             // Render new character
             this.User.Character.Render();
@@ -126,19 +141,19 @@ namespace IgiCore.Client
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
-        protected static void Log(string message)
+        public static void Log(string message)
         {
             Debug.WriteLine($"{DateTime.Now:s} [CLIENT]: {message}");
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
-        protected static void Assert(bool condition)
+        public static void Assert(bool condition)
         {
             System.Diagnostics.Debug.Assert(condition);
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
-        protected static void Assert(bool condition, string message)
+        public static void Assert(bool condition, string message)
         {
             System.Diagnostics.Debug.Assert(condition, message);
         }

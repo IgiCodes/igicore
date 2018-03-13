@@ -50,9 +50,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CitizenFX.Client">
-      <HintPath>..\lib\CitizenFX.Client.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="CitizenFX.Core">
+      <HintPath>..\..\..\..\..\src\code\bin\five\debug\citizen\clr2\lib\mono\4.5\CitizenFX.Core.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

@@ -40,7 +40,7 @@ namespace IgiCore.Server
 
         }
 
-        private Character NewCharCommand(Citizen citizen, string charName)
+        private static Character NewCharCommand(Citizen citizen, string charName)
         {
             User user = User.GetOrCreate(citizen);
             if (user.Characters == null) user.Characters = new List<Character>();
@@ -57,9 +57,9 @@ namespace IgiCore.Server
             return character;
         }
 
-        private Character GetCharCommand(Citizen citizen, string name) => User.GetOrCreate(citizen).Characters.FirstOrDefault(c => c.Name == name);
+        private static Character GetCharCommand(Citizen citizen, string name) => User.GetOrCreate(citizen).Characters.FirstOrDefault(c => c.Name == name);
 
-        private Character GetCharCommand(Citizen citizen, Guid charId) => User.GetOrCreate(citizen).Characters.FirstOrDefault(c => c.Id == charId);
+        private static Character GetCharCommand(Citizen citizen, Guid charId) => User.GetOrCreate(citizen).Characters.FirstOrDefault(c => c.Id == charId);
 
 
         public static void Log(string text)

@@ -1,6 +1,6 @@
 using System;
 
-namespace IgiCore.Core.Models
+namespace IgiCore.Core.Models.Player
 {
     public interface IUser
     {

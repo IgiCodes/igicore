@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using IgiCore.Core.Models.Appearance;
 using IgiCore.Server.Migrations;
 using IgiCore.Server.Models;

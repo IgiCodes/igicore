@@ -78,6 +78,12 @@ namespace IgiCore.Server
                     TriggerClientEvent(citizen, "igi:character:prop:set", int.Parse(args[0]), int.Parse(args[1]), int.Parse(args[2]));
 
                     break;
+                case "/car":
+                    Log("/car command called");
+
+                    TriggerClientEvent(citizen, "igi:vehicle:spawn", args[0]);
+
+                    break;
                 default:
                     Log("Unknown command");
 

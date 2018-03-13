@@ -2,8 +2,8 @@ using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
-using IgiCore.Core.Models;
 using IgiCore.Core.Models.Appearance;
+using IgiCore.Core.Models.Player;
 using Style = IgiCore.Core.Models.Appearance.Style;
 using Prop = IgiCore.Core.Models.Appearance.Prop;
 using Newtonsoft.Json;
@@ -39,7 +39,7 @@ namespace IgiCore.Client.Models
         protected Client Client;
 
         // Pretend ctor
-        public async Task Initialize(Client client)
+        public void Initialize(Client client)
         {
             // Store client reference
             this.Client = client;
@@ -130,17 +130,17 @@ namespace IgiCore.Client.Models
         protected void ApplyStyle()
         {
             this.Client.LocalPlayer.Character.Style[PedComponents.Face].SetVariation(this.Style.Face.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Head].SetVariation(this.Style.Head.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Hair].SetVariation(this.Style.Hair.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Torso].SetVariation(this.Style.Torso.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Legs].SetVariation(this.Style.Legs.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Hands].SetVariation(this.Style.Hands.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Shoes].SetVariation(this.Style.Shoes.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Special1].SetVariation(this.Style.Special1.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Special2].SetVariation(this.Style.Special2.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Special3].SetVariation(this.Style.Special3.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Textures].SetVariation(this.Style.Textures.Index, this.Style.Face.Texture);
-            this.Client.LocalPlayer.Character.Style[PedComponents.Torso2].SetVariation(this.Style.Torso2.Index, this.Style.Face.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Head].SetVariation(this.Style.Head.Index, this.Style.Head.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Hair].SetVariation(this.Style.Hair.Index, this.Style.Hair.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Torso].SetVariation(this.Style.Torso.Index, this.Style.Torso.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Legs].SetVariation(this.Style.Legs.Index, this.Style.Legs.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Hands].SetVariation(this.Style.Hands.Index, this.Style.Hands.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Shoes].SetVariation(this.Style.Shoes.Index, this.Style.Shoes.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Special1].SetVariation(this.Style.Special1.Index, this.Style.Special1.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Special2].SetVariation(this.Style.Special2.Index, this.Style.Special2.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Special3].SetVariation(this.Style.Special3.Index, this.Style.Special3.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Textures].SetVariation(this.Style.Textures.Index, this.Style.Textures.Texture);
+            this.Client.LocalPlayer.Character.Style[PedComponents.Torso2].SetVariation(this.Style.Torso2.Index, this.Style.Torso2.Texture);
 
             this.Client.LocalPlayer.Character.Style[PedProps.Hats].SetVariation(this.Style.Hat.Index, this.Style.Hat.Texture);
             this.Client.LocalPlayer.Character.Style[PedProps.Glasses].SetVariation(this.Style.Glasses.Index, this.Style.Glasses.Texture);

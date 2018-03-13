@@ -5,7 +5,7 @@ using System.Data.Entity;
 using System.Linq;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
-using IgiCore.Core.Models;
+using IgiCore.Core.Models.Player;
 using Citizen = CitizenFX.Core.Player;
 using static IgiCore.Server.Server;
 using Newtonsoft.Json;
