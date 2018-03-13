@@ -51,13 +51,11 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         VehicleLockStatus LockStatus { get; set; }
         RadioStation RadioStation { get; set; }
         VehicleClass Class { get; set; }
-        ITrailer Trailer { get; set; }
-        IVehicle TowedVehicle { get; set; }
-        Dictionary<int, bool> Extras { get; set; }
-        Dictionary<VehicleSeat, ICharacter> Occupants { get; set; }
-        Dictionary<VehicleModType, VehicleMod> Mods { get; set; }
-        Dictionary<VehicleWindowIndex, VehicleWindow> Windows { get; set; }
-        Dictionary<VehicleDoorIndex, VehicleDoor> Doors { get; set; }
-        Dictionary<int, VehicleWheel> Wheels { get; set; }
+        List<VehicleExtra> Extras { get; set; }
+        List<VehicleWindow> Windows { get; set; }
+        List<VehicleSeat> Seats { get; set; }
+        List<VehicleMod> Mods { get; set; }
+        List<VehicleDoor> Doors { get; set; }
+        List<VehicleWheel> Wheels { get; set; }
     }
 }

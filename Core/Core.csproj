@@ -46,6 +46,7 @@
     <Compile Include="Models\Appearance\PropTypes.cs" />
     <Compile Include="Models\Appearance\ComponentTypes.cs" />
     <Compile Include="Models\Appearance\Style.cs" />
+    <Compile Include="Models\Objects\Vehicles\Car.cs" />
     <Compile Include="Models\Objects\Vehicles\IAerialVehicle.cs" />
     <Compile Include="Models\Objects\Vehicles\IAirship.cs" />
     <Compile Include="Models\Objects\Vehicles\IBike.cs" />
@@ -64,14 +65,18 @@
     <Compile Include="Models\Objects\Vehicles\ISubmersible.cs" />
     <Compile Include="Models\Objects\Vehicles\ITrailer.cs" />
     <Compile Include="Models\Objects\Vehicles\IVehicle.cs" />
+    <Compile Include="Models\Objects\Vehicles\Trailer.cs" />
+    <Compile Include="Models\Objects\Vehicles\Vehicle.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleClass.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleColor.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleDoor.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleDoorIndex.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleExtra.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleLockStatus.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleMod.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleModType.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleSeat.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleSeatIndex.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleWheel.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleWheelType.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleWindow.cs" />
