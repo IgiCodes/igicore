@@ -15,9 +15,13 @@ namespace IgiCore.Server.Models
 {
     public class User : IUser
     {
-        [Key] public Guid Id { get; set; }
+        [Key]
+        public Guid Id { get; set; }
 
-        [Index(IsUnique = true)] public string SteamId { get; set; }
+        [MaxLength(17)]
+        [Index(IsUnique = true)]
+        public string SteamId { get; set; }
+
         public string Name { get; set; }
         public virtual List<Character> Characters { get; set; }
 
