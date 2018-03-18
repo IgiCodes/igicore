@@ -64,11 +64,7 @@ namespace IgiCore.Client
 
             TriggerServerEvent("igi:vehicle:save", JsonConvert.SerializeObject(car));
 
-<<<<<<< HEAD
-            //this.Services.First<VehicleService>().Tracked.Add(car.Handle);
-=======
             this.Services.First<VehicleService>().Tracked.Add(car.Handle);
->>>>>>> 964748f2d95f9f22e29e87adb203ae3502a5a3c8
         }
 
         protected async void UserLoad(User user)
