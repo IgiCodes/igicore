@@ -14,6 +14,7 @@ namespace IgiCore.Server.Storage.MySql
         public DbSet<Character> Characters { get; set; }
         public DbSet<Style> Styles { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
+        public DbSet<Car> Cars { get; set; }
 
         public DB() : base(Config.MySqlConnString)
         {

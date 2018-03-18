@@ -31,9 +31,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CitizenFX.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\src\code\bin\five\debug\citizen\clr2\lib\mono\4.5\CitizenFX.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\Guid.cs" />
@@ -69,6 +79,7 @@
     <Compile Include="Models\Objects\Vehicles\VehicleDoor.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleDoorIndex.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleExtra.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleHash.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleLockStatus.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleMod.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleModType.cs" />

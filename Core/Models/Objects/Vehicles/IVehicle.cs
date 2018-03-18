@@ -13,8 +13,6 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         float FuelLevel { get; set; }
         float OilLevel { get; set; }
         float PetrolTankHealth { get; set; }
-        float Speed { get; set; }
-        float SteeringAngle { get; set; }
         float TowingCraneRaisedAmount { get; set; }
         bool HasAlarm { get; set; }
         bool IsAlaramed { get; set; }

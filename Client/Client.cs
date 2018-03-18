@@ -5,8 +5,16 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Models;
+using IgiCore.Core.Models.Objects.Vehicles;
+using Vehicle = CitizenFX.Core.Vehicle;
+using VehicleDoorIndex = CitizenFX.Core.VehicleDoorIndex;
+using VehicleHash = CitizenFX.Core.VehicleHash;
 using Newtonsoft.Json;
 using static CitizenFX.Core.Native.API;
+using System.Collections.Generic;
+using System.Linq;
+using IgiCore.Client.Services;
+using IgiCore.Core;
 
 namespace IgiCore.Client
 {
@@ -17,6 +25,12 @@ namespace IgiCore.Client
         public new event Func<Task> Tick;
 
         public new Player LocalPlayer => base.LocalPlayer;
+
+        protected ServiceRegistry Services = new ServiceRegistry()
+        {
+            new VehicleService()
+        };
+
 
         public Client()
         {
@@ -31,15 +45,64 @@ namespace IgiCore.Client
             // Load the user
             TriggerServerEvent("igi:user:load");
 
-            HandleEvent<string>("igi:vehicle:spawn", SpawnVehicle);
+            HandleJsonEvent<Car>("igi:vehicle:spawn", SpawnVehicle);
 
             // Set pause screen title
             Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", "TEST");
+
+            foreach (Service service in this.Services)
+            {
+                this.Tick += () => service.OnTick(this);
+            }
         }
 
-        public async void SpawnVehicle(string vehicle)
+
+        private async void AutoSave()
         {
-            Vehicle veh = await World.CreateVehicle(new Model(GetHashKey(vehicle)), this.LocalPlayer.Character.Position);
+
+        }
+
+        public async void SpawnVehicle(Car carToSpawn)
+        {
+            Log(carToSpawn.Hash.ToString());
+            Vehicle veh = await World.CreateVehicle(new Model((VehicleHash)carToSpawn.Hash), this.LocalPlayer.Character.Position);
+            veh.BodyHealth = carToSpawn.BodyHealth;
+            veh.EngineHealth = carToSpawn.EngineHealth;
+            veh.DirtLevel = carToSpawn.DirtLevel;
+            veh.FuelLevel = carToSpawn.FuelLevel;
+            veh.OilLevel = carToSpawn.OilLevel;
+            veh.PetrolTankHealth = carToSpawn.PetrolTankHealth;
+            veh.TowingCraneRaisedAmount = carToSpawn.TowingCraneRaisedAmount;
+            //veh.HasAlarm = carToSpawn.HasAlarm;
+            veh.IsAlarmSet = carToSpawn.IsAlaramed;
+            //veh.HasLock = carToSpawn.HasLock;
+            veh.IsDriveable = carToSpawn.IsDriveable;
+            veh.IsEngineRunning = carToSpawn.IsEngineRunning;
+            //veh.HasSeatbelts = carToSpawn.HasSeatbelts;
+            veh.CanTiresBurst = carToSpawn.CanTiresBurst;
+
+            var car = SaveVehicle(veh);
+            car.Id = carToSpawn.Id;
+            car.Handle = veh.Handle;
+            TriggerServerEvent("igi:vehicle:save", car);
+
+
+            VehicleService service = this.Services.First<VehicleService>();
+            service.Tracked.Add(car.Handle);
+        }
+
+        public Car SaveVehicle(Vehicle veh)
+        {
+            return new Car
+            {
+                BodyHealth = veh.BodyHealth,
+                EngineHealth = veh.EngineHealth,
+                DirtLevel = veh.DirtLevel,
+                FuelLevel = veh.FuelLevel,
+                OilLevel = veh.OilLevel,
+                PetrolTankHealth = veh.PetrolTankHealth,
+                Position = veh.Position
+            };
         }
 
         protected async void UserLoad(User user)
@@ -88,18 +151,18 @@ namespace IgiCore.Client
             FreezePlayer(true);
 
             // Swap model
-            if (!await this.LocalPlayer.ChangeModel(new Model(PedHash.FreemodeMale01))) throw new ExternalException("ChangeModel failed");
+            await this.LocalPlayer.ChangeModel(new Model(PedHash.FreemodeMale01));
 
             // Not naked
             Game.Player.Character.Style.SetDefaultClothes();
 
-            this.LocalPlayer.Character.Position = new Vector3(-802.311f, 175.056f, 72.8446f);
+            this.LocalPlayer.Character.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
             this.LocalPlayer.Character.Resurrect();
             this.LocalPlayer.Character.Task.ClearAllImmediately();
             this.LocalPlayer.Character.Weapons.Drop();
             this.LocalPlayer.WantedLevel = 0;
 
-            this.LocalPlayer.Character.Weapons.Give(WeaponHash.AssaultRifle, 100, true, true);
+            this.LocalPlayer.Character.Weapons.Give(WeaponHash.Railgun, 100, true, true);
 
             ShutdownLoadingScreen();
 

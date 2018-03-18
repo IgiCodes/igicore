@@ -86,6 +86,7 @@
     <Compile Include="Config.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Character.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleExtensions.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="ServerEventHandlers.cs" />
     <Compile Include="Storage\MySql\DB.cs" />

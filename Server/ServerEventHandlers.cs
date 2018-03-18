@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using CitizenFX.Core;
+using IgiCore.Core.Extensions;
+using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Server.Models;
 using Newtonsoft.Json;
 using Citizen = CitizenFX.Core.Player;
@@ -77,7 +79,90 @@ namespace IgiCore.Server
                 case "/car":
                     Log("/car command called");
 
-                    TriggerClientEvent(citizen, "igi:vehicle:spawn", args[0]);
+                    var c = new Car
+                    {
+                        Id = GuidGenerator.GenerateTimeBasedGuid(),
+                        Hash = (uint)VehicleHash.Elegy,
+                        Seats = new List<VehicleSeat>
+                {
+                    new VehicleSeat
+                    {
+                        Index = VehicleSeatIndex.LeftFront
+                    },
+                    new VehicleSeat
+                    {
+                        Index = VehicleSeatIndex.RightFront
+                    },
+                    new VehicleSeat
+                    {
+                        Index = VehicleSeatIndex.LeftRear
+                    },
+                    new VehicleSeat
+                    {
+                        Index = VehicleSeatIndex.RightRear
+                    }
+                },
+                        Wheels = new List<VehicleWheel>
+                {
+                    new VehicleWheel
+                    {
+                        Index = 0,
+                        IsBurst = false,
+                        Type = VehicleWheelType.Sport
+                    },
+                    new VehicleWheel
+                    {
+                        Index = 0,
+                        IsBurst = false,
+                        Type = VehicleWheelType.Sport
+                    },
+                    new VehicleWheel
+                    {
+                        Index = 0,
+                        IsBurst = false,
+                        Type = VehicleWheelType.Sport
+                    },
+                    new VehicleWheel
+                    {
+                        Index = 0,
+                        IsBurst = false,
+                        Type = VehicleWheelType.Sport
+                    }
+                },
+                        Windows = new List<VehicleWindow>
+                {
+                    new VehicleWindow
+                    {
+                        Index = VehicleWindowIndex.FrontLeftWindow,
+                        IsIntact = false,
+                        IsRolledDown = false
+                    },
+                    new VehicleWindow
+                    {
+                        Index = VehicleWindowIndex.FrontRightWindow,
+                        IsIntact = false,
+                        IsRolledDown = false
+                    },
+                    new VehicleWindow
+                    {
+                        Index = VehicleWindowIndex.BackLeftWindow,
+                        IsIntact = false,
+                        IsRolledDown = false
+                    },
+                    new VehicleWindow
+                    {
+                        Index = VehicleWindowIndex.BackRightWindow,
+                        IsIntact = false,
+                        IsRolledDown = false
+                    }
+                }
+                    };
+
+
+                    TriggerClientEvent(citizen, "igi:vehicle:spawn", JsonConvert.SerializeObject(c));
+
+                    Db.Cars.Add(c);
+                    Db.SaveChanges();
 
                     break;
                 default:
