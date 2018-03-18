@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using Newtonsoft.Json;
@@ -79,7 +78,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
             }
         }
 
-        public Vehicle()
+        protected Vehicle()
         {
             this.Id = GuidGenerator.GenerateTimeBasedGuid();
         }

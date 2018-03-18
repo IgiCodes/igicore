@@ -21,26 +21,18 @@ namespace IgiCore.Server
         {
             Db = new DB();
             Db.Database.CreateIfNotExists();
+            
+            //HandleEvent<string>("onResourceStarting", r => Debug.WriteLine($"Starting resource: {r}"));
+            //HandleEvent<string>("onResourceStart", r => Debug.WriteLine($"Start resource: {r}"));
+            //HandleEvent<string>("onResourceStop", r => Debug.WriteLine($"Stop resource: {r}"));
 
-            RegisterEvents();
+            HandleEvent<Citizen, string, CallbackDelegate>("playerConnecting", OnPlayerConnecting);
+            HandleEvent<Citizen, string, CallbackDelegate>("playerDropped", OnPlayerDropped);
 
-        }
+            HandleEvent<int, string, string>("chatMessage", OnChatMessage);
 
-        private void RegisterEvents()
-        {
-            this.EventHandlers["onResourceStarting"] += new Action<string>(ResourceStarting);
-            this.EventHandlers["onResourceStart"] += new Action<string>(ResourceStart);
-            this.EventHandlers["onResourceStop"] += new Action<string>(ResourceStop);
-
-            this.EventHandlers["playerConnecting"] += new Action<Citizen, string, CallbackDelegate>(OnPlayerConnecting);
-            this.EventHandlers["playerDropped"] += new Action<Citizen, string, CallbackDelegate>(OnPlayerDropped);
-
-            this.EventHandlers["chatMessage"] += new Action<int, string, string>(OnChatMessage);
-
-            this.EventHandlers["igi:user:load"] += new Action<Citizen>(User.Load);
-
-            this.EventHandlers["igi:character:save"] += new Action<string>(Character.Save);
-
+            HandleEvent<Citizen>("igi:user:load", User.Load);
+            HandleEvent<string>("igi:character:save", Character.Save);
             HandleJsonEvent<Car>("igi:vehicle:save", VehicleExtensions.Save);
         }
 
@@ -48,6 +40,7 @@ namespace IgiCore.Server
         {
             User user = User.GetOrCreate(citizen);
             if (user.Characters == null) user.Characters = new List<Character>();
+
             Character character = new Character
             {
                 Name = charName,
@@ -55,6 +48,7 @@ namespace IgiCore.Server
             };
 
             user.Characters.Add(character);
+
             Db.Users.AddOrUpdate(user);
             Db.SaveChanges();
 
@@ -65,10 +59,10 @@ namespace IgiCore.Server
 
         private static Character GetCharCommand(Citizen citizen, Guid charId) => User.GetOrCreate(citizen).Characters.FirstOrDefault(c => c.Id == charId);
 
-
-        public static void Log(string text)
+        [System.Diagnostics.Conditional("DEBUG")]
+        public static void Log(string message)
         {
-            Debug.WriteLine($"{DateTime.UtcNow:G} [SERVER]: {text}");
+            Debug.WriteLine($"{DateTime.Now:s} [SERVER]: {message}");
         }
 
         public void HandleEvent(string name, Action action) => this.EventHandlers[name] += action;

@@ -6,7 +6,6 @@ files {
 	"System.ComponentModel.DataAnnotations.dll",
 	"Newtonsoft.Json.dll",
 	"EntityFramework.dll",
-	"AutoMapper.dll",
 }
 
 server_scripts {
@@ -16,5 +15,5 @@ server_scripts {
 
 client_scripts {
 	"Core.net.dll",
-	"Client.net.dll"
+	"Client.net.dll",
 }

@@ -1,31 +1,17 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CitizenFX.Core;
-using IgiCore.Core.Extensions;
+﻿using CitizenFX.Core;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Server.Models;
 using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using IgiCore.Core.Extensions;
 using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Server
 {
     public partial class Server
     {
-        private void ResourceStarting(string resourceName)
-        {
-            //Debug.WriteLine($"Starting resource: {resourceName}");
-        }
-
-        private void ResourceStart(string resourceName)
-        {
-            //Debug.WriteLine($"Start resource: {resourceName}");
-        }
-
-        private void ResourceStop(string resourceName)
-        {
-            //Debug.WriteLine($"Stopping resource: {resourceName}");
-        }
-
         private void OnPlayerConnecting([FromSource] Citizen citizen, string playerName, CallbackDelegate kickReason)
         {
             User.GetOrCreate(citizen);
@@ -79,91 +65,94 @@ namespace IgiCore.Server
                 case "/car":
                     Log("/car command called");
 
-                    var c = new Car
+                    var car = new Car
                     {
                         Id = GuidGenerator.GenerateTimeBasedGuid(),
                         Hash = (uint)VehicleHash.Elegy,
+                        Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f },
                         Seats = new List<VehicleSeat>
-                {
-                    new VehicleSeat
-                    {
-                        Index = VehicleSeatIndex.LeftFront
-                    },
-                    new VehicleSeat
-                    {
-                        Index = VehicleSeatIndex.RightFront
-                    },
-                    new VehicleSeat
-                    {
-                        Index = VehicleSeatIndex.LeftRear
-                    },
-                    new VehicleSeat
-                    {
-                        Index = VehicleSeatIndex.RightRear
-                    }
-                },
+                        {
+                            new VehicleSeat
+                            {
+                                Index = VehicleSeatIndex.LeftFront
+                            },
+                            new VehicleSeat
+                            {
+                                Index = VehicleSeatIndex.RightFront
+                            },
+                            new VehicleSeat
+                            {
+                                Index = VehicleSeatIndex.LeftRear
+                            },
+                            new VehicleSeat
+                            {
+                                Index = VehicleSeatIndex.RightRear
+                            }
+                        },
                         Wheels = new List<VehicleWheel>
-                {
-                    new VehicleWheel
-                    {
-                        Index = 0,
-                        IsBurst = false,
-                        Type = VehicleWheelType.Sport
-                    },
-                    new VehicleWheel
-                    {
-                        Index = 0,
-                        IsBurst = false,
-                        Type = VehicleWheelType.Sport
-                    },
-                    new VehicleWheel
-                    {
-                        Index = 0,
-                        IsBurst = false,
-                        Type = VehicleWheelType.Sport
-                    },
-                    new VehicleWheel
-                    {
-                        Index = 0,
-                        IsBurst = false,
-                        Type = VehicleWheelType.Sport
-                    }
-                },
+                        {
+                            new VehicleWheel
+                            {
+                                Index = 0,
+                                IsBurst = false,
+                                Type = VehicleWheelType.Sport
+                            },
+                            new VehicleWheel
+                            {
+                                Index = 0,
+                                IsBurst = false,
+                                Type = VehicleWheelType.Sport
+                            },
+                            new VehicleWheel
+                            {
+                                Index = 0,
+                                IsBurst = false,
+                                Type = VehicleWheelType.Sport
+                            },
+                            new VehicleWheel
+                            {
+                                Index = 0,
+                                IsBurst = false,
+                                Type = VehicleWheelType.Sport
+                            }
+                        },
                         Windows = new List<VehicleWindow>
-                {
-                    new VehicleWindow
-                    {
-                        Index = VehicleWindowIndex.FrontLeftWindow,
-                        IsIntact = false,
-                        IsRolledDown = false
-                    },
-                    new VehicleWindow
-                    {
-                        Index = VehicleWindowIndex.FrontRightWindow,
-                        IsIntact = false,
-                        IsRolledDown = false
-                    },
-                    new VehicleWindow
-                    {
-                        Index = VehicleWindowIndex.BackLeftWindow,
-                        IsIntact = false,
-                        IsRolledDown = false
-                    },
-                    new VehicleWindow
-                    {
-                        Index = VehicleWindowIndex.BackRightWindow,
-                        IsIntact = false,
-                        IsRolledDown = false
-                    }
-                }
+                        {
+                            new VehicleWindow
+                            {
+                                Index = VehicleWindowIndex.FrontLeftWindow,
+                                IsIntact = false,
+                                IsRolledDown = false
+                            },
+                            new VehicleWindow
+                            {
+                                Index = VehicleWindowIndex.FrontRightWindow,
+                                IsIntact = false,
+                                IsRolledDown = false
+                            },
+                            new VehicleWindow
+                            {
+                                Index = VehicleWindowIndex.BackLeftWindow,
+                                IsIntact = false,
+                                IsRolledDown = false
+                            },
+                            new VehicleWindow
+                            {
+                                Index = VehicleWindowIndex.BackRightWindow,
+                                IsIntact = false,
+                                IsRolledDown = false
+                            }
+                        }
                     };
 
-
-                    TriggerClientEvent(citizen, "igi:vehicle:spawn", JsonConvert.SerializeObject(c));
-
-                    Db.Cars.Add(c);
+                    
+                    Db.Cars.Add(car);
                     Db.SaveChanges();
 
+                    Log($"Sending {car.Id}");
+
+                    TriggerClientEvent(citizen, "igi:vehicle:spawn", JsonConvert.SerializeObject(car));
+                    
                     break;
                 default:
                     Log("Unknown command");

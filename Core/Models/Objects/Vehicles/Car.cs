@@ -11,10 +11,13 @@
             {
                 Handle = vehicle.Handle,
                 Position = vehicle.Position,
+                BodyHealth = vehicle.BodyHealth,
+                EngineHealth = vehicle.EngineHealth,
+                DirtLevel = vehicle.DirtLevel,
+                FuelLevel = vehicle.FuelLevel,
+                OilLevel = vehicle.OilLevel,
+                PetrolTankHealth = vehicle.PetrolTankHealth
             };
-
         }
     }
-
-    
 }
