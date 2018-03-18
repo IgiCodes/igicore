@@ -1,4 +1,6 @@
-﻿namespace IgiCore.Core.Models.Objects.Vehicles
+﻿using System;
+
+namespace IgiCore.Core.Models.Objects.Vehicles
 {
     public class Car : Vehicle, ICar
     {
@@ -9,6 +11,7 @@
         {
             return new Car
             {
+				Id = Guid.Empty,
                 Handle = vehicle.Handle,
                 Position = vehicle.Position,
                 BodyHealth = vehicle.BodyHealth,

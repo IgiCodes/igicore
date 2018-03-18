@@ -43,8 +43,6 @@ namespace IgiCore.Client.Services
 				Debug.WriteLine($"Vehicle: {vehicleHandle} - {citVeh.Position}");
 
 				Car car = citVeh;
-				car.Id = Guid.Empty;
-				// NOTE: car won't have its ID
 
 				BaseScript.TriggerServerEvent("igi:vehicle:save", JsonConvert.SerializeObject(car));
 			}
