@@ -1,20 +1,14 @@
 using System;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using IgiCore.Client.Extensions;
 using IgiCore.Client.Models;
 using IgiCore.Core.Models.Objects.Vehicles;
-using Vehicle = CitizenFX.Core.Vehicle;
-using VehicleDoorIndex = CitizenFX.Core.VehicleDoorIndex;
-using VehicleHash = CitizenFX.Core.VehicleHash;
 using Newtonsoft.Json;
-using static CitizenFX.Core.Native.API;
-using System.Collections.Generic;
-using System.Linq;
 using IgiCore.Client.Services;
-using IgiCore.Core;
+using static CitizenFX.Core.Native.API;
 
 namespace IgiCore.Client
 {
@@ -30,7 +24,6 @@ namespace IgiCore.Client
         {
             new VehicleService()
         };
-
 
         public Client()
         {
@@ -56,53 +49,22 @@ namespace IgiCore.Client
             }
         }
 
-
-        private async void AutoSave()
-        {
-
-        }
-
         public async void SpawnVehicle(Car carToSpawn)
         {
-            Log(carToSpawn.Hash.ToString());
-            Vehicle veh = await World.CreateVehicle(new Model((VehicleHash)carToSpawn.Hash), this.LocalPlayer.Character.Position);
-            veh.BodyHealth = carToSpawn.BodyHealth;
-            veh.EngineHealth = carToSpawn.EngineHealth;
-            veh.DirtLevel = carToSpawn.DirtLevel;
-            veh.FuelLevel = carToSpawn.FuelLevel;
-            veh.OilLevel = carToSpawn.OilLevel;
-            veh.PetrolTankHealth = carToSpawn.PetrolTankHealth;
-            veh.TowingCraneRaisedAmount = carToSpawn.TowingCraneRaisedAmount;
-            //veh.HasAlarm = carToSpawn.HasAlarm;
-            veh.IsAlarmSet = carToSpawn.IsAlaramed;
-            //veh.HasLock = carToSpawn.HasLock;
-            veh.IsDriveable = carToSpawn.IsDriveable;
-            veh.IsEngineRunning = carToSpawn.IsEngineRunning;
-            //veh.HasSeatbelts = carToSpawn.HasSeatbelts;
-            veh.CanTiresBurst = carToSpawn.CanTiresBurst;
+            Log($"Spawning {carToSpawn.Id}");
 
-            var car = SaveVehicle(veh);
+            var veh = await carToSpawn.ToCitizenVehcle();
+
+            Log($"Spawned {veh.Handle}");
+
+            Car car = veh;
             car.Id = carToSpawn.Id;
-            car.Handle = veh.Handle;
-            TriggerServerEvent("igi:vehicle:save", car);
 
+            Log($"Sending {car.Id}");
 
-            VehicleService service = this.Services.First<VehicleService>();
-            service.Tracked.Add(car.Handle);
-        }
+            TriggerServerEvent("igi:vehicle:save", JsonConvert.SerializeObject(car));
 
-        public Car SaveVehicle(Vehicle veh)
-        {
-            return new Car
-            {
-                BodyHealth = veh.BodyHealth,
-                EngineHealth = veh.EngineHealth,
-                DirtLevel = veh.DirtLevel,
-                FuelLevel = veh.FuelLevel,
-                OilLevel = veh.OilLevel,
-                PetrolTankHealth = veh.PetrolTankHealth,
-                Position = veh.Position
-            };
+            //this.Services.First<VehicleService>().Tracked.Add(car.Handle);
         }
 
         protected async void UserLoad(User user)
