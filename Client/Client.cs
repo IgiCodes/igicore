@@ -45,7 +45,7 @@ namespace IgiCore.Client
 
             foreach (Service service in this.Services)
             {
-                this.Tick += () => service.OnTick(this);
+                this.Tick += async () => await service.Tick(this);
             }
         }
 
@@ -64,7 +64,7 @@ namespace IgiCore.Client
 
             TriggerServerEvent("igi:vehicle:save", JsonConvert.SerializeObject(car));
 
-            //this.Services.First<VehicleService>().Tracked.Add(car.Handle);
+            this.Services.First<VehicleService>().Tracked.Add(car.Handle);
         }
 
         protected async void UserLoad(User user)

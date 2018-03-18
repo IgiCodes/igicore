@@ -4,6 +4,6 @@ namespace IgiCore.Client.Services
 {
     public interface IService
     {
-        Task OnTick(Client client);
+        Task Tick(Client client);
     }
 }
