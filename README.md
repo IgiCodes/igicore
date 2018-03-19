@@ -2,9 +2,11 @@
 Base framework for GTAV FiveM roleplaying servers but in C#
 
 
-This repo is an absolute mess right now. Purely using it as online storage and for ease of collaboration when interacting with my stream twitch.tv/igicodes
+This repo is an absolute mess right now. Purely using it as online storage and for ease of collaboration when interacting with my stream http://twitch.tv/igicodes
 
 I'll tidy this up when the framework is more production worthy.
+
+Track the progress of this project on Trello: https://trello.com/b/cGGQ5tmV/igicore
 
 
 # Development
