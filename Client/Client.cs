@@ -39,6 +39,7 @@ namespace IgiCore.Client
             TriggerServerEvent("igi:user:load");
 
             HandleJsonEvent<Car>("igi:vehicle:spawn", SpawnVehicle);
+            HandleEvent<string>("igi:vehicle:claim", ClaimVehicle);
 
             // Set pause screen title
             Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", "TEST");
@@ -49,16 +50,46 @@ namespace IgiCore.Client
             }
         }
 
+        public void ClaimVehicle(string carJson)
+        {
+            Car car = JsonConvert.DeserializeObject<Car>(carJson);
+            Log($"Claiming vehicle with netId: {car.NetId}");
+            int vehHandle = NetToVeh(car.NetId);
+            Log($"Handle found for net id: {vehHandle}");
+            CitizenFX.Core.Vehicle vehicle = new CitizenFX.Core.Vehicle(vehHandle);
+            VehToNet(vehicle.Handle);
+            NetworkRegisterEntityAsNetworked(vehicle.Handle);
+            int netId = NetworkGetNetworkIdFromEntity(vehicle.Handle);
+
+            Car newCar = vehicle;
+            newCar.Id = car.Id;
+            newCar.NetId = netId;
+
+            Log($"Sending {car.Id}");
+
+            TriggerServerEvent("igi:vehicle:save", JsonConvert.SerializeObject(newCar));
+
+            this.Services.First<VehicleService>().Tracked.Add(vehicle.Handle);
+        }
+
         public async void SpawnVehicle(Car carToSpawn)
         {
             Log($"Spawning {carToSpawn.Id}");
 
-            var veh = await carToSpawn.ToCitizenVehcle();
+            carToSpawn.Position = LocalPlayer.Character.Position;
 
-            Log($"Spawned {veh.Handle}");
+            var veh = await carToSpawn.ToCitizenVehcle();
+            VehToNet(veh.Handle);
+            NetworkRegisterEntityAsNetworked(veh.Handle);
+            int netId = NetworkGetNetworkIdFromEntity(veh.Handle);
+            //SetNetworkIdExistsOnAllMachines(netId, true);
+
+            Log($"Spawned {veh.Handle} with netId {netId}");
 
             Car car = veh;
             car.Id = carToSpawn.Id;
+            car.NetId = netId;
+            
 
             Log($"Sending {car.Id}");
 

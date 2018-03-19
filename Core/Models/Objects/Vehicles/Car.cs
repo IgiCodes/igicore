@@ -14,6 +14,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
 				Id = Guid.Empty,
                 Handle = vehicle.Handle,
                 Position = vehicle.Position,
+                Heading = vehicle.Heading,
                 BodyHealth = vehicle.BodyHealth,
                 EngineHealth = vehicle.EngineHealth,
                 DirtLevel = vehicle.DirtLevel,

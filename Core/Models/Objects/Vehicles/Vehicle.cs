@@ -13,6 +13,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         [Required]
         public uint Hash { get; set; }
         public int Handle { get; set; }
+        public int NetId { get; set; }
         public bool IsHoldable { get; set; } = false;
         public string VIN { get; set; }
         public float BodyHealth { get; set; } = 1000;
@@ -25,6 +26,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public float PosX { get; set; }
         public float PosY { get; set; }
         public float PosZ { get; set; }
+        public float Heading { get; set; }
         public bool HasAlarm { get; set; } = true;
         public bool IsAlaramed { get; set; } = false;
         public bool HasLock { get; set; } = true;

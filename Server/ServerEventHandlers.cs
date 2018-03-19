@@ -24,7 +24,7 @@ namespace IgiCore.Server
 
         private void OnChatMessage(int playerId, string playerName, string message)
         {
-            Citizen citizen = this.Players[playerId];
+            Citizen citizen = Players[playerId];
 
             List<string> args = message.Split(' ').ToList();
             string command = args.First().ToLowerInvariant();
@@ -69,7 +69,7 @@ namespace IgiCore.Server
                     {
                         Id = GuidGenerator.GenerateTimeBasedGuid(),
                         Hash = (uint)VehicleHash.Elegy,
-                        Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f },
+                        //Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f },
                         Seats = new List<VehicleSeat>
                         {
                             new VehicleSeat

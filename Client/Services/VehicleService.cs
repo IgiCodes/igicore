@@ -1,10 +1,11 @@
-
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.Core.Models.Objects.Vehicles;
 using Newtonsoft.Json;
+using static CitizenFX.Core.Native.API;
 
 namespace IgiCore.Client.Services
 {
@@ -22,16 +23,23 @@ namespace IgiCore.Client.Services
 
         private void Update(Client client)
         {
-            foreach (int vehicleHandle in this.Tracked)
+            foreach (int vehicleHandle in this.Tracked.ToList())
             {
                 var citVeh = new CitizenFX.Core.Vehicle(vehicleHandle);
                 var player = new Player(API.GetNearestPlayerToEntity(citVeh.Handle));
-                Debug.WriteLine($"Nearest Player: {player.Name}");
+                //Debug.WriteLine($"Nearest Player: {player.Name}");
 
-                if (player != client.LocalPlayer)
-                {
-                    // Transfer the vehicle to the closest client
-                }
+                if (player == client.LocalPlayer) continue;
+                int netId = NetworkGetNetworkIdFromEntity(citVeh.Handle);
+                //Debug.WriteLine($"Vehicle: {vehicleHandle} NetId: {netId} - {citVeh.Position}");
+
+                Car car = citVeh;
+                car.NetId = netId;
+                // Transfer the vehicle to the closest client
+                //Client.Log($"Removing Vehicle from tracked: {car.Handle}");
+                this.Tracked.Remove(car.Handle);
+                Client.Log($"Transfering vehicle to player: {player.ServerId}  -  {car.Handle}");
+                BaseScript.TriggerServerEvent("igi:vehicle:transfer", JsonConvert.SerializeObject(car), player.ServerId);
             }
         }
 
@@ -40,11 +48,14 @@ namespace IgiCore.Client.Services
             foreach (int vehicleHandle in this.Tracked)
             {
                 var citVeh = new CitizenFX.Core.Vehicle(vehicleHandle);
-                Debug.WriteLine($"Vehicle: {vehicleHandle} - {citVeh.Position}");
+                int netId = NetworkGetNetworkIdFromEntity(citVeh.Handle);
+                //Debug.WriteLine($"Vehicle: {vehicleHandle} - {citVeh.Position}");
 
                 Car car = citVeh;
+                car.NetId = netId;
+
                 // NOTE: car won't have its ID
-                
+
                 BaseScript.TriggerServerEvent("igi:vehicle:save", JsonConvert.SerializeObject(car));
             }
         }

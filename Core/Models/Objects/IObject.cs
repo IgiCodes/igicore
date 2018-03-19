@@ -7,10 +7,12 @@ namespace IgiCore.Core.Models.Objects
         uint Hash { get; set; }
         [NotMapped]
         int Handle { get; set; }
+        int NetId { get; set; }
         bool IsHoldable { get; set; }
         float PosX { get; set; }
         float PosY { get; set; }
         float PosZ { get; set; }
+        float Heading { get; set; }
 
     }
 }

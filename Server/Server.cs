@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Net.NetworkInformation;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
@@ -34,6 +35,16 @@ namespace IgiCore.Server
             HandleEvent<Citizen>("igi:user:load", User.Load);
             HandleEvent<string>("igi:character:save", Character.Save);
             HandleJsonEvent<Car>("igi:vehicle:save", VehicleExtensions.Save);
+            HandleEvent<string, int>("igi:vehicle:transfer", TransferVehicle);
+            
+        }
+
+        private void TransferVehicle(string carJson, int playerId)
+        {
+            Car car = JsonConvert.DeserializeObject<Car>(carJson);
+            Citizen player = Players[playerId];
+            car.Id = Db.Cars.First(c => c.Handle == car.Handle).Id;
+            TriggerClientEvent(player, "igi:vehicle:claim", JsonConvert.SerializeObject(car));
         }
 
         private static Character NewCharCommand(Citizen citizen, string charName)
