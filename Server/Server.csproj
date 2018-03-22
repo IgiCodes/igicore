@@ -86,9 +86,12 @@
     <Compile Include="Config.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Character.cs" />
+    <Compile Include="Services\IServerService.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleExtensions.cs" />
+    <Compile Include="Services\ServerService.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="ServerEventHandlers.cs" />
+    <Compile Include="Services\VehicleService.cs" />
     <Compile Include="Storage\MySql\DB.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

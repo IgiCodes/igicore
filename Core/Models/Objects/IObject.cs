@@ -1,13 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace IgiCore.Core.Models.Objects
 {
     public interface IObject
     {
-        uint Hash { get; set; }
-        [NotMapped]
-        int Handle { get; set; }
-        int NetId { get; set; }
+        Guid Id { get; set; }
+        long Hash { get; set; }
+        int? Handle { get; set; }
+        int? NetId { get; set; }
         bool IsHoldable { get; set; }
         float PosX { get; set; }
         float PosY { get; set; }

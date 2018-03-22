@@ -12,16 +12,11 @@ namespace IgiCore.Server.Models.Objects.Vehicles
 	{
 		public static void Save(Car car) // Has no ID
 		{
-			//Server.Log($"Given car {car.Id} {car.Handle}");
-
-			if (car.Id == Guid.Empty)
-			{
-				car.Id = Server.Db.Cars.First(c => c.Handle == car.Handle).Id;
-			}
-
-			//Server.Log($"Looked up {car.Id} {car.Handle}");
-
-			Server.Db.Cars.AddOrUpdate(car);
+			//Server.Log($"Given car {car.Id} {car.Handle
+		    if (car.Id == Guid.Empty) car.Id = Server.Db.Cars.FirstOrDefault(c => c.Handle == car.Handle)?.Id ?? Guid.Empty;
+		    if (car.Id == Guid.Empty) return;
+            //Server.Log($"Looked up {car.Id} {car.Handle
+            Server.Db.Cars.AddOrUpdate(car);
 			Server.Db.SaveChanges();
 		}
 

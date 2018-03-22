@@ -9,7 +9,7 @@ using static CitizenFX.Core.Native.API;
 
 namespace IgiCore.Client.Services
 {
-    public class VehicleService : Service
+    public class VehicleService : ClientService
     {
         public List<int> Tracked { get; set; } = new List<int>();
 
@@ -37,9 +37,9 @@ namespace IgiCore.Client.Services
                 car.NetId = netId;
                 // Transfer the vehicle to the closest client
                 //Client.Log($"Removing Vehicle from tracked: {car.Handle}");
-                this.Tracked.Remove(car.Handle);
+                this.Tracked.Remove(car.Handle ?? 0);
                 Client.Log($"Transfering vehicle to player: {player.ServerId}  -  {car.Handle}");
-                BaseScript.TriggerServerEvent("igi:vehicle:transfer", JsonConvert.SerializeObject(car), player.ServerId);
+                BaseScript.TriggerServerEvent("igi:car:transfer", JsonConvert.SerializeObject(car), player.ServerId);
             }
         }
 
@@ -53,10 +53,11 @@ namespace IgiCore.Client.Services
 
                 Car car = citVeh;
                 car.NetId = netId;
+                car.Hash = citVeh.Model.Hash;
 
                 // NOTE: car won't have its ID
 
-                BaseScript.TriggerServerEvent("igi:vehicle:save", JsonConvert.SerializeObject(car));
+                BaseScript.TriggerServerEvent("igi:car:save", JsonConvert.SerializeObject(car));
             }
         }
     }

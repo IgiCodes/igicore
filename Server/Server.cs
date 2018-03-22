@@ -5,18 +5,26 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
+using IgiCore.Core.Models.Objects;
 using IgiCore.Core.Models.Objects.Vehicles;
+using IgiCore.Core.Services;
 using IgiCore.Server.Models;
 using IgiCore.Server.Storage.MySql;
 using Newtonsoft.Json;
 using Citizen = CitizenFX.Core.Player;
 using IgiCore.Server.Models.Objects.Vehicles;
+using IgiCore.Server.Services;
 
 namespace IgiCore.Server
 {
     public partial class Server : BaseScript
     {
         public static DB Db;
+
+        protected ServiceRegistry Services = new ServiceRegistry()
+        {
+            new VehicleService()
+        };
 
         public Server()
         {
@@ -33,18 +41,33 @@ namespace IgiCore.Server
             HandleEvent<int, string, string>("chatMessage", OnChatMessage);
 
             HandleEvent<Citizen>("igi:user:load", User.Load);
-            HandleEvent<string>("igi:character:save", Character.Save);
-            HandleJsonEvent<Car>("igi:vehicle:save", VehicleExtensions.Save);
-            HandleEvent<string, int>("igi:vehicle:transfer", TransferVehicle);
-            
+            HandleJsonEvent<Character>("igi:character:save", Character.Save);
+            HandleJsonEvent<Car>("igi:car:save", VehicleExtensions.Save);
+            HandleEvent<string, int>("igi:car:transfer", TransferObject<Car>);
+
+            foreach (Service service in this.Services)
+            {
+                service.Initialise();
+                foreach (var e in service.Events)
+                {
+                    Log($"\tAdding event \"{e.Key}\"");
+                    this.EventHandlers[e.Key] += e.Value;
+                }
+            }
+
         }
 
-        private void TransferVehicle(string carJson, int playerId)
+        private void TransferObject<T>(string objJson, int playerId) where T : IObject
         {
-            Car car = JsonConvert.DeserializeObject<Car>(carJson);
+            T obj = JsonConvert.DeserializeObject<T>(objJson);
             Citizen player = Players[playerId];
-            car.Id = Db.Cars.First(c => c.Handle == car.Handle).Id;
-            TriggerClientEvent(player, "igi:vehicle:claim", JsonConvert.SerializeObject(car));
+            switch (typeof(T).Name)
+            {
+                case "Car":
+                    obj.Id = Db.Cars.First(c => c.Handle == obj.Handle).Id;
+                    break;
+            }
+            TriggerClientEvent(player, $"igi:{typeof(T).Name.ToLower()}:claim", JsonConvert.SerializeObject(obj));
         }
 
         private static Character NewCharCommand(Citizen citizen, string charName)

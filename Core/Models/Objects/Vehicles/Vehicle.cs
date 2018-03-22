@@ -10,10 +10,9 @@ namespace IgiCore.Core.Models.Objects.Vehicles
     public abstract class Vehicle : IVehicle
     {
         public Guid Id { get; set; }
-        [Required]
-        public uint Hash { get; set; }
-        public int Handle { get; set; }
-        public int NetId { get; set; }
+        public long Hash { get; set; }
+        public int? Handle { get; set; }
+        public int? NetId { get; set; }
         public bool IsHoldable { get; set; } = false;
         public string VIN { get; set; }
         public float BodyHealth { get; set; } = 1000;

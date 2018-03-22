@@ -52,6 +52,7 @@ namespace IgiCore.Client.Models
 
         protected async Task OnTick()
         {
+            Client.Log("Autosaving");
             // Autosave
             lock (this.AutosaveLock)
             {

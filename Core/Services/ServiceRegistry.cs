@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace IgiCore.Client.Services
+namespace IgiCore.Core.Services
 {
-    public class ServiceRegistry : List<ClientService>
+    public class ServiceRegistry : List<Service>
     {
         public T First<T>() where T : class
         {

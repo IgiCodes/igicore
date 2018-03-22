@@ -95,6 +95,9 @@
     <Compile Include="Models\Player\ICharacter.cs" />
     <Compile Include="Models\Objects\Items\IWeapon.cs" />
     <Compile Include="Models\RadioStation.cs" />
+    <Compile Include="Services\IService.cs" />
+    <Compile Include="Services\Service.cs" />
+    <Compile Include="Services\ServiceRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

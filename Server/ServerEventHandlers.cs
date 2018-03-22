@@ -69,7 +69,7 @@ namespace IgiCore.Server
                     {
                         Id = GuidGenerator.GenerateTimeBasedGuid(),
                         Hash = (uint)VehicleHash.Elegy,
-                        //Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f },
+                        Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f },
                         Seats = new List<VehicleSeat>
                         {
                             new VehicleSeat
@@ -142,6 +142,33 @@ namespace IgiCore.Server
                                 IsIntact = false,
                                 IsRolledDown = false
                             }
+                        },
+                        Doors = new List<VehicleDoor>
+                        {
+                            new VehicleDoor()
+                            {
+                                Index = VehicleDoorIndex.FrontLeftDoor,
+                            },
+                            new VehicleDoor()
+                            {
+                                Index = VehicleDoorIndex.FrontRightDoor,
+                            },
+                            new VehicleDoor()
+                            {
+                                Index = VehicleDoorIndex.BackLeftDoor,
+                            },
+                            new VehicleDoor()
+                            {
+                                Index = VehicleDoorIndex.BackRightDoor,
+                            },
+                            new VehicleDoor()
+                            {
+                                Index = VehicleDoorIndex.Hood,
+                            },
+                            new VehicleDoor()
+                            {
+                                Index = VehicleDoorIndex.Trunk,
+                            },
                         }
                     };
 
@@ -151,7 +178,7 @@ namespace IgiCore.Server
 
                     Log($"Sending {car.Id}");
 
-                    TriggerClientEvent(citizen, "igi:vehicle:spawn", JsonConvert.SerializeObject(car));
+                    TriggerClientEvent(citizen, "igi:car:spawn", JsonConvert.SerializeObject(car));
                     
                     break;
                 default:

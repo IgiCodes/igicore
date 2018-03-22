@@ -5,7 +5,6 @@ namespace IgiCore.Core.Models.Objects.Vehicles
 {
     public interface IVehicle : IObject
     {
-        Guid Id { get; set; }
         string VIN { get; set; }
         float BodyHealth { get; set; }
         float EngineHealth { get; set; }

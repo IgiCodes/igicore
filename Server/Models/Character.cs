@@ -78,9 +78,9 @@ namespace IgiCore.Server.Models
             return character;
         }
 
-        public static void Save(string json)
+        public static void Save(Character newChar)
         {
-            Character newChar = JsonConvert.DeserializeObject<Character>(json);
+            Server.Log("Character save called");
             Db.Styles.AddOrUpdate(newChar.Style);
             Db.Characters.AddOrUpdate(newChar);
             Db.SaveChanges();

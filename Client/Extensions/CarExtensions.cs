@@ -6,26 +6,26 @@ namespace IgiCore.Client.Extensions
 {
     public static class CarExtensions
     {
-        public static async Task<CitizenFX.Core.Vehicle> ToCitizenVehcle(this Car car)
+        public static async Task<CitizenFX.Core.Vehicle> ToCitizenVehicle(this Car car)
         {
-            CitizenFX.Core.Vehicle vehcle = await World.CreateVehicle(new Model((CitizenFX.Core.VehicleHash)car.Hash), car.Position);
+            CitizenFX.Core.Vehicle vehicle = await World.CreateVehicle(new Model((CitizenFX.Core.VehicleHash)car.Hash), car.Position);
 
-            vehcle.BodyHealth = car.BodyHealth;
-            vehcle.EngineHealth = car.EngineHealth;
-            vehcle.DirtLevel = car.DirtLevel;
-            vehcle.FuelLevel = car.FuelLevel;
-            vehcle.OilLevel = car.OilLevel;
-            vehcle.PetrolTankHealth = car.PetrolTankHealth;
-            vehcle.TowingCraneRaisedAmount = car.TowingCraneRaisedAmount;
+            vehicle.BodyHealth = car.BodyHealth;
+            vehicle.EngineHealth = car.EngineHealth;
+            vehicle.DirtLevel = car.DirtLevel;
+            vehicle.FuelLevel = car.FuelLevel;
+            vehicle.OilLevel = car.OilLevel;
+            vehicle.PetrolTankHealth = car.PetrolTankHealth;
+            vehicle.TowingCraneRaisedAmount = car.TowingCraneRaisedAmount;
             //veh.HasAlarm = carToSpawn.HasAlarm;
-            vehcle.IsAlarmSet = car.IsAlaramed;
+            vehicle.IsAlarmSet = car.IsAlaramed;
             //veh.HasLock = carToSpawn.HasLock;
-            vehcle.IsDriveable = car.IsDriveable;
-            vehcle.IsEngineRunning = car.IsEngineRunning;
+            vehicle.IsDriveable = car.IsDriveable;
+            vehicle.IsEngineRunning = car.IsEngineRunning;
             //veh.HasSeatbelts = carToSpawn.HasSeatbelts;
-            vehcle.CanTiresBurst = car.CanTiresBurst;
+            vehicle.CanTiresBurst = car.CanTiresBurst;
 
-            return vehcle;
+            return vehicle;
         }
     }
 }

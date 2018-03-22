@@ -2,7 +2,7 @@
 
 namespace IgiCore.Client.Services
 {
-	public abstract class Service : IService
+	public abstract class ClientService : IClientService
 	{
 		private bool Busy { get; set; } = false;
 

@@ -2,7 +2,7 @@
 
 namespace IgiCore.Client.Services
 {
-    public interface IService
+    public interface IClientService
     {
         Task Tick(Client client);
     }

@@ -38,23 +38,22 @@ namespace IgiCore.Client
             // Load the user
             TriggerServerEvent("igi:user:load");
 
-            HandleJsonEvent<Car>("igi:vehicle:spawn", SpawnVehicle);
-            HandleEvent<string>("igi:vehicle:claim", ClaimVehicle);
+            HandleJsonEvent<Car>("igi:car:spawn", SpawnVehicle);
+            HandleJsonEvent<Car>("igi:vehicle:claim", ClaimVehicle);
 
             // Set pause screen title
             Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", "TEST");
 
-            foreach (Service service in this.Services)
+            foreach (ClientService service in this.Services)
             {
                 this.Tick += async () => await service.Tick(this);
             }
         }
 
-        public void ClaimVehicle(string carJson)
+        public void ClaimVehicle(Car car)
         {
-            Car car = JsonConvert.DeserializeObject<Car>(carJson);
             Log($"Claiming vehicle with netId: {car.NetId}");
-            int vehHandle = NetToVeh(car.NetId);
+            int vehHandle = NetToVeh(car.NetId ?? 0);
             Log($"Handle found for net id: {vehHandle}");
             CitizenFX.Core.Vehicle vehicle = new CitizenFX.Core.Vehicle(vehHandle);
             VehToNet(vehicle.Handle);
@@ -67,7 +66,7 @@ namespace IgiCore.Client
 
             Log($"Sending {car.Id}");
 
-            TriggerServerEvent("igi:vehicle:save", JsonConvert.SerializeObject(newCar));
+            TriggerServerEvent("igi:car:save", JsonConvert.SerializeObject(newCar));
 
             this.Services.First<VehicleService>().Tracked.Add(vehicle.Handle);
         }
@@ -76,9 +75,7 @@ namespace IgiCore.Client
         {
             Log($"Spawning {carToSpawn.Id}");
 
-            carToSpawn.Position = LocalPlayer.Character.Position;
-
-            var veh = await carToSpawn.ToCitizenVehcle();
+            var veh = await carToSpawn.ToCitizenVehicle();
             VehToNet(veh.Handle);
             NetworkRegisterEntityAsNetworked(veh.Handle);
             int netId = NetworkGetNetworkIdFromEntity(veh.Handle);
@@ -89,13 +86,15 @@ namespace IgiCore.Client
             Car car = veh;
             car.Id = carToSpawn.Id;
             car.NetId = netId;
-            
+
 
             Log($"Sending {car.Id}");
 
-            TriggerServerEvent("igi:vehicle:save", JsonConvert.SerializeObject(car));
+            TriggerServerEvent("igi:car:save", JsonConvert.SerializeObject(car));
 
-            this.Services.First<VehicleService>().Tracked.Add(car.Handle);
+            this.Services.First<VehicleService>().Tracked.Add(car.Handle ?? 0);
+
+            return;
         }
 
         protected async void UserLoad(User user)
@@ -196,7 +195,7 @@ namespace IgiCore.Client
         [System.Diagnostics.Conditional("DEBUG")]
         public static void Log(string message)
         {
-            Debug.WriteLine($"{DateTime.Now:s} [CLIENT]: {message}");
+            Debug.Write($"{DateTime.Now:s} [CLIENT]: {message}");
         }
 
         [System.Diagnostics.Conditional("DEBUG")]
