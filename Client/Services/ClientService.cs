@@ -4,7 +4,7 @@ namespace IgiCore.Client.Services
 {
 	public abstract class ClientService : IClientService
 	{
-		private bool Busy { get; set; } = false;
+		private bool Busy { get; set; }
 
 		public abstract Task OnTick(Client client);
 
@@ -13,7 +13,7 @@ namespace IgiCore.Client.Services
 			if (this.Busy) return;
 
 			this.Busy = true;
-			await this.OnTick(client);
+			await OnTick(client);
 			this.Busy = false;
 		}
 	}

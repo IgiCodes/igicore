@@ -6,8 +6,6 @@ namespace IgiCore.Core.Services
 {
 	public abstract class Service : IService
 	{
-		private bool Busy { get; set; } = false;
-
 		public Dictionary<string, Delegate> Events { get; } = new Dictionary<string, Delegate>();
 
 		public abstract void Initialise();

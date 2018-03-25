@@ -8,6 +8,7 @@ using IgiCore.Core.Models.Objects.Vehicles;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;
+using IgiCore.Core.Extensions;
 using static CitizenFX.Core.Native.API;
 using Vehicle = IgiCore.Core.Models.Objects.Vehicles.Vehicle;
 
@@ -21,7 +22,7 @@ namespace IgiCore.Client
 
 		public new Player LocalPlayer => base.LocalPlayer;
 
-		protected ServiceRegistry Services = new ServiceRegistry()
+		protected ServiceRegistry Services = new ServiceRegistry
 		{
 			new VehicleService()
 		};
@@ -112,13 +113,9 @@ namespace IgiCore.Client
 			vehicle.Handle = spawnedVehicle.Handle;
 			vehicle.NetId = netId;
 
-			string className = typeof(T).BaseType.IsSubclassOf(typeof(Vehicle))
-				? typeof(T).BaseType.Name
-				: typeof(T).Name;
+			Log($"Sending {vehicle.Id} with event \"igi:{typeof(T).VehicleType().Name}:save\"");
 
-			Log($"Sending {vehicle.Id} with event \"igi:{className}:save\"");
-
-			TriggerServerEvent($"igi:{className}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
+			TriggerServerEvent($"igi:{typeof(T).VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
 
 			this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
 		}
@@ -128,7 +125,6 @@ namespace IgiCore.Client
 			// Store the user
 			User = user;
 
-			//HandleJsonEvent<Character>("igi:character:new", CharacterLoad); // Does the client care?
 			HandleJsonEvent<Character>("igi:character:load", CharacterLoad);
 
 			await SpawnPlayer();
