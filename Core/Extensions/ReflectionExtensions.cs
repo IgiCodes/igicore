@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace IgiCore.Server.Extentions
+namespace IgiCore.Core.Extensions
 {
 	public static class ReflectionExtensions
 	{

@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using IgiCore.Server.Extentions;
+using IgiCore.Core.Extensions;
 using Citizen = CitizenFX.Core.Player;
 using static IgiCore.Server.Server;
 
