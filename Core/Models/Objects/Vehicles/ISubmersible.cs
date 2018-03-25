@@ -1,7 +1,4 @@
 ﻿namespace IgiCore.Core.Models.Objects.Vehicles
 {
-    public interface ISubmersible : ISeaVehicle
-    {
-        
-    }
+	public interface ISubmersible : ISeaVehicle { }
 }

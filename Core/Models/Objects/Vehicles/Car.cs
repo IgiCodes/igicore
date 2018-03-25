@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Dynamic;
 
 namespace IgiCore.Core.Models.Objects.Vehicles
 {
@@ -7,11 +6,6 @@ namespace IgiCore.Core.Models.Objects.Vehicles
     {
         public Trailer Trailer { get; set; }
         public Vehicle TowedVehicle { get; set; }
-
-        public Car ShallowCopy()
-        {
-            return (Car) this.MemberwiseClone();
-        }
 
         public static implicit operator Car(CitizenFX.Core.Vehicle vehicle)
         {
