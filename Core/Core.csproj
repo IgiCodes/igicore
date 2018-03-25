@@ -53,6 +53,7 @@
     <Compile Include="Models\Appearance\ComponentTypes.cs" />
     <Compile Include="Models\Appearance\Style.cs" />
     <Compile Include="Models\Color.cs" />
+    <Compile Include="Models\Objects\Vehicles\Bike.cs" />
     <Compile Include="Models\Objects\Vehicles\Car.cs" />
     <Compile Include="Models\Objects\Vehicles\IAerialVehicle.cs" />
     <Compile Include="Models\Objects\Vehicles\IAirship.cs" />

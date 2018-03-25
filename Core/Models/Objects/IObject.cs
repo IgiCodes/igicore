@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
+using IgiCore.Core.Models.Player;
 
 namespace IgiCore.Core.Models.Objects
 {
@@ -8,6 +9,7 @@ namespace IgiCore.Core.Models.Objects
         Guid Id { get; set; }
         long Hash { get; set; }
         int? Handle { get; set; }
+        Guid TrackingUserId { get; set; }
         int? NetId { get; set; }
         bool IsHoldable { get; set; }
         float PosX { get; set; }

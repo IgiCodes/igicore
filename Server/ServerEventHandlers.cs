@@ -19,7 +19,7 @@ namespace IgiCore.Server
 
         private void OnPlayerDropped([FromSource] Citizen citizen, string disconnectMessage, CallbackDelegate kickReason)
         {
-            //Debug.WriteLine($"Disconnected: {citizen.Name}");
+            Debug.WriteLine($"Disconnected: {citizen.Name}");
         }
 
         private void OnChatMessage(int playerId, string playerName, string message)
@@ -65,7 +65,7 @@ namespace IgiCore.Server
                 case "/car":
                     Log("/car command called");
 
-                    var car = new Car
+                    Car car = new Car
                     {
                         Id = GuidGenerator.GenerateTimeBasedGuid(),
                         Hash = (uint)VehicleHash.Elegy,
@@ -172,7 +172,6 @@ namespace IgiCore.Server
                         }
                     };
 
-                    
                     Db.Cars.Add(car);
                     Db.SaveChanges();
 
@@ -180,6 +179,24 @@ namespace IgiCore.Server
 
                     TriggerClientEvent(citizen, "igi:car:spawn", JsonConvert.SerializeObject(car));
                     
+                    break;
+                case "/bike":
+                    Log("/bike command called");
+
+                    Bike bike = new Bike
+                    {
+                        Id = GuidGenerator.GenerateTimeBasedGuid(),
+                        Hash = (uint)VehicleHash.Double,
+                        Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f },
+                    };
+
+                    Db.Bikes.Add(bike);
+                    Db.SaveChanges();
+
+                    Log($"Sending {bike.Id}");
+
+                    TriggerClientEvent(citizen, "igi:bike:spawn", JsonConvert.SerializeObject(bike));
+
                     break;
                 default:
                     Log("Unknown command");

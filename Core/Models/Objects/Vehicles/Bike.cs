@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Dynamic;
 
 namespace IgiCore.Core.Models.Objects.Vehicles
 {
-    public class Car : Vehicle, ICar
+    public class Bike : Vehicle, IBike
     {
-        public Trailer Trailer { get; set; }
-        public Vehicle TowedVehicle { get; set; }
-
-        public Car ShallowCopy()
+        public static implicit operator Bike(CitizenFX.Core.Vehicle vehicle)
         {
-            return (Car) this.MemberwiseClone();
-        }
-
-        public static implicit operator Car(CitizenFX.Core.Vehicle vehicle)
-        {
-            return new Car
+            return new Bike
             {
-				Id = Guid.Empty,
+                Id = Guid.Empty,
                 Hash = vehicle.Model.Hash,
                 Handle = vehicle.Handle,
                 Position = vehicle.Position,

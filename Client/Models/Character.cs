@@ -18,6 +18,7 @@ namespace IgiCore.Client.Models
         public Guid Id { get; set; }
         public string Name { get; set; }
         public bool Alive { get; set; }
+        public DateTime LastPlayed { get; set; }
         public float PosX { get; set; }
         public float PosY { get; set; }
         public float PosZ { get; set; }
@@ -57,6 +58,7 @@ namespace IgiCore.Client.Models
             lock (this.AutosaveLock)
             {
                 this.Position = this.Client.LocalPlayer.Character.Position;
+                this.LastPlayed = DateTime.UtcNow;
 
                 BaseScript.TriggerServerEvent("igi:character:save", JsonConvert.SerializeObject(this));
             }

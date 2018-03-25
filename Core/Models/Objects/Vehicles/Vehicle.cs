@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
+using IgiCore.Core.Models.Player;
 using Newtonsoft.Json;
 
 namespace IgiCore.Core.Models.Objects.Vehicles
 {
-    public abstract class Vehicle : IVehicle
+    public class Vehicle : IVehicle
     {
         public Guid Id { get; set; }
         public long Hash { get; set; }
         public int? Handle { get; set; }
+        public Guid TrackingUserId { get; set; }
         public int? NetId { get; set; }
         public bool IsHoldable { get; set; } = false;
         public string VIN { get; set; }
@@ -82,6 +84,24 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         protected Vehicle()
         {
             this.Id = GuidGenerator.GenerateTimeBasedGuid();
+        }
+
+        public static implicit operator Vehicle(CitizenFX.Core.Vehicle vehicle)
+        {
+            return new Vehicle
+            {
+                Id = Guid.Empty,
+                Hash = vehicle.Model.Hash,
+                Handle = vehicle.Handle,
+                Position = vehicle.Position,
+                Heading = vehicle.Heading,
+                BodyHealth = vehicle.BodyHealth,
+                EngineHealth = vehicle.EngineHealth,
+                DirtLevel = vehicle.DirtLevel,
+                FuelLevel = vehicle.FuelLevel,
+                OilLevel = vehicle.OilLevel,
+                PetrolTankHealth = vehicle.PetrolTankHealth
+            };
         }
     }
 }

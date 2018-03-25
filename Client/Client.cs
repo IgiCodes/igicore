@@ -9,12 +9,13 @@ using IgiCore.Core.Models.Objects.Vehicles;
 using Newtonsoft.Json;
 using IgiCore.Client.Services;
 using static CitizenFX.Core.Native.API;
+using Vehicle = IgiCore.Core.Models.Objects.Vehicles.Vehicle;
 
 namespace IgiCore.Client
 {
     public class Client : BaseScript
     {
-        protected User User;
+        public static User User;
 
         public new event Func<Task> Tick;
 
@@ -38,8 +39,13 @@ namespace IgiCore.Client
             // Load the user
             TriggerServerEvent("igi:user:load");
 
-            HandleJsonEvent<Car>("igi:car:spawn", SpawnVehicle);
-            HandleJsonEvent<Car>("igi:vehicle:claim", ClaimVehicle);
+            HandleEvent<string>("igi:car:spawn", SpawnVehicle<Car>);
+            HandleEvent<string>("igi:car:claim", ClaimVehicle<Car>);
+            HandleEvent<string>("igi:car:unclaim", UnclaimVehicle<Car>);
+
+            HandleEvent<string>("igi:bike:spawn", SpawnVehicle<Bike>);
+            HandleEvent<string>("igi:bike:claim", ClaimVehicle<Bike>);
+            HandleEvent<string>("igi:bike:unclaim", UnclaimVehicle<Bike>);
 
             // Set pause screen title
             Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", "TEST");
@@ -50,49 +56,64 @@ namespace IgiCore.Client
             }
         }
 
-        public void ClaimVehicle(Car car)
+        public void ClaimVehicle<T>(string vehJson) where T : Vehicle
         {
-            Log($"Claiming vehicle with netId: {car.NetId}");
-            int vehHandle = NetToVeh(car.NetId ?? 0);
+            T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
+            Log($"Claiming vehicle with netId: {vehicle.NetId}");
+            int vehHandle = NetToVeh(vehicle.NetId ?? 0);
+            if (vehHandle == 0) return;
             Log($"Handle found for net id: {vehHandle}");
-            CitizenFX.Core.Vehicle vehicle = new CitizenFX.Core.Vehicle(vehHandle);
-            VehToNet(vehicle.Handle);
-            NetworkRegisterEntityAsNetworked(vehicle.Handle);
-            int netId = NetworkGetNetworkIdFromEntity(vehicle.Handle);
+            CitizenFX.Core.Vehicle citizenVehicle = new CitizenFX.Core.Vehicle(vehHandle);
+            VehToNet(citizenVehicle.Handle);
+            NetworkRegisterEntityAsNetworked(citizenVehicle.Handle);
+            int netId = NetworkGetNetworkIdFromEntity(citizenVehicle.Handle);
 
-            Car newCar = vehicle;
-            newCar.Id = car.Id;
-            newCar.NetId = netId;
+            Log($"Sending {vehicle.Id}");
 
-            Log($"Sending {car.Id}");
+            TriggerServerEvent("igi:car:claim", vehicle.Id.ToString());
 
-            TriggerServerEvent("igi:car:save", JsonConvert.SerializeObject(newCar));
+            this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
 
-            this.Services.First<VehicleService>().Tracked.Add(vehicle.Handle);
+            Log($"Tracked vehicle count in claim: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
         }
 
-        public async void SpawnVehicle(Car carToSpawn)
+        public void UnclaimVehicle<T>(string vehJson) where T : Vehicle
         {
-            Log($"Spawning {carToSpawn.Id}");
+            T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
+            Log($"Unclaiming car: {vehicle.Id} with NetId: {vehicle.NetId}");
+            Log($"Currently tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+            this.Services.First<VehicleService>().Tracked.Remove(new Tuple<Type, int>(typeof(T), vehicle.NetId ?? 0));
+            Log($"Now tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+        }
 
-            var veh = await carToSpawn.ToCitizenVehicle();
-            VehToNet(veh.Handle);
-            NetworkRegisterEntityAsNetworked(veh.Handle);
-            int netId = NetworkGetNetworkIdFromEntity(veh.Handle);
+        public async void SpawnVehicle<T>(string vehJson) where T : Vehicle
+        {
+            T vehToSpawn = JsonConvert.DeserializeObject<T>(vehJson);
+            Log($"Spawning {vehToSpawn.Id}");
+
+            var spawnedVehicle = await vehToSpawn.ToCitizenVehicle();
+            VehToNet(spawnedVehicle.Handle);
+            NetworkRegisterEntityAsNetworked(spawnedVehicle.Handle);
+            int netId = NetworkGetNetworkIdFromEntity(spawnedVehicle.Handle);
             //SetNetworkIdExistsOnAllMachines(netId, true);
 
-            Log($"Spawned {veh.Handle} with netId {netId}");
+            Log($"Spawned {spawnedVehicle.Handle} with netId {netId}");
 
-            Car car = veh;
-            car.Id = carToSpawn.Id;
-            car.NetId = netId;
+            Vehicle vehicle = spawnedVehicle;
+            vehicle.Id = vehToSpawn.Id;
+            vehicle.TrackingUserId = User.Id;
+            vehicle.Handle = spawnedVehicle.Handle;
+            vehicle.NetId = netId;
 
+            string className = typeof(T).BaseType.IsSubclassOf(typeof(Vehicle))
+                ? typeof(T).BaseType.Name
+                : typeof(T).Name;
 
-            Log($"Sending {car.Id}");
+            Log($"Sending {vehicle.Id} with event \"igi:{className}:save\"");
 
-            TriggerServerEvent("igi:car:save", JsonConvert.SerializeObject(car));
+            TriggerServerEvent($"igi:{className}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
 
-            this.Services.First<VehicleService>().Tracked.Add(car.Handle ?? 0);
+            this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
 
             return;
         }
@@ -100,10 +121,10 @@ namespace IgiCore.Client
         protected async void UserLoad(User user)
         {
             Assert(user != null, "User param is empty");
-            Assert(this.User == null, "User already loaded");
+            Assert(Client.User == null, "User already loaded");
 
             // Store the user
-            this.User = user;
+            Client.User = user;
 
             //HandleJsonEvent<Character>("igi:character:new", CharacterLoad); // Does the client care?
             HandleJsonEvent<Character>("igi:character:load", CharacterLoad);
@@ -170,6 +191,7 @@ namespace IgiCore.Client
                 {
                     this.LocalPlayer.Character.Resurrect();
                     this.LocalPlayer.WantedLevel = 0;
+                    this.LocalPlayer.Character.IsCollisionEnabled = true;
                 }
                 await Delay(10);
             };
@@ -180,16 +202,16 @@ namespace IgiCore.Client
         protected void CharacterLoad(Character character)
         {
             // Unload old character
-            this.User.Character?.Dispose();
+            Client.User.Character?.Dispose();
 
             // Store the character
-            this.User.Character = character ?? throw new ArgumentNullException(nameof(character));
-            this.User.Character.Initialize(this); // Fake ctor
+            Client.User.Character = character ?? throw new ArgumentNullException(nameof(character));
+            Client.User.Character.Initialize(this); // Fake ctor
 
             // Render new character
-            this.User.Character.Render();
+            Client.User.Character.Render();
 
-            Screen.ShowNotification($"{this.User.Character.Name} loaded at {DateTime.Now:s}");
+            Screen.ShowNotification($"{Client.User.Character.Name} loaded at {DateTime.Now:s}");
         }
 
         [System.Diagnostics.Conditional("DEBUG")]

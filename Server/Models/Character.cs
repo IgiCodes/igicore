@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Player;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ namespace IgiCore.Server.Models
         [Key] public Guid Id { get; set; }
         public string Name { get; set; }
         public bool Alive { get; set; }
+        public DateTime LastPlayed { get; set; }
         public float PosX { get; set; }
         public float PosY { get; set; }
         public float PosZ { get; set; }
