@@ -1,74 +1,78 @@
-﻿using System;
+﻿using CitizenFX.Core;
+using IgiCore.Core.Extensions;
+using IgiCore.Core.Models.Player;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
-using CitizenFX.Core;
-using IgiCore.Core.Extensions;
-using IgiCore.Core.Models.Player;
-using Citizen = CitizenFX.Core.Player;
 using static IgiCore.Server.Server;
-using Newtonsoft.Json;
+using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Server.Models
 {
-    public class User : IUser
-    {
-        [Key]
-        public Guid Id { get; set; }
+	public class User : IUser
+	{
+		[Key]
+		public Guid Id { get; set; }
 
-        [MaxLength(17)]
-        [Index(IsUnique = true)]
-        public string SteamId { get; set; }
+		[MaxLength(17)]
+		[Index(IsUnique = true)]
+		public string SteamId { get; set; }
 
-        public string Name { get; set; }
-        public virtual List<Character> Characters { get; set; }
+		public string Name { get; set; }
 
-        public User()
-        {
-            this.Id = GuidGenerator.GenerateTimeBasedGuid();
-        }
+		public virtual List<Character> Characters { get; set; }
 
-        public static void Load([FromSource]Citizen citizen)
-        {
-            BaseScript.TriggerClientEvent(citizen, "igi:user:load", JsonConvert.SerializeObject(GetOrCreate(citizen)));
-        }
+		public User()
+		{
+			this.Id = GuidGenerator.GenerateTimeBasedGuid();
+		}
 
-        public static User GetOrCreate(Citizen citizen)
-        {
-            User user = null;
+		public static void Load([FromSource]Citizen citizen)
+		{
+			BaseScript.TriggerClientEvent(citizen, "igi:user:load", JsonConvert.SerializeObject(GetOrCreate(citizen)));
+		}
 
-            DbContextTransaction transaction = Db.Database.BeginTransaction();
-            var steamId = citizen.Identifiers["steam"];
+		public static User GetOrCreate(Citizen citizen)
+		{
+			User user = null;
 
-            try
-            {
-                var users = Db.Users.Where(u => u.SteamId == steamId).ToList();
+			DbContextTransaction transaction = Db.Database.BeginTransaction();
+			var steamId = citizen.Identifiers["steam"];
 
-                if (!users.Any())
-                {
-                    Debug.WriteLine($"User not found, creating new user for steamid: {citizen.Identifiers["steam"]}  with name: {citizen.Name}");
+			try
+			{
+				var users = Db.Users.Where(u => u.SteamId == steamId).ToList();
 
-                    user = new User { SteamId = citizen.Identifiers["steam"], Name = citizen.Name };
-                    Db.Users.Add(user);
-                    Db.SaveChanges();
-                }
-                else
-                {
-                    user = users.First();
-                    Debug.WriteLine($"User found for steamid: {user.SteamId}  with name: {user.Name}  and ID: {user.Id}");
-                }
+				if (!users.Any())
+				{
+					user = new User { SteamId = citizen.Identifiers["steam"], Name = citizen.Name };
 
-                transaction.Commit();
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
-                Debug.Write(ex.Message);
-            }
+					Debug.WriteLine($"User not found, creating new user for steamid: {user.SteamId} with name: {user.Name}");
 
-            return user;
-        }
-    }
+					Db.Users.Add(user);
+					Db.SaveChanges();
+				}
+				else
+				{
+					user = users.First();
+
+					Debug.WriteLine($"User found for steamid: {user.SteamId} with name: {user.Name} and ID: {user.Id}");
+				}
+
+				transaction.Commit();
+			}
+			catch (Exception ex)
+			{
+				transaction.Rollback();
+
+				Debug.Write(ex.Message);
+			}
+
+			return user;
+		}
+	}
 }

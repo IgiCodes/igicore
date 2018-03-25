@@ -2,8 +2,5 @@
 
 namespace IgiCore.Server.Services
 {
-    public interface IServerService : IService
-    {
-        
-    }
+	public interface IServerService : IService { }
 }

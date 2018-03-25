@@ -85,10 +85,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Extentions\ReflectionExtensions.cs" />
+    <Compile Include="Extentions\VehicleExtensions.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Services\IServerService.cs" />
-    <Compile Include="Models\Objects\Vehicles\VehicleExtensions.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleActions.cs" />
     <Compile Include="Services\ServerService.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="ServerEventHandlers.cs" />
