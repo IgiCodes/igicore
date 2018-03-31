@@ -11,7 +11,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         {
             return new Car
             {
-				Id = Guid.Empty,
+                Id = Guid.Empty,
                 Hash = vehicle.Model.Hash,
                 Handle = vehicle.Handle,
                 Position = vehicle.Position,

@@ -1,4 +1,6 @@
 ﻿namespace IgiCore.Core.Models.Objects.Vehicles
 {
-	public interface IHelicopter : IAerialVehicle { }
+    public interface IHelicopter : IAerialVehicle
+    {
+    }
 }

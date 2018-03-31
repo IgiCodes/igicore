@@ -2,5 +2,7 @@
 
 namespace IgiCore.Server.Services
 {
-	public abstract class ServerService : Service, IServerService { }
+    public abstract class ServerService : Service, IServerService
+    {
+    }
 }

@@ -3,20 +3,20 @@ using IgiCore.Core.Models.Objects.Vehicles;
 
 namespace IgiCore.Core.Extensions
 {
-	public static class VehicleExtensions
-	{
-		public static Type VehicleType(this Type type)
-		{
-			Type baseType = type.BaseType;
+    public static class VehicleExtensions
+    {
+        public static Type VehicleType(this Type type)
+        {
+            Type baseType = type.BaseType;
 
-			return baseType != null && baseType.IsSubclassOf(typeof(Vehicle)) ? baseType : type;
-		}
+            return baseType != null && baseType.IsSubclassOf(typeof(Vehicle)) ? baseType : type;
+        }
 
-		public static Type VehicleType(this IVehicle vehicle)
-		{
-			Type baseType = vehicle.GetType().BaseType;
+        public static Type VehicleType(this IVehicle vehicle)
+        {
+            Type baseType = vehicle.GetType().BaseType;
 
-			return baseType != null && baseType.IsSubclassOf(typeof(Vehicle)) ? baseType : vehicle.GetType();
-		}
-	}
+            return baseType != null && baseType.IsSubclassOf(typeof(Vehicle)) ? baseType : vehicle.GetType();
+        }
+    }
 }

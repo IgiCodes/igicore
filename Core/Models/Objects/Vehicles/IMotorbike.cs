@@ -1,4 +1,6 @@
 ﻿namespace IgiCore.Core.Models.Objects.Vehicles
 {
-	public interface IMotorbike : IBike { }
+    public interface IMotorbike : IBike
+    {
+    }
 }

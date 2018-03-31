@@ -2,8 +2,8 @@
 
 namespace IgiCore.Core.Extensions
 {
-	public static class GuidGenerator
-	{
-		public static Guid GenerateTimeBasedGuid() => Guid.NewGuid();
-	}
+    public static class GuidGenerator
+    {
+        public static Guid GenerateTimeBasedGuid() { return Guid.NewGuid(); }
+    }
 }
