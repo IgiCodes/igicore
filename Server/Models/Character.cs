@@ -15,29 +15,42 @@ namespace IgiCore.Server.Models
 {
     public class Character : ICharacter
     {
-        public virtual Style Style { get; set; }
-
-        [JsonIgnore] public Vector3 Position
-        {
-            get => new Vector3(this.PosX, this.PosY, this.PosZ);
-            set
-            {
-                this.PosX = value.X;
-                this.PosY = value.Y;
-                this.PosZ = value.Z;
-            }
-        }
-
-        [Key] public Guid Id { get; set; }
-        public string Name { get; set; }
-        public bool Alive { get; set; }
-        public DateTime LastPlayed { get; set; }
-        public float PosX { get; set; }
+		[Key] public Guid Id { get; set; }
+	    public string Forename { get; set; }
+	    public string Middlename { get; set; }
+	    public string Surname { get; set; }
+	    public DateTime DateOfBirth { get; set; }
+	    public short Gender { get; set; }
+		public bool Alive { get; set; }
+	    public int Health { get; set; }
+	    public int Armor { get; set; }
+	    public string Ssn { get; set; }
+		public float PosX { get; set; }
         public float PosY { get; set; }
         public float PosZ { get; set; }
-        public virtual Inventory Inventory { get; set; } = new Inventory();
+	    public string Model { get; set; }
+		public string WalkingStyle { get; set; }
+		public virtual Inventory Inventory { get; set; } 
+	    public virtual Style Style { get; set; }
+		public DateTime LastPlayed { get; set; }
+	    public DateTime Created { get; set; }
 
-        public Character()
+	    [JsonIgnore]
+	    public Vector3 Position
+	    {
+		    get => new Vector3(this.PosX, this.PosY, this.PosZ);
+		    set
+		    {
+			    this.PosX = value.X;
+			    this.PosY = value.Y;
+			    this.PosZ = value.Z;
+		    }
+	    }
+
+		[JsonIgnore]
+	    public string FullName => $"{this.Forename} {this.Middlename} {this.Surname}".Replace("  ", " ");
+
+		public Character()
         {
             this.Id = GuidGenerator.GenerateTimeBasedGuid();
             this.Position = new Vector3 {X = -1038.121f, Y = -2738.279f, Z = 20.16929f};
@@ -90,6 +103,6 @@ namespace IgiCore.Server.Models
             Db.SaveChanges();
         }
 
-        public override string ToString() { return $"Character [{this.Id}]: {this.Name}, {this.Position}"; }
+        public override string ToString() { return $"Character [{this.Id}]: {this.FullName}, {this.Position}"; }
     }
 }

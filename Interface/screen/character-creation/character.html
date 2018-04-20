@@ -1,0 +1,14 @@
+<div class="card character-card bg-white">
+	<h4 class="card-header"><%= Forename %> <%= Middlename %> <%= Surname %></h4>
+
+	<ul class="list-group list-group-flush">
+		<li class="list-group-item"><i class="fas fa-transgender fa-fw mr-2"></i> <%= GenderString %></li>
+		<li class="list-group-item"><i class="fas fa-calendar fa-fw mr-2"></i> <%= DateOfBirthFormatted %></li>
+		<li class="list-group-item"><i class="fas fa-dollar-sign fa-fw mr-2"></i> $1,000.00</li>
+	</ul>
+
+	<div class="card-body">
+		<button type="button" class="btn btn-success btn-lg px-5 btn-load" data-id="<%= Id %>">Play</button>
+		<button type="button" class="btn btn-danger float-right mt-1 btn-delete" data-id="<%= Id %>"><i class="fas fa-trash fa-fw"></i></button>
+	</div>
+</div>

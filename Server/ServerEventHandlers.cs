@@ -47,10 +47,10 @@ namespace IgiCore.Server
                 case "/char":
                     Log("/char command called");
 
-                    TriggerClientEvent(
-                        citizen,
-                        "igi:character:load",
-                        JsonConvert.SerializeObject(GetCharCommand(citizen, args[0])));
+                    //TriggerClientEvent(
+                    //    citizen,
+                    //    "igi:character:load",
+                    //    JsonConvert.SerializeObject(GetCharCommand(citizen, args[0])));
 
                     break;
                 case "/gps":

@@ -1,0 +1,28 @@
+body {
+	box-shadow: 0 0 25em black inset;
+}
+
+main {
+	width: 60%;
+	height: 60%;
+	margin: 0 auto;
+	padding: 5% 0;
+}
+
+h1 {
+	font-family: pricedown;
+	color: white;
+	-webkit-text-fill-color: white;
+	-webkit-text-stroke: 2.5px black;
+	text-shadow:
+		3px 3px 0 #000,
+	   -1px -1px 0 #000,
+		1px -1px 0 #000,
+	   -1px  1px 0 #000,
+		1px  1px 0 #000;
+}
+
+.card.no-bg {
+	background-color: transparent;
+	border: none;
+}

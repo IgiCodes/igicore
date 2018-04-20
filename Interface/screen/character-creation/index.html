@@ -1,0 +1,73 @@
+<main>
+	<h1 class="display-1 mb-5">Characters</h1>
+
+	<div id="character-cards" class="card-deck">
+		<div class="card no-bg text-center pt-5">
+			<div class="card-body">
+				<a href="#" class="text-success" data-toggle="modal" data-target=".new-modal">
+					<span class="fa-layers fa-fw fa-7x">
+						<i class="fas fa-square text-white"></i>
+						<i class="fas fa-plus-square"></i>
+					</span>
+				</a>
+			</div>
+		</div>
+	</div>
+</main>
+
+<div class="modal fade new-modal" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h3 class="modal-title">New Character</h3>
+
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+
+			<form onsubmit="return false;">
+				<div class="modal-body">
+					<div class="form-row">
+						<div class="form-group col-md-4">
+							<label for="forename">Forename</label>
+							<input type="text" class="form-control" value="John" name="forename" id="forename" placeholder="required" pattern="^[a-zA-Z- ]{2,}$" title="Full forename, must be at least 2 characters" required>
+						</div>
+
+						<div class="form-group col-md-4">
+							<label for="middlename">Middle Name(s)</label>
+							<input type="text" class="form-control" value="" name="middlename" id="middlename" placeholder="optional" pattern="^[a-zA-Z- ]+$" title="Full middle name(s), separated by a space">
+						</div>
+
+						<div class="form-group col-md-4">
+							<label for="surname">Surname</label>
+							<input type="text" class="form-control" value="Smith" name="surname" id="surname" placeholder="required" pattern="^[a-zA-Z- ]{2,}$" title="Full surname, must be at least 2 characters" required>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="custom-control custom-radio custom-control-inline">
+							<input class="custom-control-input" type="radio" name="gender" id="genderMale" value="0" checked required>
+							<label class="custom-control-label" for="genderMale">Male</label>
+						</div>
+
+						<div class="custom-control custom-radio custom-control-inline">
+							<input class="custom-control-input" type="radio" name="gender" id="genderFemale" value="1" required>
+							<label class="custom-control-label" for="genderFemale">Female</label>
+						</div>
+					</div>
+
+					<div class="form-group">
+						<label for="dob">Date of Birth</label>
+						<input type="date" class="form-control" value="1999-01-01" name="dob" id="dob" min="1900-01-01" max="2000-01-01" required>
+					</div>
+				</div>
+
+				<div class="modal-footer">
+					<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+					<button type="submit" class="btn btn-success btn-lg">Create Character</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>

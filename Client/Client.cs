@@ -1,220 +1,341 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
+using IgiCore.Client.Events;
 using IgiCore.Client.Extensions;
+using IgiCore.Client.Interface;
+using IgiCore.Client.Interface.Hud;
+using IgiCore.Client.Interface.Menu;
+using IgiCore.Client.Interface.Screens;
+using IgiCore.Client.Managers;
 using IgiCore.Client.Models;
 using IgiCore.Client.Services;
-using IgiCore.Core.Extensions;
-using IgiCore.Core.Models.Objects.Vehicles;
-using Newtonsoft.Json;
-using static CitizenFX.Core.Native.API;
+using IgiCore.Client.Services.AI;
+using IgiCore.Client.Services.Player;
+using IgiCore.Client.Services.Vehicle;
+using IgiCore.Client.Services.World;
+using IgiCore.Core.Models.Connection;
+using JetBrains.Annotations;
 using Debug = CitizenFX.Core.Debug;
-using Vehicle = IgiCore.Core.Models.Objects.Vehicles.Vehicle;
+using static CitizenFX.Core.Native.API;
+using Screen = CitizenFX.Core.UI.Screen;
 
 namespace IgiCore.Client
 {
-    public class Client : BaseScript
-    {
-        public static User User;
+	[PublicAPI]
+	public class Client : ClientBase
+	{
+		/// <summary>
+		/// Gets or sets the global singleton instance reference.
+		/// </summary>
+		/// <value>
+		/// The singleton <see cref="Client"/> instance.
+		/// </value>
+		public static Client Instance { get; protected set; }
+
+		public event EventHandler<ServerInformationEventArgs> OnClientReady;
+		public event EventHandler<UserEventArgs> OnUserLoaded;
+		public event EventHandler<CharactersEventArgs> OnCharactersList;
+		public event EventHandler<CharacterEventArgs> OnCharacterLoaded;
+
+		public ManagerRegistry Managers { get; protected set; }
+
+		public ServiceRegistry Services { get; protected set; }
+
+		/// <summary>
+		/// Gets or sets the character select screen.
+		/// </summary>
+		/// <value>
+		/// The character select screen.
+		/// </value>
+		public CharacterSelectScreen CharacterSelectScreen { get; protected set; }
+
+		/// <summary>
+		/// Gets or sets the currently loaded user.
+		/// </summary>
+		/// <value>
+		/// The loaded user.
+		/// </value>
+		public User User { get; protected set; }
+
+		/// <summary>
+		/// Primary client entrypoint.
+		/// Initializes a new instance of the <see cref="Client"/> class.
+		/// </summary>
+		public Client()
+		{
+			// -- INIT
+			Log("Init");
+
+			// Singleton
+			Instance = this;
+
+			this.Managers = new ManagerRegistry
+			{
+				new HudManager(), // Resets and hides all HUD elements
+				new MapManager(), // Loads IPLs and blips
+				new MenuManager() // Set initial menu options
+			};
+
+			this.Services = new ServiceRegistry
+			{
+				new VehicleRollService(), // Disable rolling cars back over
+				new PlayerDeathService(), // Knock down players rather than death
+				new PlayerIdleService(), // Kick idle players
+				new PedFilterService(), // Block blacklisted peds
+				new AiPoliceService(), // Disable AI police
+				new PlayerIndicatorService(), // Show nearby players
+				new DateTimeService(), // Set the date and time
+				new BlackoutService() // Allow city blackouts
+			};
+
+			this.Services.Initialize(); // Attach handlers
+
+			// -- SERVICE EVENTS
+
+			// Player Death Service
+			this.Services.First<PlayerDeathService>().OnDowned += (s, e) =>
+			{
+				UI.ShowNotification("Downed");
+
+				if (this.LocalPlayer.Character.Weapons.Current.Group != WeaponGroup.Unarmed) this.LocalPlayer.Character.Weapons.Remove(this.LocalPlayer.Character.Weapons.Current);
+			};
+
+			this.Services.First<PlayerDeathService>().OnRevived += (s, e) =>
+			{
+				Screen.ShowNotification("Revived");
+			};
+
+			//HandleEvent("igi:character:revive", this.Services.First<PlayerDeathService>().Revive);
+		
+			//HandleEvent<string>("igi:car:spawn", SpawnVehicle<Car>);
+			//HandleEvent<string>("igi:car:claim", ClaimVehicle<Car>);
+			//HandleEvent<string>("igi:car:unclaim", UnclaimVehicle<Car>);
+			//HandleEvent<string>("igi:bike:spawn", SpawnVehicle<Bike>);
+			//HandleEvent<string>("igi:bike:claim", ClaimVehicle<Bike>);
+			//HandleEvent<string>("igi:bike:unclaim", UnclaimVehicle<Bike>);
+
+			// -- UI
+
+			this.CharacterSelectScreen = new CharacterSelectScreen(); // Character select screen
+			
+			// -- BOOTSTRAP
+
+			HandleJsonEvent<ServerInformation>("igi:client:ready", ClientReady);
+
+			// Notify server that client is loaded
+			TriggerServerEvent("igi:client:ready");
+			
+		}
 
-        protected ServiceRegistry Services = new ServiceRegistry
-            {new VehicleService()};
+		/// <summary>
+		/// Event: igi:client:ready
+		/// First event triggered when connected to a server, instructs the server to load the user.
+		/// </summary>
+		/// <param name="info">The connected server environment information.</param>
+		protected void ClientReady(ServerInformation info)
+		{
+			Log("igi:client:ready");
 
-        public new Player LocalPlayer => base.LocalPlayer;
+			this.OnClientReady?.Invoke(this, new ServerInformationEventArgs(info));
 
-        public Client()
-        {
-            // Forward tick event
-            base.Tick += () => this.Tick?.Invoke();
+			HandleJsonEvent<User>("igi:user:load", UserLoad);
 
-            // Notify server that client is loaded
-            TriggerServerEvent("igi:client:ready");
+			// Load the user
+			TriggerServerEvent("igi:user:load");
+		}
 
-            HandleJsonEvent<User>("igi:user:load", UserLoad);
+		/// <summary>
+		/// Event: igi:user:load
+		/// Stores and raises <see cref="OnUserLoaded"/> with the connected user.
+		/// </summary>
+		/// <param name="user">The connected user.</param>
+		/// <seealso cref="User"/>
+		protected void UserLoad(User user)
+		{
+			Log("igi:user:load");
 
-            // Load the user
-            TriggerServerEvent("igi:user:load");
+			// Store the user
+			this.User = user;
 
-            HandleEvent<string>("igi:car:spawn", SpawnVehicle<Car>);
-            HandleEvent<string>("igi:car:claim", ClaimVehicle<Car>);
-            HandleEvent<string>("igi:car:unclaim", UnclaimVehicle<Car>);
+			this.OnUserLoaded?.Invoke(this, new UserEventArgs(this.User));
 
-            HandleEvent<string>("igi:bike:spawn", SpawnVehicle<Bike>);
-            HandleEvent<string>("igi:bike:claim", ClaimVehicle<Bike>);
-            HandleEvent<string>("igi:bike:unclaim", UnclaimVehicle<Bike>);
+			HandleJsonEvent<List<Character>>("igi:user:characters", CharactersList);
 
-            // Set pause screen title
-            Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", "TEST");
+			// Load the characters list
+			TriggerServerEvent("igi:user:characters");
+		}
 
-            foreach (ClientService service in this.Services) this.Tick += async () => await service.Tick(this);
-        }
+		/// <summary>
+		/// Event: igi:user:characters
+		/// Raises <see cref="OnCharactersList"/> with the avaliable chracters.
+		/// </summary>
+		/// <param name="characters">The list of the user's characters.</param>
+		/// <seealso cref="Character"/>
+		protected void CharactersList(List<Character> characters)
+		{
+			Log("igi:user:characters");
 
-        public new event Func<Task> Tick;
+			HandleJsonEvent<Character>("igi:character:load", CharacterLoad);
 
-        public void ClaimVehicle<T>(string vehJson) where T : Vehicle
-        {
-            T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
+			this.OnCharactersList?.Invoke(this, new CharactersEventArgs(characters));
+		}
 
-            Log($"Claiming vehicle with netId: {vehicle.NetId}");
+		/// <summary>
+		/// Event: igi:character:load
+		/// Raises <see cref="OnCharacterLoaded"/> with the loaded and initialized character.
+		/// </summary>
+		/// <param name="character">The loaded character.</param>
+		/// <seealso cref="Character"/>
+		protected async void CharacterLoad(Character character)
+		{
+			Log("igi:character:load");
 
-            var vehHandle = NetToVeh(vehicle.NetId ?? 0);
-            if (vehHandle == 0) return;
+			// Unload old character
+			this.User.Character?.Dispose();
 
-            Log($"Handle found for net id: {vehHandle}");
+			// Store the character
+			this.User.Character = character ?? throw new ArgumentNullException(nameof(character));
 
-            CitizenFX.Core.Vehicle citizenVehicle = new CitizenFX.Core.Vehicle(vehHandle);
-            VehToNet(citizenVehicle.Handle);
-            NetworkRegisterEntityAsNetworked(citizenVehicle.Handle);
-            var netId = NetworkGetNetworkIdFromEntity(citizenVehicle.Handle);
+			// Setup character
+			this.User.Character.Initialize();
 
-            Log($"Sending {vehicle.Id}");
+			// Render new character
+			this.User.Character.Render();
 
-            TriggerServerEvent("igi:car:claim", vehicle.Id.ToString());
+			this.OnCharacterLoaded?.Invoke(this, new CharacterEventArgs(this.User.Character));
 
-            this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
+			// Spawn character
+			await Game.Player.Spawn(this.User.Character.Position);
 
-            Log($"Tracked vehicle count in claim: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
-        }
+			DisableAutomaticRespawn(true);
+			Game.Player.Character.DropsWeaponsOnDeath = false;
+			Game.Player.Character.Health = Game.Player.Character.MaxHealth;
 
-        public void UnclaimVehicle<T>(string vehJson) where T : Vehicle
-        {
-            T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
+			// Enable PvP
+			NetworkSetFriendlyFireOption(true);
+			SetCanAttackFriendly(Game.Player.Character.Handle, true, false);
 
-            Log($"Unclaiming car: {vehicle.Id} with NetId: {vehicle.NetId}");
-            Log($"Currently tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+			await this.CharacterSelectScreen.Hide();
 
-            this.Services.First<VehicleService>().Tracked.Remove(new Tuple<Type, int>(typeof(T), vehicle.NetId ?? 0));
+			this.Managers.First<HudManager>().Visible = true;
 
-            Log($"Now tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
-        }
 
-        public async void SpawnVehicle<T>(string vehJson) where T : Vehicle
-        {
-            T vehToSpawn = JsonConvert.DeserializeObject<T>(vehJson);
-            Log($"Spawning {vehToSpawn.Id}");
 
-            CitizenFX.Core.Vehicle spawnedVehicle = await vehToSpawn.ToCitizenVehicle();
-            VehToNet(spawnedVehicle.Handle);
-            NetworkRegisterEntityAsNetworked(spawnedVehicle.Handle);
-            var netId = NetworkGetNetworkIdFromEntity(spawnedVehicle.Handle);
-            //SetNetworkIdExistsOnAllMachines(netId, true);
+			//var bone = Game.Player.Character.Bones[Bone.PH_R_Hand];
 
-            Log($"Spawned {spawnedVehicle.Handle} with netId {netId}");
+			//var board = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), Game.Player.Character.Position, Game.Player.Character.Rotation, false, false);
+			//board.AttachTo(bone);
 
-            Vehicle vehicle = spawnedVehicle;
-            vehicle.Id = vehToSpawn.Id;
-            vehicle.TrackingUserId = User.Id;
-            vehicle.Handle = spawnedVehicle.Handle;
-            vehicle.NetId = netId;
+			//var text = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), board.Position, board.Rotation, false, false);
+			//text.AttachTo(board);
 
-            Log($"Sending {vehicle.Id} with event \"igi:{typeof(T).VehicleType().Name}:save\"");
+			//Game.Player.Character.Task.PlayAnimation("mp_character_creation@lineup@male_a", "loop_raised", 1, -1, AnimationFlags.Loop);
 
-            TriggerServerEvent($"igi:{typeof(T).VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
+			//var scaleformHandle = new Scaleform("mugshot_board_01");
+			//scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "002134234", this.User.Character.FullName, DateTime.Now.ToString("d"), 0);
 
-            this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
-        }
 
-        protected async void UserLoad(User user)
-        {
-            // Store the user
-            User = user;
+			//var renderTargetName = "ID_Text";
+			//int renderTargetHash = -955488312;
+			////RegisterNamedRendertarget(renderTargetName, true);
+			////LinkNamedRendertarget((uint) new Model(GetHashKey("prop_police_id_board")).Hash);
+			////var renderTargetID = GetNamedRendertargetRenderId(renderTargetName);
+			////var renderTargetID = CreateNamedRenderTargetForModel(renderTargetName, text);
 
-            HandleJsonEvent<Character>("igi:character:load", CharacterLoad);
 
-            await SpawnPlayer();
-        }
+			//if (!IsNamedRendertargetRegistered(renderTargetName)) RegisterNamedRendertarget(renderTargetName, true);
+			//if (!Function.Call<bool>((Hash)0x113750538FA31298, renderTargetHash)) Function.Call((Hash)0xF6C09E276AEB3F2D, renderTargetHash);// IsNamedRendertargetLinked LinkNamedRendertarget(-955488312);
 
-        protected void FreezePlayer(bool freeze)
-        {
-            Game.Player.CanControlCharacter = !freeze;
+			//var renderTargetID = IsNamedRendertargetRegistered(renderTargetName) ? GetNamedRendertargetRenderId(renderTargetName) : 0;
 
-            this.LocalPlayer.Character.IsVisible = !freeze;
 
-            if (!this.LocalPlayer.Character.IsInVehicle()) this.LocalPlayer.Character.IsCollisionEnabled = !freeze;
 
-            this.LocalPlayer.Character.IsPositionFrozen = freeze;
+			//AttachTickHandler(async () =>
+			//{
+			//	SetTextRenderId(renderTargetID);
 
-            this.LocalPlayer.Character.IsInvincible = freeze;
+			//	scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "543-01-1349", DateTime.Now.ToString("d"), this.User.Character.FullName, 0);
 
-            if (!this.LocalPlayer.Character.IsDead && freeze) this.LocalPlayer.Character.Task.ClearAllImmediately();
-        }
+			//	//DrawScaleformMovie(scale.Handle, 0.405f, 0.37f, 0.81f, 0.74f, 255, 255, 255, 255, 1);
+			//	//scale.Render3D(text.Position - new Vector3(0.022f, 0, 0), text.Rotation - new Vector3(0.022f, 0, 0), new Vector3(0.35f, 0.15f, 0));
 
-        protected async Task SpawnPlayer()
-        {
-            Screen.Fading.FadeOut(500);
-            while (Screen.Fading.IsFadingOut) await Delay(10);
+			//	SetTextRenderId(GetDefaultScriptRendertargetRenderId());
+			//});
 
-            FreezePlayer(true);
+			////Screen.ShowNotification($"{this.User.Character.FullName} loaded at {DateTime.Now:h:mm:ss tt}");
+		}
 
-            // Swap model
-            await this.LocalPlayer.ChangeModel(new Model(PedHash.FreemodeMale01));
+		[Conditional("DEBUG")]
+		public static void Log(string message) => Debug.Write($"{DateTime.Now:s} [CLIENT]: {message}");
 
-            // Not naked
-            Game.Player.Character.Style.SetDefaultClothes();
+		public void AttachTickHandler(Func<Task> task) => this.Tick += task;
 
-            this.LocalPlayer.Character.Position = new Vector3 {X = -1038.121f, Y = -2738.279f, Z = 20.16929f};
-            this.LocalPlayer.Character.Resurrect();
-            this.LocalPlayer.Character.Task.ClearAllImmediately();
-            this.LocalPlayer.Character.Weapons.Drop();
-            this.LocalPlayer.WantedLevel = 0;
+		public void DettachTickHandler(Func<Task> task) => this.Tick -= task;
 
-            this.LocalPlayer.Character.Weapons.Give(WeaponHash.Railgun, 100, true, true);
+		//public void ClaimVehicle<T>(string vehJson) where T : Vehicle
+		//{
+		//	T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
 
-            ShutdownLoadingScreen();
+		//	Log($"Claiming vehicle with netId: {vehicle.NetId}");
 
-            Screen.Fading.FadeIn(500);
-            while (Screen.Fading.IsFadingIn) await Delay(10);
+		//	var vehHandle = NetToVeh(vehicle.NetId ?? 0);
+		//	if (vehHandle == 0) return;
 
-            FreezePlayer(false);
+		//	Log($"Handle found for net id: {vehHandle}");
 
-            // Temporary respawning
-            this.Tick += async () =>
-            {
-                if (!this.LocalPlayer.Character.IsAlive)
-                {
-                    this.LocalPlayer.Character.Resurrect();
-                    this.LocalPlayer.WantedLevel = 0;
-                    this.LocalPlayer.Character.IsCollisionEnabled = true;
-                }
+		//	CitizenFX.Core.Vehicle citizenVehicle = new CitizenFX.Core.Vehicle(vehHandle);
+		//	VehToNet(citizenVehicle.Handle);
+		//	NetworkRegisterEntityAsNetworked(citizenVehicle.Handle);
+		//	var netId = NetworkGetNetworkIdFromEntity(citizenVehicle.Handle);
 
-                await Delay(10);
-            };
+		//	Log($"Sending {vehicle.Id}");
 
-            Screen.ShowNotification($"{Game.Player.Name} connected at {DateTime.Now:s}");
-        }
+		//	TriggerServerEvent("igi:car:claim", vehicle.Id.ToString());
 
-        protected void CharacterLoad(Character character)
-        {
-            // Unload old character
-            User.Character?.Dispose();
+		//	this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
 
-            // Store the character
-            User.Character = character ?? throw new ArgumentNullException(nameof(character));
-            User.Character.Initialize(this); // Fake ctor
+		//	Log($"Tracked vehicle count in claim: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+		//}
 
-            // Render new character
-            User.Character.Render();
+		//public void UnclaimVehicle<T>(string vehJson) where T : Vehicle
+		//{
+		//	T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
 
-            Screen.ShowNotification($"{User.Character.Name} loaded at {DateTime.Now:h:mm:ss tt}");
-        }
+		//	Log($"Unclaiming car: {vehicle.Id} with NetId: {vehicle.NetId}");
+		//	Log($"Currently tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
 
-        [Conditional("DEBUG")] public static void Log(string message) { Debug.Write($"{DateTime.Now:s} [CLIENT]: {message}"); }
+		//	this.Services.First<VehicleService>().Tracked.Remove(new Tuple<Type, int>(typeof(T), vehicle.NetId ?? 0));
 
-        public void HandleEvent(string name, Action action) { this.EventHandlers[name] += action; }
+		//	Log($"Now tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+		//}
 
-        public void HandleEvent<T1>(string name, Action<T1> action) { this.EventHandlers[name] += action; }
+		//public async void SpawnVehicle<T>(string vehJson) where T : Vehicle
+		//{
+		//	T vehToSpawn = JsonConvert.DeserializeObject<T>(vehJson);
+		//	Log($"Spawning {vehToSpawn.Id}");
 
-        public void HandleEvent<T1, T2>(string name, Action<T1, T2> action) { this.EventHandlers[name] += action; }
+		//	CitizenFX.Core.Vehicle spawnedVehicle = await vehToSpawn.ToCitizenVehicle();
+		//	VehToNet(spawnedVehicle.Handle);
+		//	NetworkRegisterEntityAsNetworked(spawnedVehicle.Handle);
+		//	var netId = NetworkGetNetworkIdFromEntity(spawnedVehicle.Handle);
+		//	//SetNetworkIdExistsOnAllMachines(netId, true);
 
-        public void HandleEvent<T1, T2, T3>(string name, Action<T1, T2, T3> action) { this.EventHandlers[name] += action; }
+		//	Log($"Spawned {spawnedVehicle.Handle} with netId {netId}");
 
-        public void HandleJsonEvent<T>(string eventName, Action<T> action) { this.EventHandlers[eventName] += new Action<string>(json => action(JsonConvert.DeserializeObject<T>(json))); }
+		//	Vehicle vehicle = spawnedVehicle;
+		//	vehicle.Id = vehToSpawn.Id;
+		//	vehicle.TrackingUserId = this.User.Id;
+		//	vehicle.Handle = spawnedVehicle.Handle;
+		//	vehicle.NetId = netId;
 
-        public void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action) { this.EventHandlers[eventName] += new Action<string, string>((j1, j2) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2))); }
+		//	Log($"Sending {vehicle.Id} with event \"igi:{typeof(T).VehicleType().Name}:save\"");
 
-        public void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action) { this.EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2), JsonConvert.DeserializeObject<T3>(j3))); }
-    }
+		//	TriggerServerEvent($"igi:{typeof(T).VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
+
+		//	this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
+		//}
+	}
 }
