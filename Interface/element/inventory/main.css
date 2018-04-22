@@ -1,0 +1,67 @@
+body {
+	box-shadow: 0 0 25em black inset;
+}
+
+h1 {
+    font-family: pricedown;
+    color: white;
+    -webkit-text-fill-color: white;
+    -webkit-text-stroke: 2.5px black;
+    text-shadow:
+               3px 3px 0 #000,
+               -1px -1px 0 #000,
+               1px -1px 0 #000,
+               -1px  1px 0 #000,
+               1px  1px 0 #000;
+}
+
+#inventory-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: url("screenshot.JPG");
+    background-size: cover;
+}
+
+#inventory {
+    background: rgba(40, 40, 40, 0.6);
+    height: 80%;
+    margin: 5% auto;
+}
+
+.inventory.section {
+    height: 100%;
+    background: rgba(40, 40, 40, 0.8);
+}
+
+.inventory.section.character .row {
+    height: 25%;
+    width: 100%;
+    margin: 0;
+}
+    .inventory.section.character > .background {
+        position: absolute;
+        width: 91%;
+        padding: 4%;
+    }
+
+    .inventory.section.character > .background > img {
+        
+        width: 100%;
+        filter: drop-shadow(1px 1px 0 white) drop-shadow(-1px -1px 0 white);
+        opacity: 0.3;
+    }
+
+.inventory.section.character > .row > .slot-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+    .inventory.section.character > .row > .slot-container > .slot {
+        background: rgba(255, 255, 255, 0.3);
+        height: 6em;
+        width: 6em;
+    }
+
+

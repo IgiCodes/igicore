@@ -50,6 +50,10 @@ files {
 	'Interface/screen/character-creation/main.js',
 	'Interface/screen/character-creation/main.css',
 
+	'Interface/element/inventory/index.html',
+	'Interface/element/inventory/main.js',
+	'Interface/element/inventory/main.css',
+
 	'Interface/element/driving/index.html',
 	'Interface/element/driving/main.js',
 	'Interface/element/driving/main.css',

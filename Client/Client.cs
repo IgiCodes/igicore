@@ -52,13 +52,21 @@ namespace IgiCore.Client
 		/// </value>
 		public CharacterSelectScreen CharacterSelectScreen { get; protected set; }
 
-		/// <summary>
-		/// Gets or sets the currently loaded user.
-		/// </summary>
-		/// <value>
-		/// The loaded user.
-		/// </value>
-		public User User { get; protected set; }
+        /// <summary>
+        /// Gets or sets the inventory screen.
+        /// </summary>
+        /// <value>
+        /// The inventory screen.
+        /// </value>
+        public InventoryScreen InventoryScreen { get; protected set; }
+
+        /// <summary>
+        /// Gets or sets the currently loaded user.
+        /// </summary>
+        /// <value>
+        /// The loaded user.
+        /// </value>
+        public User User { get; protected set; }
 
 		/// <summary>
 		/// Primary client entrypoint.
@@ -120,10 +128,11 @@ namespace IgiCore.Client
 			// -- UI
 
 			this.CharacterSelectScreen = new CharacterSelectScreen(); // Character select screen
-			
-			// -- BOOTSTRAP
+		    this.InventoryScreen = new InventoryScreen(); // Inventory screen
 
-			HandleJsonEvent<ServerInformation>("igi:client:ready", ClientReady);
+            // -- BOOTSTRAP
+
+            HandleJsonEvent<ServerInformation>("igi:client:ready", ClientReady);
 
 			// Notify server that client is loaded
 			TriggerServerEvent("igi:client:ready");
@@ -219,54 +228,53 @@ namespace IgiCore.Client
 			SetCanAttackFriendly(Game.Player.Character.Handle, true, false);
 
 			await this.CharacterSelectScreen.Hide();
+		    this.InventoryScreen.Enabled = true;
 
-			this.Managers.First<HudManager>().Visible = true;
+            this.Managers.First<HudManager>().Visible = true;
 
+            //var bone = Game.Player.Character.Bones[Bone.PH_R_Hand];
 
+            //var board = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), Game.Player.Character.Position, Game.Player.Character.Rotation, false, false);
+            //board.AttachTo(bone);
 
-			//var bone = Game.Player.Character.Bones[Bone.PH_R_Hand];
+            //var text = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), board.Position, board.Rotation, false, false);
+            //text.AttachTo(board);
 
-			//var board = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), Game.Player.Character.Position, Game.Player.Character.Rotation, false, false);
-			//board.AttachTo(bone);
+            //Game.Player.Character.Task.PlayAnimation("mp_character_creation@lineup@male_a", "loop_raised", 1, -1, AnimationFlags.Loop);
 
-			//var text = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), board.Position, board.Rotation, false, false);
-			//text.AttachTo(board);
-
-			//Game.Player.Character.Task.PlayAnimation("mp_character_creation@lineup@male_a", "loop_raised", 1, -1, AnimationFlags.Loop);
-
-			//var scaleformHandle = new Scaleform("mugshot_board_01");
-			//scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "002134234", this.User.Character.FullName, DateTime.Now.ToString("d"), 0);
-
-
-			//var renderTargetName = "ID_Text";
-			//int renderTargetHash = -955488312;
-			////RegisterNamedRendertarget(renderTargetName, true);
-			////LinkNamedRendertarget((uint) new Model(GetHashKey("prop_police_id_board")).Hash);
-			////var renderTargetID = GetNamedRendertargetRenderId(renderTargetName);
-			////var renderTargetID = CreateNamedRenderTargetForModel(renderTargetName, text);
+            //var scaleformHandle = new Scaleform("mugshot_board_01");
+            //scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "002134234", this.User.Character.FullName, DateTime.Now.ToString("d"), 0);
 
 
-			//if (!IsNamedRendertargetRegistered(renderTargetName)) RegisterNamedRendertarget(renderTargetName, true);
-			//if (!Function.Call<bool>((Hash)0x113750538FA31298, renderTargetHash)) Function.Call((Hash)0xF6C09E276AEB3F2D, renderTargetHash);// IsNamedRendertargetLinked LinkNamedRendertarget(-955488312);
+            //var renderTargetName = "ID_Text";
+            //int renderTargetHash = -955488312;
+            ////RegisterNamedRendertarget(renderTargetName, true);
+            ////LinkNamedRendertarget((uint) new Model(GetHashKey("prop_police_id_board")).Hash);
+            ////var renderTargetID = GetNamedRendertargetRenderId(renderTargetName);
+            ////var renderTargetID = CreateNamedRenderTargetForModel(renderTargetName, text);
 
-			//var renderTargetID = IsNamedRendertargetRegistered(renderTargetName) ? GetNamedRendertargetRenderId(renderTargetName) : 0;
+
+            //if (!IsNamedRendertargetRegistered(renderTargetName)) RegisterNamedRendertarget(renderTargetName, true);
+            //if (!Function.Call<bool>((Hash)0x113750538FA31298, renderTargetHash)) Function.Call((Hash)0xF6C09E276AEB3F2D, renderTargetHash);// IsNamedRendertargetLinked LinkNamedRendertarget(-955488312);
+
+            //var renderTargetID = IsNamedRendertargetRegistered(renderTargetName) ? GetNamedRendertargetRenderId(renderTargetName) : 0;
 
 
 
-			//AttachTickHandler(async () =>
-			//{
-			//	SetTextRenderId(renderTargetID);
+            //AttachTickHandler(async () =>
+            //{
+            //	SetTextRenderId(renderTargetID);
 
-			//	scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "543-01-1349", DateTime.Now.ToString("d"), this.User.Character.FullName, 0);
+            //	scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "543-01-1349", DateTime.Now.ToString("d"), this.User.Character.FullName, 0);
 
-			//	//DrawScaleformMovie(scale.Handle, 0.405f, 0.37f, 0.81f, 0.74f, 255, 255, 255, 255, 1);
-			//	//scale.Render3D(text.Position - new Vector3(0.022f, 0, 0), text.Rotation - new Vector3(0.022f, 0, 0), new Vector3(0.35f, 0.15f, 0));
+            //	//DrawScaleformMovie(scale.Handle, 0.405f, 0.37f, 0.81f, 0.74f, 255, 255, 255, 255, 1);
+            //	//scale.Render3D(text.Position - new Vector3(0.022f, 0, 0), text.Rotation - new Vector3(0.022f, 0, 0), new Vector3(0.35f, 0.15f, 0));
 
-			//	SetTextRenderId(GetDefaultScriptRendertargetRenderId());
-			//});
+            //	SetTextRenderId(GetDefaultScriptRendertargetRenderId());
+            //});
 
-			////Screen.ShowNotification($"{this.User.Character.FullName} loaded at {DateTime.Now:h:mm:ss tt}");
-		}
+            ////Screen.ShowNotification($"{this.User.Character.FullName} loaded at {DateTime.Now:h:mm:ss tt}");
+        }
 
 		[Conditional("DEBUG")]
 		public static void Log(string message) => Debug.Write($"{DateTime.Now:s} [CLIENT]: {message}");

@@ -3,6 +3,15 @@ const container = $('body > main');
 const screens = {};
 const elements = {};
 
+window.objectifyForm = (formArray) => {//serialize data function
+
+    var returnArray = {};
+    for (var i = 0; i < formArray.length; i++){
+        returnArray[formArray[i]['name']] = formArray[i]['value'];
+    }
+    return returnArray;
+}
+
 window.post = async (url, data) => {
 	// TODO: await
 	fetch('http://igicore/' + url, {
@@ -65,14 +74,16 @@ $(window).on('resize', () => {
 
 
 import CharacterCreationScreen from './screen/character-creation/main.js';
+import InventoryElement from './element/inventory/main.js';
 import DrivingElement from './element/driving/main.js';
 
 $(async () => {
 	// Screens
-	await loadScreen(CharacterCreationScreen);
-
+    await loadScreen(CharacterCreationScreen);
+    
 	// Elements
-	await loadElement(DrivingElement);
+    await loadElement(DrivingElement);
+    await loadElement(InventoryElement);
 
 
 	await elements['driving'].show();

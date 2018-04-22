@@ -25,6 +25,14 @@ export default class extends Screen {
 			cards.prepend(this.templates.character(character));
 		}
 
+        $('form', this.container).off('submit').on('submit', async (e) => {
+		    console.log("Char Create from submitted");
+		    e.preventDefault();
+		    $(e.target).prop('disable', true);
+
+		    await post('character-create', objectifyForm($('form').serializeArray()));
+		});
+
 		$('.btn-load', this.container).on('click', async (e) => {
 			e.preventDefault();
 			$(e.target).prop('disable', true);
