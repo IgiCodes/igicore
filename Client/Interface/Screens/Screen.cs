@@ -8,7 +8,7 @@ namespace IgiCore.Client.Interface.Screens
 {
 	public abstract class Screen : IDisposable
 	{
-	    public bool Visible { get; protected set; }
+		public bool Visible { get; protected set; } = false;
 	    public bool Enabled { get; protected set; } = true;
 
         public abstract Task Show();

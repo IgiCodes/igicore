@@ -18,46 +18,10 @@ files {
 	'EntityFramework.dll',
 	'NativeUI.dll',
 
-	'Interface/index.html',
-	'Interface/main.js',
-	'Interface/main.css',
-
-	'Interface/fonts/gravity.woff2',
-	'Interface/fonts/pricedown.woff2',
-
-	'Interface/libs/jquery.min.js',
-	'Interface/libs/lodash.min.js',
-	'Interface/libs/bootstrap.min.css',
-	'Interface/libs/bootstrap.bundle.min.js',
-	'Interface/libs/fontawesome-all.min.js',
-
-	'Interface/loading-screen/index.html',
-	'Interface/loading-screen/main.js',
-	'Interface/loading-screen/main.css',
-	'Interface/loading-screen/img/logo.png',
-	'Interface/loading-screen/img/bg1.jpg',
-	'Interface/loading-screen/img/bg2.jpg',
-	'Interface/loading-screen/img/bg3.jpg',
-	'Interface/loading-screen/img/bg4.jpg',
-	'Interface/loading-screen/img/bg5.jpg',
-
-	'Interface/Control.js',
-	'Interface/screen/Screen.js',
-	'Interface/element/Element.js',
-
-	'Interface/screen/character-creation/index.html',
-	'Interface/screen/character-creation/character.html',
-	'Interface/screen/character-creation/main.js',
-	'Interface/screen/character-creation/main.css',
-
-	'Interface/element/inventory/index.html',
-	'Interface/element/inventory/main.js',
-	'Interface/element/inventory/main.css',
-
-	'Interface/element/driving/index.html',
-	'Interface/element/driving/main.js',
-	'Interface/element/driving/main.css',
+	'Interface/dist/index.html',
+	'Interface/dist/bundle.js',
+	'Interface/dist/gravity.woff2',
+	'Interface/dist/pricedown.woff2',
 }
 
-loadscreen 'Interface/loading-screen/index.html'
-ui_page 'Interface/index.html'
+ui_page 'Interface/dist/index.html'

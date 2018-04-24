@@ -98,7 +98,7 @@ namespace IgiCore.Client.Interface.Hud
 			Screen.Hud.HideComponentThisFrame(HudComponent.Saving);
 			Screen.Hud.HideComponentThisFrame(HudComponent.WeaponWheelStats);
 
-			Screen.Hud.IsRadarVisible = Game.Player.Character.IsInVehicle();
+			this.MiniMapVisible = Game.Player.Character.IsInVehicle();
 
 			foreach (var element in this.Elements) await element.Render();
 

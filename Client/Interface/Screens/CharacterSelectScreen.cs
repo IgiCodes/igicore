@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using CitizenFX.Core.UI;
 using IgiCore.Client.Events;
 using IgiCore.Client.Extensions;
 using IgiCore.Client.Handlers;
@@ -15,7 +17,10 @@ namespace IgiCore.Client.Interface.Screens
 	[PublicAPI]
 	public class CharacterSelectScreen : Screen
 	{
-		public Vector3 Postision => new Vector3(763.5f, 1185.5f, 380); // Top of VINEWOOD sign
+		public float CameraHeight => 500;
+		public float CameraRadius => 1500;
+		public float CameraAngle { get; protected set; } = 0;
+		public Vector3 CameraCenter => Vector3.Zero;
 		public DateTime Time => new DateTime(DateTime.Now.Year, 1, 1, 12, 0, 0); // Noon
 		public Weather Weather => Weather.ExtraSunny;
 
@@ -29,7 +34,7 @@ namespace IgiCore.Client.Interface.Screens
 			RegisterNuiCallback("character-load", OnNuiCharacterLoad);
 			RegisterNuiCallback("character-delete", OnNuiCharacterDelete);
 
-			TickHandler.Attach<CharacterSelectScreen>(this.Render);
+			TickHandler.Attach<CharacterSelectScreen>(Render);
 		}
 
 		private async void OnCharactersList(object sender, CharactersEventArgs args)
@@ -69,8 +74,8 @@ namespace IgiCore.Client.Interface.Screens
 			API.SetNuiFocus(true, true);
 
 			// Position
-			API.LoadScene(this.Postision.X, this.Postision.Y, this.Postision.Z);
-			API.RequestCollisionAtCoord(this.Postision.X, this.Postision.Y, this.Postision.Z);
+			API.LoadScene(this.CameraCenter.X, this.CameraCenter.Y, this.CameraCenter.Z);
+			API.RequestCollisionAtCoord(this.CameraCenter.X, this.CameraCenter.Y, this.CameraCenter.Z);
 			Game.Player.Character.Position = Vector3.Zero;
 
 			// Freeze
@@ -88,8 +93,10 @@ namespace IgiCore.Client.Interface.Screens
 			API.SetWeatherTypeNowPersist(Enum.GetName(typeof(Weather), this.Weather)?.ToUpper());
 
 			// Camera
-			var camera = World.CreateCamera(this.Postision, Vector3.Zero, 50);
-			camera.PointAt(Vector3.Zero); // Point towards the city
+			var camera = World.CreateCamera(Vector3.Zero, Vector3.Zero, 50);
+			var location = this.CameraCenter.RotateAround(this.CameraRadius, this.CameraAngle);
+			camera.Position = new Vector3(location.X, location.Y, this.CameraHeight);
+			camera.PointAt(this.CameraCenter);
 			World.RenderingCamera = camera;
 
 			// Show
@@ -117,7 +124,7 @@ namespace IgiCore.Client.Interface.Screens
 			// Camera
 			World.DestroyAllCameras();
 			World.RenderingCamera = null; // Required to reset the camera
-			
+
 			// Hide
 			SendNuiMessage("screen:character-creation:hide");
 
@@ -129,6 +136,13 @@ namespace IgiCore.Client.Interface.Screens
 			// Time
 			World.CurrentDayTime = this.Time.TimeOfDay;
 			API.NetworkOverrideClockTime(this.Time.Hour, this.Time.Minute, this.Time.Second);
+
+			// Camera
+			if (this.CameraAngle >= 360) this.CameraAngle = 0;
+			this.CameraAngle += 0.01f;
+
+			var location = this.CameraCenter.RotateAround(this.CameraRadius, this.CameraAngle);
+			World.RenderingCamera.Position = new Vector3(location.X, location.Y, this.CameraHeight);
 		}
 	}
 }

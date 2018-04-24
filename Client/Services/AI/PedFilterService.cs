@@ -10,7 +10,7 @@ namespace IgiCore.Client.Services.AI
 	public class PedFilterService : ClientService
 	{
 		// https://wiki.gtanet.work/index.php?title=Peds
-		public List<PedHash> IllicalPeds = new List<PedHash>
+		public readonly List<PedHash> IllicalPeds = new List<PedHash>
 		{
 			// Police
 			PedHash.Cop01SFY,
