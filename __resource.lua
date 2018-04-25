@@ -34,6 +34,7 @@ files {
 	'Interface/dist/bundle.js',
 	'Interface/dist/gravity.woff2',
 	'Interface/dist/pricedown.woff2',
+	'Interface/dist/male.png',
 }
 
 loadscreen 'Interface/loading-screen/index.html'
