@@ -1,18 +1,16 @@
 <template>
 	<main>
+		<Loading v-show="false" />
 		<inventory v-show="showInventory" />
 		<interact v-show="showInteract" ref="interact" />
 	</main>
 </template>
 
 <script>
+import $ from 'jquery'
 import Loading from './components/Loading'
 import Inventory from './components/Inventory'
 import Interact from './components/Interact'
-
-import $ from 'jquery'
-import 'bootstrap'
-
 
 export default {
 	name: 'App',
@@ -21,6 +19,25 @@ export default {
 		Loading,
 		Inventory,
 		Interact
+	},
+
+	data() {
+		return {
+			showInventory: false,
+			showInteract: false
+		}
+	},
+
+	mounted() {
+		//$(window).on('resize', this.onResize).trigger('resize')
+		$(window).on('message', this.onMessage)
+		$(window).on('keypress', this.onKeypress)
+	},
+
+	beforeDestroy() {
+		//$(window).off('resize', this.onResize)
+		$(window).off('message', this.onMessage)
+		$(window).off('keypress', this.onKeypress)
 	},
 
 	methods: {
@@ -53,39 +70,18 @@ export default {
 		},
 
 		onKeypress(e) {
-			console.debug(e.keyCode)
-			if (e.keyCode == 9) {
-				if (this.showInventory) this.showInventory = false
-				else this.showInventory = true
+			if (!e.metaKey) e.preventDefault()
+
+			if (e.key == 'q') { // 'tab' is hard to test in Chrome
+				this.showInventory = !this.showInventory
 			}
 
-			if (e.keyCode == 101) {
-				if (this.showInteract) this.showInteract = false
-				else this.showInteract = true
+			if (e.key == 'e') {
+				this.showInteract = !this.showInteract
 
 				this.$refs.interact.toggle()
 			}
 		}
-
-	},
-
-	data() {
-		return {
-			showInventory: false,
-			showInteract: false
-		}
-	},
-
-	mounted() {
-		$(window).on('message', this.onMessage)
-		//$(window).on('resize', this.onResize).trigger('resize')
-		$(window).on('keypress', this.onKeypress)
-	},
-
-	beforeDestroy() {
-		//$(window).off('resize', this.onResize)
-		$(window).off('message', this.onMessage)
-		$(window).off('keypress', this.onKeypress)
 	}
 }
 </script>
@@ -98,26 +94,29 @@ $font-family-sans-serif: gravity;
 
 @font-face {
 	font-family: gravity;
-	src: url(fonts/gravity.woff2);
+	src: url('fonts/gravity.woff2');
 }
 
 @font-face {
 	font-family: pricedown;
-	src: url(fonts/pricedown.woff2);
+	src: url('fonts/pricedown.woff2');
 }
 
-html, body {
+html,
+body {
 	width: 100%;
 	height: 100%;
-	overflow: hidden;
 	margin: 0;
+	overflow: hidden;
 }
 
 body > main {
+	position: absolute;
 	width: 100%;
 	height: 100%;
-	position: absolute;
 	user-select: none;
-	border: 1px solid red;
+	outline: none;
+
+	/* border: 1px solid red; */
 }
 </style>
