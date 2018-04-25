@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import Store from './Store'
 import App from './App'
 import Nui from './helpers/Nui'
 import FontAwesome from '@fortawesome/fontawesome'
@@ -9,6 +10,7 @@ FontAwesome.library.add(FontAwesomeRegular, FontAwesomeSolid) // TODO: Only load
 
 new Vue({
 	el: 'main',
+	store: Store,
 	render: h => h(App)
 })
 
