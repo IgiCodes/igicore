@@ -1,7 +1,7 @@
 <template>
 	<main>
-		<loading v-show="false" />
-		<character-select v-show="true" ref="CharacterSelect" />
+		<loading v-show="!showCharacterSelect && !showInventory && !showInteract" />
+		<character-select v-show="showCharacterSelect" ref="CharacterSelect" />
 		<inventory v-show="showInventory" />
 		<interact v-show="showInteract" ref="Interact" />
 	</main>
@@ -27,6 +27,7 @@ export default {
 
 	data() {
 		return {
+			showCharacterSelect: false,
 			showInventory: false,
 			showInteract: false
 		}
@@ -75,6 +76,12 @@ export default {
 			if (type == 'screen:character-creation:characters') {
 				this.$refs.CharacterSelect.load(data)
 			}
+			if (type == 'screen:character-creation:show') {
+				this.showCharacterSelect = true
+			}
+			if (type == 'screen:character-creation:hide') {
+				this.showCharacterSelect = false
+			}
 		},
 
 		onKeypress(e) {
@@ -82,10 +89,20 @@ export default {
 
 			if (e.key == 'q') { // 'tab' is hard to test in Chrome
 				this.showInventory = !this.showInventory
+
+				if (this.showInventory) {
+					this.showCharacterSelect = false
+					this.showInteract = false
+				}
 			}
 
 			if (e.key == 'e') {
 				this.showInteract = !this.showInteract
+
+				if (this.showInteract) {
+					this.showCharacterSelect = false
+					this.showInventory = false
+				}
 
 				this.$refs.Interact.toggle()
 			}
