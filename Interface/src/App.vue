@@ -1,14 +1,16 @@
 <template>
 	<main>
-		<Loading v-show="false" />
+		<loading v-show="false" />
+		<character-select v-show="true" ref="CharacterSelect" />
 		<inventory v-show="showInventory" />
-		<interact v-show="showInteract" ref="interact" />
+		<interact v-show="showInteract" ref="Interact" />
 	</main>
 </template>
 
 <script>
 import $ from 'jquery'
 import Loading from './components/Loading'
+import CharacterSelect from './components/CharacterSelect/CharacterSelect'
 import Inventory from './components/Inventory'
 import Interact from './components/Interact'
 
@@ -17,6 +19,7 @@ export default {
 
 	components: {
 		Loading,
+		CharacterSelect,
 		Inventory,
 		Interact
 	},
@@ -66,7 +69,11 @@ export default {
 			const type = e.originalEvent.data.type
 			const data = e.originalEvent.data.data || null
 
-			console.debug('onMessage', type, data)
+			console.debug('NUI', type, data)
+
+			if (type == 'screen:character-creation:characters') {
+				this.$refs.CharacterSelect.load(data)
+			}
 		},
 
 		onKeypress(e) {
@@ -79,7 +86,7 @@ export default {
 			if (e.key == 'e') {
 				this.showInteract = !this.showInteract
 
-				this.$refs.interact.toggle()
+				this.$refs.Interact.toggle()
 			}
 		}
 	}
