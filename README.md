@@ -5,6 +5,8 @@ This repo is an absolute mess right now. Purely using it as online storage and f
 I'll tidy this up when the framework is more production worthy.
 
 ## Development
+This resource replaces ALL stock server resources; make sure you remove them from your configuration. The server will always try to load ``sessionmanager``, even if it is not in your configuration, so you must delete or rename the resource.
+
 Clone this repo inside your FiveM server's ``resources`` directory and build the project in Visual Studio 2017.
 
 Edit your ``server.cfg`` file to include the following line below your existing configuration:
