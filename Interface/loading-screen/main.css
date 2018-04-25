@@ -1,0 +1,65 @@
+@font-face {
+	font-family: gravity;
+	src: url(../fonts/gravity.woff2);
+}
+
+html {
+	width: 100%;
+	height: 100%;
+}
+
+body {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	font-family: gravity;
+	color: #DDD;
+	box-shadow: 0 0 25em black inset;
+	background-color: #222;
+}
+
+#background {
+	width: 100%;
+	height: 100%;
+	z-index: -1;
+	opacity: 0.5;
+	transition: opacity 1s;
+	object-fit: cover;
+}
+
+#logo {
+	width: 60%;
+	height: 40%;
+	position: fixed;
+	top: 20%;
+	left: 20%;
+	object-fit: contain;
+}
+
+section {
+	position: fixed;
+	left: 20%;
+	bottom: 20%;
+	width: 60%;
+	font-size: 1.2rem;
+}
+
+#message {
+	display: inline-block;
+	transition: opacity 0.25s;
+}
+
+progress[value] {
+	width: 100%;
+	height: 30px;
+	-webkit-appearance: none;
+	appearance: none;
+}
+progress[value]::-webkit-progress-bar {
+	background-color: #333;
+	border-radius: 15px;
+}
+progress::-webkit-progress-value {
+	background: green;
+	border-radius: 15px;
+}
