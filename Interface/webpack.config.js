@@ -1,5 +1,7 @@
 const webpack = require('webpack')
 const path = require('path')
+const StyleLintPlugin = require('stylelint-webpack-plugin')
+const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 
 module.exports = {
 	target: 'web',
@@ -17,6 +19,13 @@ module.exports = {
 	performance: {
 		hints: false
 	},
+	plugins: [
+		new StyleLintPlugin({
+			files: ['src/**/*.vue'],
+			syntax: 'scss'
+		}),
+		new FriendlyErrorsWebpackPlugin()
+	],
 	module: {
 		rules: [
 			{
