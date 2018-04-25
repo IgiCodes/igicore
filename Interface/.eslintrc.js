@@ -11,7 +11,7 @@ module.exports = {
 		'plugin:vue/essential'
 	],
 	rules: {
-		'vue/no-unused-vars': 'error',
+		'vue/no-unused-vars': 'warn',
 		indent: ['error', 'tab'],
 		quotes: ['error', 'single', 'avoid-escape'],
 		'linebreak-style': ['error', 'windows'],

@@ -1,5 +1,5 @@
 <template>
-	<section class="row align-items-center h-100 text-center text-white">
+	<section class="row align-items-center h-100 text-center text-black">
 		<div class="col">
 			<font-awesome-icon icon="circle-notch" size="10x" spin fixed-width />
 		</div>
@@ -21,4 +21,5 @@ export default {
 section {
 	height: 100%;
 }
+
 </style>

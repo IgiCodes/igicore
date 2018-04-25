@@ -1,18 +1,26 @@
 <template>
 	<main>
-		<loading />
+		<inventory v-show="showInventory" />
+		<interact v-show="showInteract" ref="interact" />
 	</main>
 </template>
 
 <script>
 import Loading from './components/Loading'
+import Inventory from './components/Inventory'
+import Interact from './components/Interact'
+
 import $ from 'jquery'
+import 'bootstrap'
+
 
 export default {
 	name: 'App',
 
 	components: {
-		Loading
+		Loading,
+		Inventory,
+		Interact
 	},
 
 	methods: {
@@ -42,17 +50,42 @@ export default {
 			const data = e.originalEvent.data.data || null
 
 			console.debug('onMessage', type, data)
+		},
+
+		onKeypress(e) {
+			console.debug(e.keyCode)
+			if (e.keyCode == 9) {
+				if (this.showInventory) this.showInventory = false
+				else this.showInventory = true
+			}
+
+			if (e.keyCode == 101) {
+				if (this.showInteract) this.showInteract = false
+				else this.showInteract = true
+
+				this.$refs.interact.toggle()
+			}
+		}
+
+	},
+
+	data() {
+		return {
+			showInventory: false,
+			showInteract: false
 		}
 	},
 
 	mounted() {
 		$(window).on('message', this.onMessage)
-		$(window).on('resize', this.onResize).trigger('resize')
+		//$(window).on('resize', this.onResize).trigger('resize')
+		$(window).on('keypress', this.onKeypress)
 	},
 
 	beforeDestroy() {
-		$(window).off('resize', this.onResize)
+		//$(window).off('resize', this.onResize)
 		$(window).off('message', this.onMessage)
+		$(window).off('keypress', this.onKeypress)
 	}
 }
 </script>
@@ -77,6 +110,7 @@ html, body {
 	width: 100%;
 	height: 100%;
 	overflow: hidden;
+	margin: 0;
 }
 
 body > main {
