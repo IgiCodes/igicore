@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import 'bootstrap'
 import $ from 'jquery'
 import Loading from './components/Loading'
 import CharacterSelect from './components/CharacterSelect/CharacterSelect'
