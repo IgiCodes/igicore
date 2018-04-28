@@ -1,4 +1,3 @@
-const webpack = require('webpack')
 const path = require('path')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
@@ -44,9 +43,9 @@ module.exports = {
 			{
 				test: /\.scss$/,
 				use: [
-				  'vue-style-loader',
-				  'css-loader',
-				  'sass-loader'
+					'vue-style-loader',
+					'css-loader',
+					'sass-loader'
 				]
 			},
 			{
