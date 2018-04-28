@@ -4,6 +4,7 @@ using System.Data.Entity.Migrations;
 using System.Diagnostics;
 using System.Linq;
 using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Connection;
@@ -72,6 +73,7 @@ namespace IgiCore.Server
 		{
 			TriggerClientEvent(citizen, "igi:client:ready", JsonConvert.SerializeObject(new ServerInformation
 			{
+				ResourceName = API.GetCurrentResourceName(),
 				ServerName = "igicore",
 				DateTime = DateTime.Now,
 				Weather = "EXTRASUNNY" // TODO
