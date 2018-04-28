@@ -4,10 +4,13 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using IgiCore.Client.Events;
 using IgiCore.Client.Handlers;
 using IgiCore.Client.Interface.Hud.Elements;
+using IgiCore.Client.Interface.Screens;
 using IgiCore.Client.Managers;
 using JetBrains.Annotations;
+using Screen = CitizenFX.Core.UI.Screen;
 
 namespace IgiCore.Client.Interface.Hud
 {
@@ -16,7 +19,8 @@ namespace IgiCore.Client.Interface.Hud
 	{
 		protected string ServerNameValue = string.Empty;
 		protected bool ChatVisibleValue = true;
-
+		
+		public List<Screens.Screen> Screens { get; } = new List<Screens.Screen>();
 		public List<Element> Elements { get; } = new List<Element>();
 
 		public string ServerName
@@ -58,27 +62,51 @@ namespace IgiCore.Client.Interface.Hud
 		{
 			TickHandler.Attach<HudManager>(Render);
 
-			Client.Instance.OnClientReady += async (s, a) =>
-			{
-				this.ServerName = a.Information.ServerName; // Set pause screen menu server name
-
-				// Init
-				API.SetPauseMenuActive(true);
-				API.SetNoLoadingScreen(true);
-
-				this.Visible = false;
-				this.MiniMapVisible = false;
-				this.ChatVisible = false;
-
-				// Fade out screen
-				await UI.FadeScreenOut(500);
-				UI.ShutdownLoadingScreen();
-			};
+			Client.Instance.OnClientReady += OnClientReady;
+			Client.Instance.OnCharacterLoaded += OnCharacterLoaded;
 
 			this.Elements.Add(new Location(this));
 			this.Elements.Add(new Speedometer(this));
 
+			this.Screens.Add(new CharacterSelectScreen());
+			this.Screens.Add(new InventoryScreen());
+
 			//MiniMapAnchor();
+		}
+
+		private async void OnClientReady(object s, ServerInformationEventArgs a)
+		{
+			this.ServerName = a.Information.ServerName; // Set pause screen menu server name
+
+			// Init
+			API.SetPauseMenuActive(true);
+			API.SetNoLoadingScreen(true);
+
+			this.Visible = false;
+			this.MiniMapVisible = false;
+			this.ChatVisible = false;
+
+			// Fade out screen
+			await UI.FadeScreenOut(500);
+
+			UI.ShutdownLoadingScreen();
+			
+			NUI.Show();
+
+			// Fade in screen
+			await UI.FadeScreenIn(500);
+		}
+
+		private async void OnCharacterLoaded(object s, CharacterEventArgs a)
+		{
+			// Fade out screen
+			await UI.FadeScreenOut(500);
+
+			foreach (var screen in this.Screens) await screen.Hide();
+			NUI.Hide();
+
+			// Fade in screen
+			await UI.FadeScreenIn(500);
 		}
 
 		public async Task Render()
@@ -100,63 +128,13 @@ namespace IgiCore.Client.Interface.Hud
 
 			this.MiniMapVisible = Game.Player.Character.IsInVehicle();
 
+			foreach (var screen in this.Screens) await screen.Render();
 			foreach (var element in this.Elements) await element.Render();
-
-			//var ui = MiniMapAnchor();
-			//var thickness = 4;
-			//drawRct(ui.X, ui.Y, ui.Width, thickness * ui.ScaleY, 0, 255, 0, 100);
-			//drawRct(ui.X, ui.Y + ui.Height, ui.Width, -thickness * ui.ScaleY, 0, 255, 0, 100);
-			//drawRct(ui.X, ui.Y, thickness * ui.ScaleX, ui.Height, 0, 255, 0, 100);
-			//drawRct(ui.X + ui.Width, ui.Y, -thickness * ui.ScaleX, ui.Height, 0, 255, 0, 100);
 		}
-
-		protected void drawRct(float x, float y, float width, float height, int r, int g, int b, int a)
-		{
-			API.DrawRect(x + width / 2, y + height / 2, width, height, r, g, b, a);
-		}
-
-		public MiniMapAnchor MiniMapAnchor()
-		{
-			int width = Screen.Resolution.Width;
-			int height = Screen.Resolution.Height;
-			float xScale = 1.0f / width;
-			float yScale = 1.0f / height;
-
-			float safezoneX = 1.0f / 20.0f;
-			float safezoneY = 1.0f / 20.0f;
-			float safezone = API.GetSafeZoneSize();
-
-			MiniMapAnchor minimap = new MiniMapAnchor
-			{
-				Width = xScale * (width / (4 * Screen.AspectRatio)),
-				Height = yScale * (height / 5.674f),
-				X = xScale * (width * (safezoneX * ((Math.Abs(safezone - 1)) * 10))),
-				ScaleX = xScale,
-				ScaleY = yScale
-			};
-
-			minimap.Y = (1 - yScale * (height * (safezoneY * ((Math.Abs(safezone - 1)) * 10)))) - minimap.Height;
-
-			//Client.Log(minimap.ToString());
-
-			return minimap;
-		}
-
+		
 		public override void Dispose()
 		{
 			TickHandler.Dettach<HudManager>();
 		}
-	}
-
-	public class MiniMapAnchor
-	{
-		public float Width { get; set; }
-		public float Height { get; set; }
-		public float X { get; set; }
-		public float Y { get; set; }
-		public float ScaleX { get; set; }
-		public float ScaleY { get; set; }
-
-		public override string ToString() => $"MiniMapAnchor: Size {this.Width}x{this.Height}, Pos {this.X}x{this.Y}, Scale {this.ScaleX}x{this.ScaleY}";
 	}
 }

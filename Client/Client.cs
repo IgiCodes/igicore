@@ -18,6 +18,7 @@ using IgiCore.Client.Services.Vehicle;
 using IgiCore.Client.Services.World;
 using IgiCore.Core.Models.Connection;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Debug = CitizenFX.Core.Debug;
 using static CitizenFX.Core.Native.API;
 using Screen = CitizenFX.Core.UI.Screen;
@@ -43,22 +44,6 @@ namespace IgiCore.Client
 		public ManagerRegistry Managers { get; protected set; }
 
 		public ServiceRegistry Services { get; protected set; }
-
-		/// <summary>
-		/// Gets or sets the character select screen.
-		/// </summary>
-		/// <value>
-		/// The character select screen.
-		/// </value>
-		public CharacterSelectScreen CharacterSelectScreen { get; protected set; }
-
-        /// <summary>
-        /// Gets or sets the inventory screen.
-        /// </summary>
-        /// <value>
-        /// The inventory screen.
-        /// </value>
-        public InventoryScreen InventoryScreen { get; protected set; }
 
         /// <summary>
         /// Gets or sets the currently loaded user.
@@ -125,18 +110,12 @@ namespace IgiCore.Client
 			//HandleEvent<string>("igi:bike:claim", ClaimVehicle<Bike>);
 			//HandleEvent<string>("igi:bike:unclaim", UnclaimVehicle<Bike>);
 
-			// -- UI
-
-			this.CharacterSelectScreen = new CharacterSelectScreen(); // Character select screen
-		    this.InventoryScreen = new InventoryScreen(); // Inventory screen
-
             // -- BOOTSTRAP
 
             HandleJsonEvent<ServerInformation>("igi:client:ready", ClientReady);
 
 			// Notify server that client is loaded
 			TriggerServerEvent("igi:client:ready");
-			
 		}
 
 		/// <summary>
@@ -226,11 +205,10 @@ namespace IgiCore.Client
 			// Enable PvP
 			NetworkSetFriendlyFireOption(true);
 			SetCanAttackFriendly(Game.Player.Character.Handle, true, false);
-
-			await this.CharacterSelectScreen.Hide();
-		    this.InventoryScreen.Enabled = true;
-
+			
             this.Managers.First<HudManager>().Visible = true;
+			
+
 
             //var bone = Game.Player.Character.Bones[Bone.PH_R_Hand];
 

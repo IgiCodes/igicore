@@ -8,35 +8,10 @@ namespace IgiCore.Client.Interface.Screens
 {
 	public abstract class Screen : IDisposable
 	{
-		public bool Visible { get; protected set; } = false;
-	    public bool Enabled { get; protected set; } = true;
-
-        public abstract Task Show();
-		public abstract Task Hide();
 		public abstract Task Render();
 
-		protected void SendNuiMessage(string type, object data = null)
-		{
-			API.SendNuiMessage(JsonConvert.SerializeObject(new
-			{
-				type,
-				data
-			}));
-		}
-
-		protected void RegisterNuiCallback(string type, Action<dynamic> callback)
-		{
-			API.RegisterNuiCallbackType(type);
-
-			Client.Instance.HandleEvent($"__cfx_nui:{type}", callback); // TODO: Dispose
-		}
-
-		protected void RegisterNuiCallback(string type, Action<dynamic, CallbackDelegate> callback)
-		{
-			API.RegisterNuiCallbackType(type);
-
-			Client.Instance.HandleEvent($"__cfx_nui:{type}", callback); // TODO: Dispose
-		}
+		public abstract Task Show();
+		public abstract Task Hide();
 
 		public virtual void Dispose()
 		{

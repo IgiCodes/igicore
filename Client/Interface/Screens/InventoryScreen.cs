@@ -17,21 +17,18 @@ namespace IgiCore.Client.Interface.Screens
 	[PublicAPI]
 	public class InventoryScreen : Screen
 	{
-		public Vector3 Postision => new Vector3(763.5f, 1185.5f, 380); // Top of VINEWOOD sign
-		public DateTime Time => new DateTime(DateTime.Now.Year, 1, 1, 12, 0, 0); // Noon
-		public Weather Weather => Weather.ExtraSunny;
-
-        public new bool Enabled = false;
+		public bool Visible = false;
 
 		public InventoryScreen()
 		{
-		    RegisterNuiCallback("inventory-hide", async (a, b) => await this.Hide());
-            TickHandler.Attach<InventoryScreen>(this.Render);
+			NUI.RegisterCallback("inventory-hide", async (a, b) => await this.Hide());
+
+			TickHandler.Attach<InventoryScreen>(this.Render);
 		}
 
 		public override async Task Show()
 		{
-		    if (!this.Enabled || this.Visible) return;
+			if (this.Visible) return;
 
 			// HUD
 			Client.Instance.Managers.First<HudManager>().Visible = false;
@@ -39,29 +36,31 @@ namespace IgiCore.Client.Interface.Screens
 			API.SetNuiFocus(true, true);
 
 			// Show
-			SendNuiMessage("element:inventory:show");
-		    this.Visible = true;
-        }
+			NUI.Send("element:inventory:show");
+			NUI.Show();
+			this.Visible = true;
+		}
 
 		public override async Task Hide()
 		{
-		    if (!this.Visible) return;
-		    Client.Log("Inventory Hide called!");
+			if (!this.Visible) return;
+			Client.Log("Inventory Hide called!");
 
 			// HUD
 			Client.Instance.Managers.First<HudManager>().Visible = true;
 			Client.Instance.Managers.First<HudManager>().ChatVisible = true;
 			API.SetNuiFocus(false, false);
 
-            // Hide
-		    Client.Log("Sending Inventory NUI Hide");
-            SendNuiMessage("element:inventory:hide");
-		    this.Visible = false;
+			// Hide
+			Client.Log("Sending Inventory NUI Hide");
+			NUI.Send("element:inventory:hide");
+			NUI.Hide();
+			this.Visible = false;
 		}
 
-	    public override async Task Render()
-	    {
-	        if (Input.Input.IsControlJustPressed(Control.PhoneUp) && !this.Visible) await this.Show();
-	    }
+		public override async Task Render()
+		{
+			if (Input.Input.IsControlJustPressed(Control.PhoneUp) && !this.Visible) await this.Show();
+		}
 	}
 }

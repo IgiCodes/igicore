@@ -83,6 +83,7 @@
     <Compile Include="Interface\Hud\Elements\Element.cs" />
     <Compile Include="Interface\Hud\Elements\Speedometer.cs" />
     <Compile Include="Interface\Hud\Elements\Location.cs" />
+    <Compile Include="Interface\NUI.cs" />
     <Compile Include="Interface\Screens\InventoryScreen.cs" />
     <Compile Include="Managers\Manager.cs" />
     <Compile Include="Managers\IManager.cs" />

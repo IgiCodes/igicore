@@ -9,14 +9,13 @@
 		</ul>
 
 		<div class="card-body">
-			<button type="button" class="btn btn-success btn-lg px-5 btn-load" @click="onSelect">Play</button>
-			<button type="button" class="btn btn-danger float-right mt-1 btn-delete" @click="onDelete"><font-awesome-icon icon="trash" fixed-width /></button>
+			<button type="button" class="btn btn-success btn-lg px-5 btn-load" @click="selectCharacter">Play</button>
+			<button type="button" class="btn btn-danger float-right mt-1 btn-delete" @click="deleteCharacter"><font-awesome-icon icon="trash" fixed-width /></button>
 		</div>
 	</div>
 </template>
 
 <script>
-import Nui from '../../helpers/Nui'
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
 
 export default {
@@ -34,12 +33,12 @@ export default {
 	},
 
 	methods: {
-		async onSelect() {
-			await Nui.send('character-load', this.character.Id)
+		async selectCharacter() {
+			await this.$store.dispatch('selectCharacter', this.character.Id)
 		},
 
-		async onDelete() {
-			await Nui.send('character-delete', this.character.Id)
+		async deleteCharacter() {
+			await this.$store.dispatch('selectCharacter', this.character.Id)
 		}
 	}
 }

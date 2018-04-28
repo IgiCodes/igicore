@@ -77,6 +77,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 import Character from './Character'
 
@@ -89,27 +90,10 @@ export default {
 		FontAwesomeLayers
 	},
 
-	data() {
-		return {
-			characters: []
-		}
-	},
-
-	methods: {
-		load(characters) {
-			this.characters = []
-
-			for (let i = 0; i < characters.length; i++) {
-				const character = characters[i]
-
-				character.GenderString = character.Gender == 0 ? 'Male' : 'Female'
-
-				const dob = new Date(character.DateOfBirth)
-				character.DateOfBirthFormatted = dob.getDate() + ' ' + dob.toLocaleString('en-US', {month: 'long'}) + ' ' + dob.getFullYear()
-
-				this.characters.push(character)
-			}
-		}
+	computed: {
+		...mapGetters([
+			'characters'
+		])
 	}
 }
 </script>

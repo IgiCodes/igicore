@@ -27,24 +27,28 @@ namespace IgiCore.Client.Interface.Screens
 		public CharacterSelectScreen()
 		{
 			// Events
+			Client.Instance.OnClientReady += (sender, args) => NUI.Send("ready", args.Information);
+			Client.Instance.OnUserLoaded += (sender, args) => NUI.Send("user", args.User);
 			Client.Instance.OnCharactersList += OnCharactersList;
 
 			// NUI events
-			RegisterNuiCallback("character-create", OnNuiCharacterCreate);
-			RegisterNuiCallback("character-load", OnNuiCharacterLoad);
-			RegisterNuiCallback("character-delete", OnNuiCharacterDelete);
+			NUI.RegisterCallback("character-create", OnNuiCharacterCreate);
+			NUI.RegisterCallback("character-load", OnNuiCharacterLoad);
+			NUI.RegisterCallback("character-delete", OnNuiCharacterDelete);
 
 			TickHandler.Attach<CharacterSelectScreen>(Render);
 		}
 
 		private async void OnCharactersList(object sender, CharactersEventArgs args)
 		{
-			SendNuiMessage("screen:character-creation:characters", args.Characters);
+			NUI.Send("characters", args.Characters);
 
 			await Show();
+
+			await UI.FadeScreenIn(500);
 		}
 
-		protected void OnNuiCharacterCreate(dynamic character)
+		protected void OnNuiCharacterCreate(dynamic character, CallbackDelegate callback)
 		{
 			BaseScript.TriggerServerEvent("igi:character:create", JsonConvert.SerializeObject(new Character
 			{
@@ -54,16 +58,22 @@ namespace IgiCore.Client.Interface.Screens
 				Gender = short.Parse(character.gender),
 				DateOfBirth = DateTime.Parse(character.dob)
 			}));
+
+			callback("ok");
 		}
 
 		protected void OnNuiCharacterLoad(dynamic id, CallbackDelegate callback)
 		{
 			BaseScript.TriggerServerEvent("igi:character:load", id);
+
+			callback("ok");
 		}
 
-		protected void OnNuiCharacterDelete(dynamic id)
+		protected void OnNuiCharacterDelete(dynamic id, CallbackDelegate callback)
 		{
 			BaseScript.TriggerServerEvent("igi:character:delete", id);
+
+			callback("ok");
 		}
 
 		public override async Task Show()
@@ -98,17 +108,10 @@ namespace IgiCore.Client.Interface.Screens
 			camera.Position = new Vector3(location.X, location.Y, this.CameraHeight);
 			camera.PointAt(this.CameraCenter);
 			World.RenderingCamera = camera;
-
-			// Show
-			SendNuiMessage("screen:character-creation:show");
-
-			await UI.FadeScreenIn(500);
 		}
 
 		public override async Task Hide()
 		{
-			await UI.FadeScreenOut(500);
-
 			// HUD
 			Client.Instance.Managers.First<HudManager>().Visible = true;
 			Client.Instance.Managers.First<HudManager>().ChatVisible = true;
@@ -124,11 +127,6 @@ namespace IgiCore.Client.Interface.Screens
 			// Camera
 			World.DestroyAllCameras();
 			World.RenderingCamera = null; // Required to reset the camera
-
-			// Hide
-			SendNuiMessage("screen:character-creation:hide");
-
-			await UI.FadeScreenIn(500);
 		}
 
 		public override async Task Render()

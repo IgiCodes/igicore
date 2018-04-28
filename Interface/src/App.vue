@@ -1,9 +1,8 @@
 <template>
-	<main>
-		<loading v-show="!showCharacterSelect && !showInventory && !showInteract" />
-		<character-select v-show="showCharacterSelect" ref="CharacterSelect" />
-		<inventory v-show="showInventory" />
-		<interact v-show="showInteract" ref="Interact" />
+	<main v-show="visible">
+		<transition name="component-fade">
+			<component :is="screen" />
+		</transition>
 	</main>
 </template>
 
@@ -11,7 +10,7 @@
 import 'bootstrap'
 import $ from 'jquery'
 import Loading from './components/Loading'
-import CharacterSelect from './components/CharacterSelect/CharacterSelect'
+import CharacterSelect from './components/CharacterSelect'
 import Inventory from './components/Inventory'
 import Interact from './components/Interact'
 
@@ -27,9 +26,8 @@ export default {
 
 	data() {
 		return {
-			showCharacterSelect: false,
-			showInventory: false,
-			showInteract: false
+			visible: false,
+			screen: 'Loading'
 		}
 	},
 
@@ -71,16 +69,28 @@ export default {
 			const type = e.originalEvent.data.type
 			const data = e.originalEvent.data.data || null
 
-			console.debug('NUI', type, data)
+			console.debug('[NUI RECV]', type, data)
 
-			if (type == 'screen:character-creation:characters') {
-				this.$refs.CharacterSelect.load(data)
+			if (type == 'ready') {
+				this.$store.commit('setEnvironment', data)
 			}
-			if (type == 'screen:character-creation:show') {
-				this.showCharacterSelect = true
+
+			if (type == 'characters') {
+				this.$store.commit('setCharacters', data)
+
+				this.screen = 'CharacterSelect'
 			}
-			if (type == 'screen:character-creation:hide') {
-				this.showCharacterSelect = false
+
+			if (type == 'show') {
+				this.visible = true
+			}
+
+			if (type == 'hide') {
+				this.visible = false
+			}
+
+			if (type == 'element:inventory:show') {
+				this.screen = 'Inventory'
 			}
 		},
 
@@ -143,5 +153,18 @@ body > main {
 	outline: none;
 
 	/* border: 1px solid red; */
+}
+
+.component-fade-enter-active {
+	transition: all 0.5s ease;
+}
+
+.component-fade-leave-active {
+	transition: all 0.1s;
+}
+
+.component-fade-enter,
+.component-fade-leave-to {
+	opacity: 0;
 }
 </style>
