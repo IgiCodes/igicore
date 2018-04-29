@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using IgiCore.Core.Models.Inventories.Characters;
 
 namespace IgiCore.Core.Models.Player
@@ -23,5 +24,6 @@ namespace IgiCore.Core.Models.Player
 		Inventory Inventory { get; set; }
 	    DateTime LastPlayed { get; set; }
 		DateTime Created { get; set; }
-	}
+        List<Skill> Skills { get; set; }
+    }
 }

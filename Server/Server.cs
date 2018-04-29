@@ -13,7 +13,9 @@ using IgiCore.Core.Models.Objects;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Services;
 using IgiCore.Server.Models;
+using IgiCore.Server.Models.Groups;
 using IgiCore.Server.Models.Objects.Vehicles;
+using IgiCore.Server.Models.Player;
 using IgiCore.Server.Services;
 using IgiCore.Server.Storage.MySql;
 using Newtonsoft.Json;
@@ -24,13 +26,17 @@ namespace IgiCore.Server
 {
 	public partial class Server : BaseScript
 	{
-		public static DB Db;
+	    public static Server Instance { get; protected set; }
+        public static DB Db;
 		protected ServiceRegistry Services = new ServiceRegistry();
 
 		public new PlayerList Players => base.Players;
 
 		public Server()
 		{
+            // Singleton
+		    Instance = this;
+
 			Db = new DB();
 			Db.Database.CreateIfNotExists();
 

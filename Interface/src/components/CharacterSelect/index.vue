@@ -28,7 +28,7 @@
 						</button>
 					</div>
 
-					<form>
+					<form @submit="submit">
 						<div class="modal-body">
 							<div class="form-row">
 								<div class="form-group col-md-4">
@@ -80,6 +80,8 @@
 import { mapGetters } from 'vuex'
 import { FontAwesomeIcon, FontAwesomeLayers } from '@fortawesome/vue-fontawesome'
 import Character from './Character'
+import $ from 'jquery'
+import Nui from '../../helpers/Nui'
 
 export default {
 	name: 'CharacterSelect',
@@ -94,6 +96,18 @@ export default {
 		...mapGetters([
 			'characters'
 		])
+	},
+
+	methods: {
+		submit(e) {
+			e.preventDefault()
+			const data = $('form').serializeArray()
+			const obj = {}
+			for (let i = 0; i < data.length; ++i)
+				obj[data[i].name] = data[i].value
+			console.debug(obj)
+			Nui.send('character-create', obj)
+		}
 	}
 }
 </script>

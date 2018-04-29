@@ -56,6 +56,16 @@
     <Compile Include="Models\Appearance\Style.cs" />
     <Compile Include="Models\Color.cs" />
     <Compile Include="Models\Connection\ServerInformation.cs" />
+    <Compile Include="Models\Economy\Banking\BankAccountTypes.cs" />
+    <Compile Include="Models\Economy\Banking\IBank.cs" />
+    <Compile Include="Models\Economy\Banking\IBankAccount.cs" />
+    <Compile Include="Models\Economy\Banking\IBankAccountCard.cs" />
+    <Compile Include="Models\Economy\Banking\IBankAccountMembers.cs" />
+    <Compile Include="Models\Economy\Banking\IBankATM.cs" />
+    <Compile Include="Models\Economy\Banking\IBankBranch.cs" />
+    <Compile Include="Models\Groups\IGroup.cs" />
+    <Compile Include="Models\Groups\IGroupMember.cs" />
+    <Compile Include="Models\Groups\IGroupRole.cs" />
     <Compile Include="Models\Inventories\Characters\Arm.cs" />
     <Compile Include="Models\Inventories\Characters\Foot.cs" />
     <Compile Include="Models\Inventories\Characters\Inventory.cs" />
@@ -83,7 +93,8 @@
     <Compile Include="Models\Inventories\Container.cs" />
     <Compile Include="Models\Inventories\IContainer.cs" />
     <Compile Include="Models\Objects\IStorable.cs" />
-    <Compile Include="Models\Objects\Items\Cash.cs" />
+    <Compile Include="Models\Objects\Items\Economy\BankCard.cs" />
+    <Compile Include="Models\Objects\Items\Economy\Cash.cs" />
     <Compile Include="Models\Objects\Items\Clothing.cs" />
     <Compile Include="Models\Objects\Items\IEquipable.cs" />
     <Compile Include="Models\Objects\Items\IStackable.cs" />
@@ -133,6 +144,10 @@
     <Compile Include="Models\Player\IUser.cs" />
     <Compile Include="Models\Player\ICharacter.cs" />
     <Compile Include="Models\Objects\Items\IWeapon.cs" />
+    <Compile Include="Models\Player\MentalSkillType.cs" />
+    <Compile Include="Models\Player\PhysicalSkillType.cs" />
+    <Compile Include="Models\Player\Skill.cs" />
+    <Compile Include="Models\Player\SkillType.cs" />
     <Compile Include="Models\RadioStation.cs" />
     <Compile Include="Services\IService.cs" />
     <Compile Include="Services\Service.cs" />

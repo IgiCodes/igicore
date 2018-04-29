@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -9,9 +10,8 @@ using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Inventories.Characters;
 using IgiCore.Core.Models.Player;
 using Newtonsoft.Json;
-using static IgiCore.Server.Server;
 
-namespace IgiCore.Server.Models
+namespace IgiCore.Server.Models.Player
 {
     public class Character : ICharacter
     {
@@ -34,8 +34,9 @@ namespace IgiCore.Server.Models
 	    public virtual Style Style { get; set; }
 		public DateTime LastPlayed { get; set; }
 	    public DateTime Created { get; set; }
+        public virtual List<Skill> Skills { get; set; }
 
-	    [JsonIgnore]
+        [JsonIgnore]
 	    public Vector3 Position
 	    {
 		    get => new Vector3(this.PosX, this.PosY, this.PosZ);
@@ -60,7 +61,7 @@ namespace IgiCore.Server.Models
         public static Character GetOrCreate(User user, Guid charId)
         {
             Character character = null;
-            DbContextTransaction transaction = Db.Database.BeginTransaction();
+            DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
 
             try
             {
@@ -73,8 +74,8 @@ namespace IgiCore.Server.Models
 
                     user.Characters.Add(character);
 
-                    Db.Users.AddOrUpdate(user);
-                    Db.SaveChanges();
+                    Server.Db.Users.AddOrUpdate(user);
+                    Server.Db.SaveChanges();
                 }
                 else
                 {
@@ -94,13 +95,50 @@ namespace IgiCore.Server.Models
             return character;
         }
 
+        public static Character GetLatestOrCreate(User user)
+        {
+            Character character = null;
+            DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
+
+            try
+            {
+                if (user.Characters.Count == 0)
+                {
+                    Debug.WriteLine($"Character not found, creating new char for userid: {user.Id} ");
+
+                    character = new Character
+                        { Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() } };
+
+                    user.Characters.Add(character);
+
+                    Server.Db.Users.AddOrUpdate(user);
+                    Server.Db.SaveChanges();
+                }
+                else
+                {
+                    character = user.Characters.OrderBy(c => c.LastPlayed).Last();
+                    Debug.WriteLine($"Character found for userId: {user.Id}  ID: {character.Id}");
+                }
+
+                transaction.Commit();
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+
+                Debug.Write(ex.Message);
+            }
+
+            return character;
+        }
+
         public static void Save(Character newChar)
         {
-            Log("Character save called");
+            Server.Log("Character save called");
 
-            Db.Styles.AddOrUpdate(newChar.Style);
-            Db.Characters.AddOrUpdate(newChar);
-            Db.SaveChanges();
+            Server.Db.Styles.AddOrUpdate(newChar.Style);
+            Server.Db.Characters.AddOrUpdate(newChar);
+            Server.Db.SaveChanges();
         }
 
         public override string ToString() { return $"Character [{this.Id}]: {this.FullName}, {this.Position}"; }

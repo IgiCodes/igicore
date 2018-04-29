@@ -8,10 +8,9 @@ using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Player;
 using Newtonsoft.Json;
-using static IgiCore.Server.Server;
 using Citizen = CitizenFX.Core.Player;
 
-namespace IgiCore.Server.Models
+namespace IgiCore.Server.Models.Player
 {
     public class User : IUser
     {
@@ -32,12 +31,12 @@ namespace IgiCore.Server.Models
         {
             User user = null;
 
-            DbContextTransaction transaction = Db.Database.BeginTransaction();
+            DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
             var steamId = citizen.Identifiers["steam"];
 
             try
             {
-                var users = Db.Users.Where(u => u.SteamId == steamId).ToList();
+                var users = Server.Db.Users.Where(u => u.SteamId == steamId).ToList();
 
                 if (!users.Any())
                 {
@@ -46,8 +45,8 @@ namespace IgiCore.Server.Models
                     Debug.WriteLine(
                         $"User not found, creating new user for steamid: {user.SteamId} with name: {user.Name}");
 
-                    Db.Users.Add(user);
-                    Db.SaveChanges();
+                    Server.Db.Users.Add(user);
+                    Server.Db.SaveChanges();
                 }
                 else
                 {

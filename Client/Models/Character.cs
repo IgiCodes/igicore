@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using CitizenFX.Core;
 using IgiCore.Client.Handlers;
 using IgiCore.Core.Extensions;
@@ -34,8 +35,9 @@ namespace IgiCore.Client.Models
 		public Style Style { get; set; }
 		public DateTime LastPlayed { get; set; }
 		public DateTime Created { get; set; }
+        public List<Skill> Skills { get; set; }
 
-		[JsonIgnore]
+        [JsonIgnore]
 		public Vector3 Position
 		{
 			get => new Vector3(this.PosX, this.PosY, this.PosZ);

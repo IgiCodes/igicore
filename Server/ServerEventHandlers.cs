@@ -1,9 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
+using IgiCore.Server.Extentions;
 using IgiCore.Server.Models;
+using IgiCore.Server.Models.Groups;
+using IgiCore.Server.Models.Player;
 using Newtonsoft.Json;
 using Citizen = CitizenFX.Core.Player;
 
@@ -195,6 +199,15 @@ namespace IgiCore.Server
                     Log($"Sending {bike.Id}");
 
                     TriggerClientEvent(citizen, "igi:bike:spawn", JsonConvert.SerializeObject(bike));
+
+                    break;
+
+                case "/group":
+                    Log("/group command called");
+
+                    if (args[0] == null) return;
+                    string groupName = args[0];
+                    Group.Create(citizen.ToLastCharacter(), groupName);
 
                     break;
                 default:
