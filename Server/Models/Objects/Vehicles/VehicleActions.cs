@@ -9,7 +9,7 @@ namespace IgiCore.Server.Models.Objects.Vehicles
 {
     public static class VehicleActions
     {
-        public static void Save<T>(string vehicleJson) where T : class, IVehicle // Has no ID
+        public static async void Save<T>(string vehicleJson) where T : class, IVehicle // Has no ID
         {
             T vehicle = JsonConvert.DeserializeObject<T>(vehicleJson);
 
@@ -22,7 +22,7 @@ namespace IgiCore.Server.Models.Objects.Vehicles
             if (vehicle.TrackingUserId != dbCar.TrackingUserId && dbCar.TrackingUserId != Guid.Empty) return;
 
             Db.Set<T>().AddOrUpdate(vehicle);
-            Db.SaveChanges();
+            await Db.SaveChangesAsync();
         }
     }
 }

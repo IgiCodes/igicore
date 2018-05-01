@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Appearance;
@@ -58,7 +59,7 @@ namespace IgiCore.Server.Models.Player
 			this.Alive = false;
 		}
 
-		public static Character GetOrCreate(User user, Guid charId)
+		public static async Task<Character> GetOrCreate(User user, Guid charId)
 		{
 			Character character = null;
 			DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
@@ -75,7 +76,7 @@ namespace IgiCore.Server.Models.Player
 					user.Characters.Add(character);
 
 					Server.Db.Users.AddOrUpdate(user);
-					Server.Db.SaveChanges();
+					await Server.Db.SaveChangesAsync();
 				}
 				else
 				{
@@ -95,7 +96,7 @@ namespace IgiCore.Server.Models.Player
 			return character;
 		}
 
-		public static Character GetLatestOrCreate(User user)
+		public static async Task<Character> GetLatestOrCreate(User user)
 		{
 			Character character = null;
 			DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
@@ -112,7 +113,7 @@ namespace IgiCore.Server.Models.Player
 					user.Characters.Add(character);
 
 					Server.Db.Users.AddOrUpdate(user);
-					Server.Db.SaveChanges();
+					await Server.Db.SaveChangesAsync();
 				}
 				else
 				{
@@ -132,13 +133,13 @@ namespace IgiCore.Server.Models.Player
 			return character;
 		}
 
-		public static void Save(Character newChar)
+		public static async void Save(Character newChar)
 		{
 			Server.Log("Character save called");
 
 			Server.Db.Styles.AddOrUpdate(newChar.Style);
 			Server.Db.Characters.AddOrUpdate(newChar);
-			Server.Db.SaveChanges();
+			await Server.Db.SaveChangesAsync();
 		}
 
 		public override string ToString() { return $"Character [{this.Id}]: {this.FullName}, {this.Position}"; }

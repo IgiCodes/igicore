@@ -4,6 +4,8 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 using System.Linq;
+using System.Net;
+using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Player;
@@ -24,6 +26,8 @@ namespace IgiCore.Server.Models.Player
 
 		public string Name { get; set; }
 		public DateTime? AcceptedRules { get; set; }
+		public DateTime LastConnected { get; set; }
+		public string LastIpAddress { get; set; }
 		public DateTime Created { get; set; }
 
 		public User()
@@ -32,9 +36,12 @@ namespace IgiCore.Server.Models.Player
 			this.Created = DateTime.UtcNow;
 		}
 
-		public static void Load([FromSource] Citizen citizen) { BaseScript.TriggerClientEvent(citizen, "igi:user:load", JsonConvert.SerializeObject(GetOrCreate(citizen))); }
+		public static async void Load([FromSource] Citizen citizen)
+		{
+			BaseScript.TriggerClientEvent(citizen, "igi:user:load", JsonConvert.SerializeObject(await GetOrCreate(citizen)));
+		}
 
-		public static User GetOrCreate(Citizen citizen)
+		public static async Task<User> GetOrCreate(Citizen citizen)
 		{
 			User user = null;
 
@@ -49,22 +56,19 @@ namespace IgiCore.Server.Models.Player
 				{
 					user = new User
 					{
-						SteamId = citizen.Identifiers["steam"],
+						SteamId = steamId,
 						Name = citizen.Name,
-						AcceptedRules = null
+						AcceptedRules = null,
+						LastConnected = DateTime.UtcNow,
+						LastIpAddress = citizen.EndPoint
 					};
 
-					Debug.WriteLine(
-						$"User not found, creating new user for steamid: {user.SteamId} with name: {user.Name}");
-
 					Server.Db.Users.Add(user);
-					Server.Db.SaveChanges();
+					await Server.Db.SaveChangesAsync();
 				}
 				else
 				{
 					user = users.First();
-
-					Debug.WriteLine($"User found for steamid: {user.SteamId} with name: {user.Name} and ID: {user.Id}");
 				}
 
 				transaction.Commit();

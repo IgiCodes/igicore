@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Groups;
 using IgiCore.Server.Models.Player;
@@ -19,7 +20,7 @@ namespace IgiCore.Server.Models.Groups
 
 		public Group() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
 
-		public static Group Create(Character owner, string name)
+		public static async Task<Group> Create(Character owner, string name)
 		{
 			List<GroupRole> roles = new List<GroupRole>
 			{
@@ -50,7 +51,7 @@ namespace IgiCore.Server.Models.Groups
 			};
 
 			Server.Db.Groups.Add(group);
-			Server.Db.SaveChanges();
+			await Server.Db.SaveChangesAsync();
 
 			return group;
 		}

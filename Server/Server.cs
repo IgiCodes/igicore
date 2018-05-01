@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Connection;
 using IgiCore.Core.Models.Objects;
 using IgiCore.Core.Services;
 using IgiCore.Server.Models.Player;
+using IgiCore.Server.Rpc;
 using IgiCore.Server.Services;
 using IgiCore.Server.Storage.MySql;
 using Newtonsoft.Json;
@@ -42,21 +45,22 @@ namespace IgiCore.Server
 			//HandleEvent<string>("onResourceStart", r => Debug.WriteLine($"Start resource: {r}"));
 			//HandleEvent<string>("onResourceStop", r => Debug.WriteLine($"Stop resource: {r}"));
 
-			HandleEvent<Citizen>("hostingSession", SessionManager.OnHostingSession);
-			HandleEvent<Citizen>("hostedSession", SessionManager.OnHostedSession);
+			HandleEvent<Citizen>(ServerEvents.HostingSession, SessionManager.OnHostingSession);
+			HandleEvent<Citizen>(ServerEvents.HostedSession, SessionManager.OnHostedSession);
 
-			HandleEvent<Citizen, string, CallbackDelegate>("playerConnecting", OnPlayerConnecting);
-			HandleEvent<Citizen, string, CallbackDelegate>("playerDropped", OnPlayerDropped);
+			HandleEvent<Citizen, string, CallbackDelegate>(ServerEvents.PlayerConnecting, OnPlayerConnecting);
+			HandleEvent<Citizen, string, CallbackDelegate>(ServerEvents.PlayerDropped, OnPlayerDropped);
 
 			HandleEvent<int, string, string>("chatMessage", OnChatMessage);
 
-			HandleEvent<Citizen>("igi:client:ready", ClientReady);
+			HandleEvent<Citizen>(RpcEvents.GetServerInformation, ClientReady);
 
 			HandleEvent<Citizen, string>("igi:user:rules", AcceptRules);
 
-			HandleEvent<Citizen>("igi:user:load", User.Load);
-			HandleEvent<Citizen>("igi:user:characters", GetCharacters);
-			HandleEvent<Citizen, string>("igi:character:load", LoadCharacter);
+			HandleEvent<Citizen>(RpcEvents.GetUser, User.Load);
+			HandleEvent<Citizen>(RpcEvents.GetCharacters, GetCharacters);
+
+			HandleEvent<Citizen, string>(RpcEvents.CharacterLoad, LoadCharacter);
 			HandleEvent<Citizen, string>("igi:character:create", CreateCharacter);
 			//HandleEvent<Citizen, string>("igi:character:delete", DeleteCharacter);
 			HandleJsonEvent<Character>("igi:character:save", Character.Save);
@@ -77,8 +81,6 @@ namespace IgiCore.Server
 
 		private static void ClientReady([FromSource] Citizen citizen)
 		{
-			Log("Sending: igi:client:ready");
-
 			TriggerClientEvent(citizen, "igi:client:ready", JsonConvert.SerializeObject(new ServerInformation
 			{
 				ResourceName = API.GetCurrentResourceName(),
@@ -88,30 +90,28 @@ namespace IgiCore.Server
 			}));
 		}
 
-		private static void AcceptRules([FromSource] Citizen citizen, string jsonDateTime)
+		private static async void AcceptRules([FromSource] Citizen citizen, string jsonDateTime)
 		{
-			var user = User.GetOrCreate(citizen);
+			var user = await User.GetOrCreate(citizen);
 
 			user.AcceptedRules = JsonConvert.DeserializeObject<DateTime>(jsonDateTime);
 
 			Db.Users.AddOrUpdate(user);
-			Db.SaveChanges();
+			await Db.SaveChangesAsync();
 		}
 
-		private static void GetCharacters([FromSource] Citizen citizen)
+		private static async void GetCharacters([FromSource] Citizen citizen)
 		{
-			User user = User.GetOrCreate(citizen);
+			User user = await User.GetOrCreate(citizen);
 
 			if (user.Characters == null) user.Characters = new List<Character>();
 
-			var j = JsonConvert.SerializeObject(user.Characters.OrderByDescending(c => c.Created));
-			Debug.Write(j + Environment.NewLine);
-			TriggerClientEvent(citizen, "igi:user:characters", j);
+			TriggerClientEvent(citizen, "igi:user:characters", JsonConvert.SerializeObject(user.Characters.OrderByDescending(c => c.Created)));
 		}
 
-		private static void CreateCharacter([FromSource] Citizen citizen, string characterJson)
+		private static async void CreateCharacter([FromSource] Citizen citizen, string characterJson)
 		{
-			User user = User.GetOrCreate(citizen);
+			User user = await User.GetOrCreate(citizen);
 
 			if (user.Characters == null) user.Characters = new List<Character>();
 
@@ -130,14 +130,14 @@ namespace IgiCore.Server
 			user.Characters.Add(character);
 
 			Db.Users.AddOrUpdate(user);
-			Db.SaveChanges();
+			await Db.SaveChangesAsync();
 
 			GetCharacters(citizen);
 		}
 
-		private static void LoadCharacter([FromSource] Citizen citizen, string characterId)
+		private static async void LoadCharacter([FromSource] Citizen citizen, string characterId)
 		{
-			User user = User.GetOrCreate(citizen);
+			User user = await User.GetOrCreate(citizen);
 
 			if (user.Characters == null) user.Characters = new List<Character>();
 
@@ -154,7 +154,7 @@ namespace IgiCore.Server
 			TriggerClientEvent(this.Players[playerId], $"igi:{typeof(T).Name}:claim", JsonConvert.SerializeObject(obj));
 		}
 
-		private void ClaimObject<T>([FromSource] Citizen claimer, string objectIdString) where T : class, IObject
+		private async Task ClaimObject<T>([FromSource] Citizen claimer, string objectIdString) where T : class, IObject
 		{
 			Log($"{objectIdString}");
 
@@ -168,7 +168,7 @@ namespace IgiCore.Server
 			obj.TrackingUserId = claimerUser.Id;
 
 			Db.Set<T>().AddOrUpdate(obj);
-			Db.SaveChanges();
+			await Db.SaveChangesAsync();
 
 			if (currentTrackerId == Guid.Empty) return;
 
@@ -183,7 +183,7 @@ namespace IgiCore.Server
 			catch (Exception ex) { Log(ex.Message); }
 		}
 
-		private static void UnclaimObject<T>(int netId) where T : class, IObject
+		private static async Task UnclaimObject<T>(int netId) where T : class, IObject
 		{
 			T obj = Db.Set<T>().First(c => c.NetId == netId);
 			obj.TrackingUserId = Guid.Empty;
@@ -191,12 +191,12 @@ namespace IgiCore.Server
 			obj.NetId = null;
 
 			Db.Set<T>().AddOrUpdate(obj);
-			Db.SaveChanges();
+			await Db.SaveChangesAsync();
 		}
 
-		private static Character NewCharCommand(Citizen citizen, string charName)
+		private static async Task<Character> NewCharCommand(Citizen citizen, string charName)
 		{
-			User user = User.GetOrCreate(citizen);
+			User user = await User.GetOrCreate(citizen);
 			if (user.Characters == null) user.Characters = new List<Character>();
 
 			Character character = new Character
@@ -208,7 +208,7 @@ namespace IgiCore.Server
 			user.Characters.Add(character);
 
 			Db.Users.AddOrUpdate(user);
-			Db.SaveChanges();
+			await Db.SaveChangesAsync();
 
 			return character;
 		}

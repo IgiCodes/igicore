@@ -1,10 +1,11 @@
-﻿using IgiCore.Server.Models.Player;
+﻿using System.Threading.Tasks;
+using IgiCore.Server.Models.Player;
 using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Server.Extentions
 {
 	public static class CitizenExtentions
 	{
-		public static Character ToLastCharacter(this Citizen citizen) => Character.GetLatestOrCreate(User.GetOrCreate(citizen));
+		public static async Task<Character> ToLastCharacter(this Citizen citizen) => await Character.GetLatestOrCreate(await User.GetOrCreate(citizen));
 	}
 }

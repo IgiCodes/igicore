@@ -29,10 +29,8 @@ namespace IgiCore.Server.Services
 
 		public override void Initialise() { ResetVehicleTracking(); }
 
-		private static void ResetVehicleTracking()
+		private async static void ResetVehicleTracking()
 		{
-			Log("Resetting vehicles");
-
 			foreach (Vehicle dbVehicle in Db.Vehicles.ToArray())
 			{
 				dbVehicle.Handle = null;
@@ -41,11 +39,11 @@ namespace IgiCore.Server.Services
 
 				Db.Vehicles.AddOrUpdate(dbVehicle);
 			}
-
-			Db.SaveChanges();
+			
+			await Db.SaveChangesAsync();
 		}
 
-		private void ReassignTrackedVehicles(
+		private async void ReassignTrackedVehicles(
 			[FromSource] Citizen disconnectedCitizen, string disconnectMessage,
 			CallbackDelegate kickReason)
 		{
@@ -108,7 +106,7 @@ namespace IgiCore.Server.Services
 					vehicle.TrackingUserId = Guid.Empty;
 
 					Db.Vehicles.AddOrUpdate(vehicle);
-					Db.SaveChanges();
+					await Db.SaveChangesAsync();
 				}
 			}
 
