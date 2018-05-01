@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Entity.Migrations;
 using System.Linq;
-using System.Net;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Server.Extentions;
-using IgiCore.Server.Models;
 using IgiCore.Server.Models.Groups;
 using IgiCore.Server.Models.Player;
 using Newtonsoft.Json;

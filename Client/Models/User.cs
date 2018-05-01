@@ -1,5 +1,4 @@
 using System;
-using System.Net;
 using IgiCore.Core.Models.Player;
 
 namespace IgiCore.Client.Models

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using CitizenFX.Core;
-using IgiCore.Client.Handlers;
 using IgiCore.Client.Rpc;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Appearance;

@@ -3,7 +3,6 @@ using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Inventories.Characters;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Server.Migrations;
-using IgiCore.Server.Models;
 using IgiCore.Server.Models.Economy.Banking;
 using IgiCore.Server.Models.Groups;
 using IgiCore.Server.Models.Player;
