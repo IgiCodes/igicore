@@ -4,6 +4,9 @@ using System.Threading.Tasks;
 
 namespace IgiCore.Client.Handlers
 {
+	/// <summary>
+	/// Handles attaching actions to the global tick cycle.
+	/// </summary>
 	public static class TickHandler
 	{
 		private static readonly Dictionary<Type, Func<Task>> Handlers = new Dictionary<Type, Func<Task>>();
