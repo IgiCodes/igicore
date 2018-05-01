@@ -21,13 +21,24 @@ new Vue({
 // HACK: Emulate server NUI messages with a slight delay
 if (window.emulateServer) {
 	setTimeout(() => {
-		Nui.emulate('ready', {
+		Nui.emulate('client', {
 			ResourceName: 'igicore',
-			ServerName: 'igicore',
+			ServerName: 'IgiCore',
 			Weather: 'EXTRASUNNY',
 			DateTime: '2018-04-26T01:41:40.6064963+01:00'
 		})
 	}, 500)
+
+	setTimeout(() => {
+		Nui.emulate('user', {
+			Id: 'f31df95f-a5e7-453e-ab34-c61e609c571e',
+			SteamId: '110000000000001',
+			Name: 'User',
+			AcceptedRules: null,
+			Character: null,
+			Created: '2018-04-26T01:41:40.6064963+01:00'
+		})
+	}, 1000)
 
 	setTimeout(() => {
 		Nui.emulate('characters', [{
@@ -163,11 +174,7 @@ if (window.emulateServer) {
 			LastPlayed: '0001-01-01T00:00:00',
 			Created: '2018-04-12T00:38:59'
 		}])
-	}, 1000)
-
-	setTimeout(() => {
-		Nui.emulate('show')
-	}, 2000)
+	}, 1500)
 }
 
 // Microphone VU meter demo

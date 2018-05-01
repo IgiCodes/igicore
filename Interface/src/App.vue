@@ -1,67 +1,61 @@
 <template>
-	<main v-show="visible">
-		<transition name="component-fade">
-			<component :is="screen" />
-		</transition>
-	</main>
+	<transition name="component-fade">
+		<component v-show="visible" :is="screen" @finish="screenFinished(screen)" @select="select" @disconnect="disconnect" />
+	</transition>
 </template>
 
 <script>
-import 'bootstrap'
 import $ from 'jquery'
+import Blank from './components/Blank'
 import Loading from './components/Loading'
+import Intro from './components/Intro'
 import CharacterSelect from './components/CharacterSelect'
 import Inventory from './components/Inventory'
 import Interact from './components/Interact'
+import Nui from './helpers/Nui'
 
 export default {
 	name: 'App',
 
 	components: {
+		// Screens
+		Blank,
 		Loading,
+		Intro,
 		CharacterSelect,
+
+		// Menus
 		Inventory,
 		Interact
 	},
 
 	data() {
 		return {
-			visible: false,
-			screen: 'Loading'
+			visible: true,
+			screen: 'Blank'
 		}
 	},
 
 	mounted() {
-		//$(window).on('resize', this.onResize).trigger('resize')
+		// Fake background
+		if (window.emulateServer) {
+			$('body').css({
+				'background-image': 'url(../loading-screen/img/bg1.jpg)',
+				'background-attachment': 'fixed',
+				'background-size': 'cover'
+			})
+		}
+
 		$(window).on('message', this.onMessage)
 		$(window).on('keypress', this.onKeypress)
 	},
 
 	beforeDestroy() {
-		//$(window).off('resize', this.onResize)
 		$(window).off('message', this.onMessage)
 		$(window).off('keypress', this.onKeypress)
 	},
 
 	methods: {
-		onResize() {
-			const page = $('body')
-
-			// TODO: Get safezone size from game
-			const safezone = 0.03 // 97%
-			const x = (page.width() * safezone) / 2
-			const width = page.width() - (x * 2)
-			const y = (page.height() * safezone) / 2
-			const height = page.height() - (y * 2)
-
-			$('body > main').css({
-				'left': x,
-				'width': width,
-				'top': y,
-				'height': height
-			})
-		},
-
 		onMessage(e) {
 			if (e.originalEvent.data === undefined) return
 			if (e.originalEvent.data.type === undefined) return
@@ -71,51 +65,58 @@ export default {
 
 			console.debug('[NUI RECV]', type, data)
 
-			if (type == 'ready') {
+			if (type == 'client') {
 				this.$store.commit('setEnvironment', data)
+
+				this.screen = 'Loading'
+			}
+
+			if (type == 'user') {
+				this.$store.commit('setUser', data)
+
+				// If new user then show Intro
+				if (!this.$store.getters.user.AcceptedRules) {
+					this.screen = 'Intro'
+				}
 			}
 
 			if (type == 'characters') {
 				this.$store.commit('setCharacters', data)
 
-				this.screen = 'CharacterSelect'
-			}
-
-			if (type == 'show') {
-				this.visible = true
-			}
-
-			if (type == 'hide') {
-				this.visible = false
-			}
-
-			if (type == 'element:inventory:show') {
-				this.screen = 'Inventory'
+				if (this.screen != 'Intro') this.screen = 'CharacterSelect'
 			}
 		},
 
 		onKeypress(e) {
-			if (!e.metaKey) e.preventDefault()
-
-			if (e.key == 'q') { // 'tab' is hard to test in Chrome
-				this.showInventory = !this.showInventory
-
-				if (this.showInventory) {
-					this.showCharacterSelect = false
-					this.showInteract = false
-				}
-			}
-
 			if (e.key == 'e') {
-				this.showInteract = !this.showInteract
-
-				if (this.showInteract) {
-					this.showCharacterSelect = false
-					this.showInventory = false
-				}
-
-				this.$refs.Interact.toggle()
+				// TODO
 			}
+		},
+
+		async screenFinished(screen) {
+			console.debug('[SCRN DONE]', screen)
+
+			if (screen == 'Intro') {
+				// Store rules agreed
+				await Nui.send('rules-agreed')
+
+				this.screen = 'CharacterSelect'
+			}
+
+			if (screen == 'CharacterSelect') {
+				this.screen = 'Intro'
+			}
+		},
+
+		async select() {
+			this.visible = false
+			this.screen = 'Blank'
+		},
+
+		async disconnect() {
+			this.screen = 'Loading'
+
+			await Nui.send('disconnect')
 		}
 	}
 }
@@ -139,20 +140,34 @@ $font-family-sans-serif: gravity;
 
 html,
 body {
-	width: 100%;
-	height: 100%;
+	width: 100vw;
+	height: 100vh;
 	margin: 0;
 	overflow: hidden;
+	font-size: 1.5vh;
+	user-select: none;
+	outline: none;
 }
 
 body > main {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	user-select: none;
-	outline: none;
+	width: 80vw;
+	height: 90vh;
+	margin: 5vh auto;
+	overflow: hidden;
+}
 
-	/* border: 1px solid red; */
+h1 {
+	margin-left: 0.15vh;
+	font-family: pricedown, sans-serif;
+	-webkit-text-stroke: 0.15vh #000;
+	color: #fff;
+	text-shadow:
+		0.4vh 0.4vh 0 #000,
+		-0.15vh -0.15vh 0 #000,
+		0.15vh -0.15vh 0 #000,
+		-0.15vh 0.15vh 0 #000,
+		0.15vh 0.15vh 0 #000;
+	letter-spacing: -0.3vh;
 }
 
 .component-fade-enter-active {
@@ -166,5 +181,15 @@ body > main {
 .component-fade-enter,
 .component-fade-leave-to {
 	opacity: 0;
+}
+
+::-webkit-scrollbar {
+	width: 1vw;
+	height: 1vw;
+}
+
+::-webkit-scrollbar-thumb {
+	background-color: #000;
+	border-radius: 0.5rem;
 }
 </style>
