@@ -43,7 +43,7 @@ namespace IgiCore.Client.Extensions
 			RequestCollisionAtCoord(position.X, position.Y, position.Z);
 
 			// Swap model
-			while (!await player.ChangeModel(new Model(PedHash.FreemodeMale01))) await BaseScript.Delay(0);
+			while (!await player.ChangeModel(new Model(PedHash.FreemodeMale01))) await BaseScript.Delay(10);
 
 			// Not naked
 			player.Character.Style.SetDefaultClothes();
