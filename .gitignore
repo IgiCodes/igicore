@@ -11,3 +11,4 @@ Interface/dist/*
 !Interface/dist/index.html
 !System.Configuration.Install.dll
 !System.ComponentModel.DataAnnotations.dll
+!System.Numerics.dll
