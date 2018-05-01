@@ -10,8 +10,6 @@ namespace IgiCore.Client.Interface.Screens
 	[PublicAPI]
 	public class InventoryScreen : Screen
 	{
-		public bool Visible = false;
-
 		public InventoryScreen()
 		{
 			Nui.RegisterCallback("inventory-hide", async (a, b) => await this.Hide());
