@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using Newtonsoft.Json;
 
 namespace IgiCore.Client.Interface.Screens
 {
 	public abstract class Screen : IDisposable
 	{
+		public bool Visible { get; protected set; }
+
 		public abstract Task Render();
 
 		public abstract Task Show();

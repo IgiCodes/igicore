@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Drawing;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
 using IgiCore.Client.Events;
 using IgiCore.Client.Extensions;
-using IgiCore.Client.Handlers;
 using IgiCore.Client.Interface.Hud;
 using IgiCore.Client.Models;
+using IgiCore.Client.Rpc;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
@@ -27,27 +25,29 @@ namespace IgiCore.Client.Interface.Screens
 		public CharacterSelectScreen()
 		{
 			// Events
-			Client.Instance.OnClientReady += (sender, args) => NUI.Send("ready", args.Information);
-			Client.Instance.OnUserLoaded += (sender, args) => NUI.Send("user", args.User);
+			Client.Instance.OnClientReady += (sender, args) => Nui.Send("client", args.Information);
+			Client.Instance.OnUserLoaded += (sender, args) => Nui.Send("user", args.User);
+			Client.Instance.OnCharactersList += (sender, args) => Nui.Send("characters", args.Characters);
 			Client.Instance.OnCharactersList += OnCharactersList;
 
 			// NUI events
-			NUI.RegisterCallback("character-create", OnNuiCharacterCreate);
-			NUI.RegisterCallback("character-load", OnNuiCharacterLoad);
-			NUI.RegisterCallback("character-delete", OnNuiCharacterDelete);
-
-			TickHandler.Attach<CharacterSelectScreen>(Render);
+			Nui.RegisterCallback("rules-agreed", OnNuiRulesAgreed);
+			Nui.RegisterCallback("character-create", OnNuiCharacterCreate);
+			Nui.RegisterCallback("character-load", OnNuiCharacterLoad);
+			Nui.RegisterCallback("character-delete", OnNuiCharacterDelete);
 		}
 
 		private async void OnCharactersList(object sender, CharactersEventArgs args)
 		{
-			NUI.Send("characters", args.Characters);
-
 			await Show();
-
-			await UI.FadeScreenIn(500);
 		}
 
+		protected void OnNuiRulesAgreed(dynamic _, CallbackDelegate callback)
+		{
+			Server.Trigger("igi:user:rules", DateTime.UtcNow);
+
+			callback("ok");
+		}
 		protected void OnNuiCharacterCreate(dynamic character, CallbackDelegate callback)
 		{
 			BaseScript.TriggerServerEvent("igi:character:create", JsonConvert.SerializeObject(new Character
@@ -55,7 +55,7 @@ namespace IgiCore.Client.Interface.Screens
 				Forename = character.forename,
 				Middlename = character.middlename,
 				Surname = character.surname,
-				Gender = short.Parse(character.gender),
+				Gender = (short)character.gender,
 				DateOfBirth = DateTime.Parse(character.dob)
 			}));
 
@@ -80,12 +80,12 @@ namespace IgiCore.Client.Interface.Screens
 		{
 			// HUD
 			Client.Instance.Managers.First<HudManager>().Visible = false;
-			Client.Instance.Managers.First<HudManager>().ChatVisible = false;
 			API.SetNuiFocus(true, true);
 
 			// Position
 			API.LoadScene(this.CameraCenter.X, this.CameraCenter.Y, this.CameraCenter.Z);
 			API.RequestCollisionAtCoord(this.CameraCenter.X, this.CameraCenter.Y, this.CameraCenter.Z);
+
 			Game.Player.Character.Position = Vector3.Zero;
 
 			// Freeze
@@ -108,13 +108,14 @@ namespace IgiCore.Client.Interface.Screens
 			camera.Position = new Vector3(location.X, location.Y, this.CameraHeight);
 			camera.PointAt(this.CameraCenter);
 			World.RenderingCamera = camera;
+
+			this.Visible = true;
 		}
 
 		public override async Task Hide()
 		{
 			// HUD
 			Client.Instance.Managers.First<HudManager>().Visible = true;
-			Client.Instance.Managers.First<HudManager>().ChatVisible = true;
 			API.SetNuiFocus(false, false);
 
 			// Freeze
@@ -127,10 +128,14 @@ namespace IgiCore.Client.Interface.Screens
 			// Camera
 			World.DestroyAllCameras();
 			World.RenderingCamera = null; // Required to reset the camera
+
+			this.Visible = false;
 		}
 
 		public override async Task Render()
 		{
+			if (!this.Visible) return;
+
 			// Time
 			World.CurrentDayTime = this.Time.TimeOfDay;
 			API.NetworkOverrideClockTime(this.Time.Hour, this.Time.Minute, this.Time.Second);

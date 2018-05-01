@@ -8,13 +8,8 @@ using CitizenFX.Core.Native;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Connection;
-using IgiCore.Core.Models.Inventories.Characters;
 using IgiCore.Core.Models.Objects;
-using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Services;
-using IgiCore.Server.Models;
-using IgiCore.Server.Models.Groups;
-using IgiCore.Server.Models.Objects.Vehicles;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Services;
 using IgiCore.Server.Storage.MySql;
@@ -26,16 +21,16 @@ namespace IgiCore.Server
 {
 	public partial class Server : BaseScript
 	{
-	    public static Server Instance { get; protected set; }
-        public static DB Db;
+		public static Server Instance { get; protected set; }
+		public static DB Db;
 		protected ServiceRegistry Services = new ServiceRegistry();
 
 		public new PlayerList Players => base.Players;
 
 		public Server()
 		{
-            // Singleton
-		    Instance = this;
+			// Singleton
+			Instance = this;
 
 			Db = new DB();
 			Db.Database.CreateIfNotExists();
@@ -57,6 +52,8 @@ namespace IgiCore.Server
 
 			HandleEvent<Citizen>("igi:client:ready", ClientReady);
 
+			HandleEvent<Citizen, string>("igi:user:rules", AcceptRules);
+
 			HandleEvent<Citizen>("igi:user:load", User.Load);
 			HandleEvent<Citizen>("igi:user:characters", GetCharacters);
 			HandleEvent<Citizen, string>("igi:character:load", LoadCharacter);
@@ -73,17 +70,32 @@ namespace IgiCore.Server
 			//HandleEvent<string, int>("igi:bike:transfer", TransferObject<Bike>);
 			//HandleEvent<Citizen, string>("igi:bike:claim", ClaimObject<Bike>);
 			//HandleEvent<int>("igi:bike:unclaim", UnclaimObject<Bike>);
+
+			API.SetGameType("Roleplay");
+			API.SetMapName("Los Santos");
 		}
 
 		private static void ClientReady([FromSource] Citizen citizen)
 		{
+			Log("Sending: igi:client:ready");
+
 			TriggerClientEvent(citizen, "igi:client:ready", JsonConvert.SerializeObject(new ServerInformation
 			{
 				ResourceName = API.GetCurrentResourceName(),
-				ServerName = "igicore",
-				DateTime = DateTime.Now,
+				ServerName = Config.ServerName,
+				DateTime = DateTime.UtcNow,
 				Weather = "EXTRASUNNY" // TODO
 			}));
+		}
+
+		private static void AcceptRules([FromSource] Citizen citizen, string jsonDateTime)
+		{
+			var user = User.GetOrCreate(citizen);
+
+			user.AcceptedRules = JsonConvert.DeserializeObject<DateTime>(jsonDateTime);
+
+			Db.Users.AddOrUpdate(user);
+			Db.SaveChanges();
 		}
 
 		private static void GetCharacters([FromSource] Citizen citizen)

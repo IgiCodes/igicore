@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
@@ -47,17 +46,6 @@ namespace IgiCore.Client.Interface.Hud
 			set => Screen.Hud.IsRadarVisible = value;
 		}
 
-		public bool ChatVisible
-		{
-			get => this.ChatVisibleValue;
-			set
-			{
-				this.ChatVisibleValue = value;
-
-				API.SetTextChatEnabled(value);
-			}
-		}
-
 		public HudManager()
 		{
 			TickHandler.Attach<HudManager>(Render);
@@ -65,33 +53,31 @@ namespace IgiCore.Client.Interface.Hud
 			Client.Instance.OnClientReady += OnClientReady;
 			Client.Instance.OnCharacterLoaded += OnCharacterLoaded;
 
-			this.Elements.Add(new Location(this));
-			this.Elements.Add(new Speedometer(this));
+			//this.Elements.Add(new Location(this));
+			//this.Elements.Add(new Speedometer(this));
 
 			this.Screens.Add(new CharacterSelectScreen());
-			this.Screens.Add(new InventoryScreen());
+			//this.Screens.Add(new InventoryScreen());
 
-			//MiniMapAnchor();
+			API.SetTextChatEnabled(false);
 		}
 
 		private async void OnClientReady(object s, ServerInformationEventArgs a)
 		{
 			this.ServerName = a.Information.ServerName; // Set pause screen menu server name
-
-			// Init
-			API.SetPauseMenuActive(true);
+			
+			API.SetPauseMenuActive(true); // TODO: When?
 			API.SetNoLoadingScreen(true);
 
 			this.Visible = false;
 			this.MiniMapVisible = false;
-			this.ChatVisible = false;
 
 			// Fade out screen
 			await UI.FadeScreenOut(500);
 
+			await this.Screens[0].Show();
+
 			UI.ShutdownLoadingScreen();
-			
-			NUI.Show();
 
 			// Fade in screen
 			await UI.FadeScreenIn(500);
@@ -103,8 +89,7 @@ namespace IgiCore.Client.Interface.Hud
 			await UI.FadeScreenOut(500);
 
 			foreach (var screen in this.Screens) await screen.Hide();
-			NUI.Hide();
-
+			
 			// Fade in screen
 			await UI.FadeScreenIn(500);
 		}

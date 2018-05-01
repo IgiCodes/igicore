@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using CitizenFX.Core;
 using IgiCore.Client.Handlers;
+using IgiCore.Client.Rpc;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Inventories.Characters;
@@ -35,9 +36,9 @@ namespace IgiCore.Client.Models
 		public Style Style { get; set; }
 		public DateTime LastPlayed { get; set; }
 		public DateTime Created { get; set; }
-        public List<Skill> Skills { get; set; }
+		public List<Skill> Skills { get; set; }
 
-        [JsonIgnore]
+		[JsonIgnore]
 		public Vector3 Position
 		{
 			get => new Vector3(this.PosX, this.PosY, this.PosZ);
@@ -54,8 +55,8 @@ namespace IgiCore.Client.Models
 
 		public void Initialize()
 		{
-			Client.Instance.HandleEvent<int, int, int>("igi:character:component:set", SetComponent);
-			Client.Instance.HandleEvent<int, int, int>("igi:character:prop:set", SetProp);
+			Server.On<int, int, int>("igi:character:component:set", SetComponent);
+			Server.On<int, int, int>("igi:character:prop:set", SetProp);
 		}
 
 		public void Save()
@@ -64,7 +65,7 @@ namespace IgiCore.Client.Models
 			{
 				this.Position = Game.Player.Character.Position;
 
-				ClientBase.TriggerServerJsonEvent("igi:character:save", this);
+				Server.Trigger("igi:character:save", this);
 			}
 		}
 
@@ -120,7 +121,7 @@ namespace IgiCore.Client.Models
 
 		public void Dispose()
 		{
-			TickHandler.Dettach<Character>();
+			
 		}
 
 		protected static Style ConvertStyle(CitizenFX.Core.Style style, Guid? id = null)

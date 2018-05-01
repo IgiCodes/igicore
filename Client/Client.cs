@@ -4,29 +4,27 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Client.Events;
-using IgiCore.Client.Extensions;
 using IgiCore.Client.Interface;
 using IgiCore.Client.Interface.Hud;
 using IgiCore.Client.Interface.Menu;
-using IgiCore.Client.Interface.Screens;
 using IgiCore.Client.Managers;
 using IgiCore.Client.Models;
+using IgiCore.Client.Rpc;
 using IgiCore.Client.Services;
 using IgiCore.Client.Services.AI;
 using IgiCore.Client.Services.Player;
 using IgiCore.Client.Services.Vehicle;
 using IgiCore.Client.Services.World;
+using IgiCore.Core;
 using IgiCore.Core.Models.Connection;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using Debug = CitizenFX.Core.Debug;
-using static CitizenFX.Core.Native.API;
 using Screen = CitizenFX.Core.UI.Screen;
 
 namespace IgiCore.Client
 {
 	[PublicAPI]
-	public class Client : ClientBase
+	public class Client : BaseScript
 	{
 		/// <summary>
 		/// Gets or sets the global singleton instance reference.
@@ -45,13 +43,15 @@ namespace IgiCore.Client
 
 		public ServiceRegistry Services { get; protected set; }
 
-        /// <summary>
-        /// Gets or sets the currently loaded user.
-        /// </summary>
-        /// <value>
-        /// The loaded user.
-        /// </value>
-        public User User { get; protected set; }
+		public EventHandlerDictionary Handlers => this.EventHandlers;
+
+		/// <summary>
+		/// Gets or sets the currently loaded user.
+		/// </summary>
+		/// <value>
+		/// The loaded user.
+		/// </value>
+		public User User { get; protected set; }
 
 		/// <summary>
 		/// Primary client entrypoint.
@@ -102,7 +102,7 @@ namespace IgiCore.Client
 			};
 
 			//HandleEvent("igi:character:revive", this.Services.First<PlayerDeathService>().Revive);
-		
+
 			//HandleEvent<string>("igi:car:spawn", SpawnVehicle<Car>);
 			//HandleEvent<string>("igi:car:claim", ClaimVehicle<Car>);
 			//HandleEvent<string>("igi:car:unclaim", UnclaimVehicle<Car>);
@@ -110,65 +110,30 @@ namespace IgiCore.Client
 			//HandleEvent<string>("igi:bike:claim", ClaimVehicle<Bike>);
 			//HandleEvent<string>("igi:bike:unclaim", UnclaimVehicle<Bike>);
 
-            // -- BOOTSTRAP
-
-            HandleJsonEvent<ServerInformation>("igi:client:ready", ClientReady);
-
-			// Notify server that client is loaded
-			TriggerServerEvent("igi:client:ready");
+			Startup();
 		}
 
 		/// <summary>
-		/// Event: igi:client:ready
-		/// First event triggered when connected to a server, instructs the server to load the user.
+		/// Loads initial data from the server, raises events and attaches handlers.
 		/// </summary>
-		/// <param name="info">The connected server environment information.</param>
-		protected void ClientReady(ServerInformation info)
+		public async Task Startup()
 		{
-			Log("igi:client:ready");
+			Log("Startup");
 
-			this.OnClientReady?.Invoke(this, new ServerInformationEventArgs(info));
+			// Load server details
+			this.OnClientReady?.Invoke(this, new ServerInformationEventArgs(await Server.Request<ServerInformation>(RpcEvents.GetServerInformation)));
 
-			HandleJsonEvent<User>("igi:user:load", UserLoad);
-
-			// Load the user
-			TriggerServerEvent("igi:user:load");
-		}
-
-		/// <summary>
-		/// Event: igi:user:load
-		/// Stores and raises <see cref="OnUserLoaded"/> with the connected user.
-		/// </summary>
-		/// <param name="user">The connected user.</param>
-		/// <seealso cref="User"/>
-		protected void UserLoad(User user)
-		{
-			Log("igi:user:load");
-
-			// Store the user
-			this.User = user;
-
+			// Load user
+			this.User = await Server.Request<User>(RpcEvents.GetUser);
 			this.OnUserLoaded?.Invoke(this, new UserEventArgs(this.User));
 
-			HandleJsonEvent<List<Character>>("igi:user:characters", CharactersList);
+			// Load user's characters
+			this.OnCharactersList?.Invoke(this, new CharactersEventArgs(await Server.Request<List<Character>>(RpcEvents.GetCharacters)));
 
-			// Load the characters list
-			TriggerServerEvent("igi:user:characters");
-		}
+			Server.On<List<Character>>(RpcEvents.GetCharacters, list => this.OnCharactersList?.Invoke(this, new CharactersEventArgs(list)));
+			Server.On<Character>(RpcEvents.CharacterLoad, CharacterLoad);
 
-		/// <summary>
-		/// Event: igi:user:characters
-		/// Raises <see cref="OnCharactersList"/> with the avaliable chracters.
-		/// </summary>
-		/// <param name="characters">The list of the user's characters.</param>
-		/// <seealso cref="Character"/>
-		protected void CharactersList(List<Character> characters)
-		{
-			Log("igi:user:characters");
-
-			HandleJsonEvent<Character>("igi:character:load", CharacterLoad);
-
-			this.OnCharactersList?.Invoke(this, new CharactersEventArgs(characters));
+			Log("Waiting for character selection...");
 		}
 
 		/// <summary>
@@ -176,7 +141,6 @@ namespace IgiCore.Client
 		/// Raises <see cref="OnCharacterLoaded"/> with the loaded and initialized character.
 		/// </summary>
 		/// <param name="character">The loaded character.</param>
-		/// <seealso cref="Character"/>
 		protected async void CharacterLoad(Character character)
 		{
 			Log("igi:character:load");
@@ -195,64 +159,69 @@ namespace IgiCore.Client
 
 			this.OnCharacterLoaded?.Invoke(this, new CharacterEventArgs(this.User.Character));
 
-			// Spawn character
-			await Game.Player.Spawn(this.User.Character.Position);
-
-			DisableAutomaticRespawn(true);
-			Game.Player.Character.DropsWeaponsOnDeath = false;
-			Game.Player.Character.Health = Game.Player.Character.MaxHealth;
-
-			// Enable PvP
-			NetworkSetFriendlyFireOption(true);
-			SetCanAttackFriendly(Game.Player.Character.Handle, true, false);
-			
-            this.Managers.First<HudManager>().Visible = true;
-			
 
 
-            //var bone = Game.Player.Character.Bones[Bone.PH_R_Hand];
+			//// Spawn character
+			//await Game.Player.Spawn(this.User.Character.Position);
 
-            //var board = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), Game.Player.Character.Position, Game.Player.Character.Rotation, false, false);
-            //board.AttachTo(bone);
+			//DisableAutomaticRespawn(true);
+			//Game.Player.Character.DropsWeaponsOnDeath = false;
+			//Game.Player.Character.Health = Game.Player.Character.MaxHealth;
 
-            //var text = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), board.Position, board.Rotation, false, false);
-            //text.AttachTo(board);
+			//// Enable PvP
+			//NetworkSetFriendlyFireOption(true);
+			//SetCanAttackFriendly(Game.Player.Character.Handle, true, false);
 
-            //Game.Player.Character.Task.PlayAnimation("mp_character_creation@lineup@male_a", "loop_raised", 1, -1, AnimationFlags.Loop);
-
-            //var scaleformHandle = new Scaleform("mugshot_board_01");
-            //scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "002134234", this.User.Character.FullName, DateTime.Now.ToString("d"), 0);
-
-
-            //var renderTargetName = "ID_Text";
-            //int renderTargetHash = -955488312;
-            ////RegisterNamedRendertarget(renderTargetName, true);
-            ////LinkNamedRendertarget((uint) new Model(GetHashKey("prop_police_id_board")).Hash);
-            ////var renderTargetID = GetNamedRendertargetRenderId(renderTargetName);
-            ////var renderTargetID = CreateNamedRenderTargetForModel(renderTargetName, text);
-
-
-            //if (!IsNamedRendertargetRegistered(renderTargetName)) RegisterNamedRendertarget(renderTargetName, true);
-            //if (!Function.Call<bool>((Hash)0x113750538FA31298, renderTargetHash)) Function.Call((Hash)0xF6C09E276AEB3F2D, renderTargetHash);// IsNamedRendertargetLinked LinkNamedRendertarget(-955488312);
-
-            //var renderTargetID = IsNamedRendertargetRegistered(renderTargetName) ? GetNamedRendertargetRenderId(renderTargetName) : 0;
+			//this.Managers.First<HudManager>().Visible = true;
 
 
 
-            //AttachTickHandler(async () =>
-            //{
-            //	SetTextRenderId(renderTargetID);
 
-            //	scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "543-01-1349", DateTime.Now.ToString("d"), this.User.Character.FullName, 0);
 
-            //	//DrawScaleformMovie(scale.Handle, 0.405f, 0.37f, 0.81f, 0.74f, 255, 255, 255, 255, 1);
-            //	//scale.Render3D(text.Position - new Vector3(0.022f, 0, 0), text.Rotation - new Vector3(0.022f, 0, 0), new Vector3(0.35f, 0.15f, 0));
 
-            //	SetTextRenderId(GetDefaultScriptRendertargetRenderId());
-            //});
+			//var bone = Game.Player.Character.Bones[Bone.PH_R_Hand];
 
-            ////Screen.ShowNotification($"{this.User.Character.FullName} loaded at {DateTime.Now:h:mm:ss tt}");
-        }
+			//var board = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), Game.Player.Character.Position, Game.Player.Character.Rotation, false, false);
+			//board.AttachTo(bone);
+
+			//var text = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), board.Position, board.Rotation, false, false);
+			//text.AttachTo(board);
+
+			//Game.Player.Character.Task.PlayAnimation("mp_character_creation@lineup@male_a", "loop_raised", 1, -1, AnimationFlags.Loop);
+
+			//var scaleformHandle = new Scaleform("mugshot_board_01");
+			//scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "002134234", this.User.Character.FullName, DateTime.Now.ToString("d"), 0);
+
+
+			//var renderTargetName = "ID_Text";
+			//int renderTargetHash = -955488312;
+			////RegisterNamedRendertarget(renderTargetName, true);
+			////LinkNamedRendertarget((uint) new Model(GetHashKey("prop_police_id_board")).Hash);
+			////var renderTargetID = GetNamedRendertargetRenderId(renderTargetName);
+			////var renderTargetID = CreateNamedRenderTargetForModel(renderTargetName, text);
+
+
+			//if (!IsNamedRendertargetRegistered(renderTargetName)) RegisterNamedRendertarget(renderTargetName, true);
+			//if (!Function.Call<bool>((Hash)0x113750538FA31298, renderTargetHash)) Function.Call((Hash)0xF6C09E276AEB3F2D, renderTargetHash);// IsNamedRendertargetLinked LinkNamedRendertarget(-955488312);
+
+			//var renderTargetID = IsNamedRendertargetRegistered(renderTargetName) ? GetNamedRendertargetRenderId(renderTargetName) : 0;
+
+
+
+			//AttachTickHandler(async () =>
+			//{
+			//	SetTextRenderId(renderTargetID);
+
+			//	scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "543-01-1349", DateTime.Now.ToString("d"), this.User.Character.FullName, 0);
+
+			//	//DrawScaleformMovie(scale.Handle, 0.405f, 0.37f, 0.81f, 0.74f, 255, 255, 255, 255, 1);
+			//	//scale.Render3D(text.Position - new Vector3(0.022f, 0, 0), text.Rotation - new Vector3(0.022f, 0, 0), new Vector3(0.35f, 0.15f, 0));
+
+			//	SetTextRenderId(GetDefaultScriptRendertargetRenderId());
+			//});
+
+			////Screen.ShowNotification($"{this.User.Character.FullName} loaded at {DateTime.Now:h:mm:ss tt}");
+		}
 
 		[Conditional("DEBUG")]
 		public static void Log(string message) => Debug.Write($"{DateTime.Now:s} [CLIENT]: {message}");

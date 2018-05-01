@@ -1,16 +1,9 @@
-﻿using System;
-using System.Runtime.Remoting.Messaging;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using IgiCore.Client.Events;
-using IgiCore.Client.Extensions;
 using IgiCore.Client.Handlers;
-using IgiCore.Client.Input;
 using IgiCore.Client.Interface.Hud;
-using IgiCore.Client.Models;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 
 namespace IgiCore.Client.Interface.Screens
 {
@@ -21,7 +14,7 @@ namespace IgiCore.Client.Interface.Screens
 
 		public InventoryScreen()
 		{
-			NUI.RegisterCallback("inventory-hide", async (a, b) => await this.Hide());
+			Nui.RegisterCallback("inventory-hide", async (a, b) => await this.Hide());
 
 			TickHandler.Attach<InventoryScreen>(this.Render);
 		}
@@ -32,12 +25,10 @@ namespace IgiCore.Client.Interface.Screens
 
 			// HUD
 			Client.Instance.Managers.First<HudManager>().Visible = false;
-			Client.Instance.Managers.First<HudManager>().ChatVisible = false;
 			API.SetNuiFocus(true, true);
 
 			// Show
-			NUI.Send("element:inventory:show");
-			NUI.Show();
+			Nui.Send("element:inventory:show");
 			this.Visible = true;
 		}
 
@@ -48,13 +39,11 @@ namespace IgiCore.Client.Interface.Screens
 
 			// HUD
 			Client.Instance.Managers.First<HudManager>().Visible = true;
-			Client.Instance.Managers.First<HudManager>().ChatVisible = true;
 			API.SetNuiFocus(false, false);
 
 			// Hide
 			Client.Log("Sending Inventory NUI Hide");
-			NUI.Send("element:inventory:hide");
-			NUI.Hide();
+			Nui.Send("element:inventory:hide");
 			this.Visible = false;
 		}
 

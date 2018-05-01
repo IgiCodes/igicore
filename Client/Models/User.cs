@@ -9,5 +9,7 @@ namespace IgiCore.Client.Models
         public Guid Id { get; set; }
         public string SteamId { get; set; }
         public string Name { get; set; }
+	    public DateTime? AcceptedRules { get; set; }
+	    public DateTime Created { get; set; }
     }
 }

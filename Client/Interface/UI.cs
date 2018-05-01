@@ -44,18 +44,14 @@ namespace IgiCore.Client.Interface
 
 		public static async Task FadeScreenOut(int msec = 0)
 		{
-			Client.Log("FadeScreenOut START");
 			Screen.Fading.FadeOut(msec);
-			while (Screen.Fading.IsFadingOut) await BaseScript.Delay(1);
-			Client.Log("FadeScreenOut END");
+			while (Screen.Fading.IsFadingOut) await BaseScript.Delay(10);
 		}
 
 		public static async Task FadeScreenIn(int msec = 0)
 		{
-			Client.Log("FadeScreenIn START");
 			Screen.Fading.FadeIn(msec);
-			while (Screen.Fading.IsFadingIn) await BaseScript.Delay(1);
-			Client.Log("FadeScreenIn END");
+			while (Screen.Fading.IsFadingIn) await BaseScript.Delay(10);
 		}
 
 		public static void ShutdownLoadingScreen()
