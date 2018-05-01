@@ -13,134 +13,134 @@ using Newtonsoft.Json;
 
 namespace IgiCore.Server.Models.Player
 {
-    public class Character : ICharacter
-    {
+	public class Character : ICharacter
+	{
 		[Key] public Guid Id { get; set; }
-	    public string Forename { get; set; }
-	    public string Middlename { get; set; }
-	    public string Surname { get; set; }
-	    public DateTime DateOfBirth { get; set; }
-	    public short Gender { get; set; }
+		public string Forename { get; set; }
+		public string Middlename { get; set; }
+		public string Surname { get; set; }
+		public DateTime DateOfBirth { get; set; }
+		public short Gender { get; set; }
 		public bool Alive { get; set; }
-	    public int Health { get; set; }
-	    public int Armor { get; set; }
-	    public string Ssn { get; set; }
+		public int Health { get; set; }
+		public int Armor { get; set; }
+		public string Ssn { get; set; }
 		public float PosX { get; set; }
-        public float PosY { get; set; }
-        public float PosZ { get; set; }
-	    public string Model { get; set; }
+		public float PosY { get; set; }
+		public float PosZ { get; set; }
+		public string Model { get; set; }
 		public string WalkingStyle { get; set; }
-		public virtual Inventory Inventory { get; set; } 
-	    public virtual Style Style { get; set; }
+		public virtual Inventory Inventory { get; set; }
+		public virtual Style Style { get; set; }
 		public DateTime LastPlayed { get; set; }
-	    public DateTime Created { get; set; }
-        public virtual List<Skill> Skills { get; set; }
-
-        [JsonIgnore]
-	    public Vector3 Position
-	    {
-		    get => new Vector3(this.PosX, this.PosY, this.PosZ);
-		    set
-		    {
-			    this.PosX = value.X;
-			    this.PosY = value.Y;
-			    this.PosZ = value.Z;
-		    }
-	    }
+		public DateTime Created { get; set; }
+		public virtual List<Skill> Skills { get; set; }
 
 		[JsonIgnore]
-	    public string FullName => $"{this.Forename} {this.Middlename} {this.Surname}".Replace("  ", " ");
+		public Vector3 Position
+		{
+			get => new Vector3(this.PosX, this.PosY, this.PosZ);
+			set
+			{
+				this.PosX = value.X;
+				this.PosY = value.Y;
+				this.PosZ = value.Z;
+			}
+		}
+
+		[JsonIgnore]
+		public string FullName => $"{this.Forename} {this.Middlename} {this.Surname}".Replace("  ", " ");
 
 		public Character()
-        {
-            this.Id = GuidGenerator.GenerateTimeBasedGuid();
-            this.Position = new Vector3 {X = -1038.121f, Y = -2738.279f, Z = 20.16929f};
-            this.Alive = false;
-        }
+		{
+			this.Id = GuidGenerator.GenerateTimeBasedGuid();
+			this.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
+			this.Alive = false;
+		}
 
-        public static Character GetOrCreate(User user, Guid charId)
-        {
-            Character character = null;
-            DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
+		public static Character GetOrCreate(User user, Guid charId)
+		{
+			Character character = null;
+			DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
 
-            try
-            {
-                if (user.Characters.Count == 0 || user.Characters.All(c => c.Id != charId))
-                {
-                    Debug.WriteLine($"Character not found, creating new char for userid: {user.Id} with id: {charId}");
+			try
+			{
+				if (user.Characters.Count == 0 || user.Characters.All(c => c.Id != charId))
+				{
+					Debug.WriteLine($"Character not found, creating new char for userid: {user.Id} with id: {charId}");
 
-                    character = new Character
-                        {Style = new Style {Id = GuidGenerator.GenerateTimeBasedGuid()}};
+					character = new Character
+					{ Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() } };
 
-                    user.Characters.Add(character);
+					user.Characters.Add(character);
 
-                    Server.Db.Users.AddOrUpdate(user);
-                    Server.Db.SaveChanges();
-                }
-                else
-                {
-                    character = user.Characters.First(c => c.Id == charId);
-                    Debug.WriteLine($"Character found for userId: {user.Id}  ID: {charId}");
-                }
+					Server.Db.Users.AddOrUpdate(user);
+					Server.Db.SaveChanges();
+				}
+				else
+				{
+					character = user.Characters.First(c => c.Id == charId);
+					Debug.WriteLine($"Character found for userId: {user.Id}  ID: {charId}");
+				}
 
-                transaction.Commit();
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
+				transaction.Commit();
+			}
+			catch (Exception ex)
+			{
+				transaction.Rollback();
 
-                Debug.Write(ex.Message);
-            }
+				Debug.Write(ex.Message);
+			}
 
-            return character;
-        }
+			return character;
+		}
 
-        public static Character GetLatestOrCreate(User user)
-        {
-            Character character = null;
-            DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
+		public static Character GetLatestOrCreate(User user)
+		{
+			Character character = null;
+			DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
 
-            try
-            {
-                if (user.Characters.Count == 0)
-                {
-                    Debug.WriteLine($"Character not found, creating new char for userid: {user.Id} ");
+			try
+			{
+				if (user.Characters.Count == 0)
+				{
+					Debug.WriteLine($"Character not found, creating new char for userid: {user.Id} ");
 
-                    character = new Character
-                        { Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() } };
+					character = new Character
+					{ Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() } };
 
-                    user.Characters.Add(character);
+					user.Characters.Add(character);
 
-                    Server.Db.Users.AddOrUpdate(user);
-                    Server.Db.SaveChanges();
-                }
-                else
-                {
-                    character = user.Characters.OrderBy(c => c.LastPlayed).Last();
-                    Debug.WriteLine($"Character found for userId: {user.Id}  ID: {character.Id}");
-                }
+					Server.Db.Users.AddOrUpdate(user);
+					Server.Db.SaveChanges();
+				}
+				else
+				{
+					character = user.Characters.OrderBy(c => c.LastPlayed).Last();
+					Debug.WriteLine($"Character found for userId: {user.Id}  ID: {character.Id}");
+				}
 
-                transaction.Commit();
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
+				transaction.Commit();
+			}
+			catch (Exception ex)
+			{
+				transaction.Rollback();
 
-                Debug.Write(ex.Message);
-            }
+				Debug.Write(ex.Message);
+			}
 
-            return character;
-        }
+			return character;
+		}
 
-        public static void Save(Character newChar)
-        {
-            Server.Log("Character save called");
+		public static void Save(Character newChar)
+		{
+			Server.Log("Character save called");
 
-            Server.Db.Styles.AddOrUpdate(newChar.Style);
-            Server.Db.Characters.AddOrUpdate(newChar);
-            Server.Db.SaveChanges();
-        }
+			Server.Db.Styles.AddOrUpdate(newChar.Style);
+			Server.Db.Characters.AddOrUpdate(newChar);
+			Server.Db.SaveChanges();
+		}
 
-        public override string ToString() { return $"Character [{this.Id}]: {this.FullName}, {this.Position}"; }
-    }
+		public override string ToString() { return $"Character [{this.Id}]: {this.FullName}, {this.Position}"; }
+	}
 }

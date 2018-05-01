@@ -1,7 +1,7 @@
 ﻿namespace IgiCore.Core.Models.Objects.Items.Economy
 {
-    public class BankCard : StorableItem
-    {
+	public class BankCard : StorableItem
+	{
 
-    }
+	}
 }

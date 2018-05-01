@@ -4,12 +4,12 @@ using IgiCore.Server.Models.Player;
 
 namespace IgiCore.Server.Models.Economy.Banking
 {
-    public class BankAccountMember : IBankAccountMembers
-    {
-        public Guid Id { get; set; }
-        public DateTime Created { get; set; }
-        public DateTime? Deleted { get; set; }
+	public class BankAccountMember : IBankAccountMembers
+	{
+		public Guid Id { get; set; }
+		public DateTime Created { get; set; }
+		public DateTime? Deleted { get; set; }
 
-        public Character Member { get; set; }
-    }
+		public Character Member { get; set; }
+	}
 }

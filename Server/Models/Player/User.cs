@@ -12,59 +12,71 @@ using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Server.Models.Player
 {
-    public class User : IUser
-    {
-        public virtual List<Character> Characters { get; set; }
+	public class User : IUser
+	{
+		public virtual List<Character> Characters { get; set; }
 
-        [Key] public Guid Id { get; set; }
+		[Key] public Guid Id { get; set; }
 
-        [MaxLength(17)] [Index(IsUnique = true)]
-        public string SteamId { get; set; }
+		[MaxLength(17)]
+		[Index(IsUnique = true)]
+		public string SteamId { get; set; }
 
-        public string Name { get; set; }
+		public string Name { get; set; }
+		public DateTime? AcceptedRules { get; set; }
+		public DateTime Created { get; set; }
 
-        public User() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
+		public User()
+		{
+			this.Id = GuidGenerator.GenerateTimeBasedGuid();
+			this.Created = DateTime.UtcNow;
+		}
 
-        public static void Load([FromSource] Citizen citizen) { BaseScript.TriggerClientEvent(citizen, "igi:user:load", JsonConvert.SerializeObject(GetOrCreate(citizen))); }
+		public static void Load([FromSource] Citizen citizen) { BaseScript.TriggerClientEvent(citizen, "igi:user:load", JsonConvert.SerializeObject(GetOrCreate(citizen))); }
 
-        public static User GetOrCreate(Citizen citizen)
-        {
-            User user = null;
+		public static User GetOrCreate(Citizen citizen)
+		{
+			User user = null;
 
-            DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
-            var steamId = citizen.Identifiers["steam"];
+			DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
+			var steamId = citizen.Identifiers["steam"];
 
-            try
-            {
-                var users = Server.Db.Users.Where(u => u.SteamId == steamId).ToList();
+			try
+			{
+				var users = Server.Db.Users.Where(u => u.SteamId == steamId).ToList();
 
-                if (!users.Any())
-                {
-                    user = new User {SteamId = citizen.Identifiers["steam"], Name = citizen.Name};
+				if (!users.Any())
+				{
+					user = new User
+					{
+						SteamId = citizen.Identifiers["steam"],
+						Name = citizen.Name,
+						AcceptedRules = null
+					};
 
-                    Debug.WriteLine(
-                        $"User not found, creating new user for steamid: {user.SteamId} with name: {user.Name}");
+					Debug.WriteLine(
+						$"User not found, creating new user for steamid: {user.SteamId} with name: {user.Name}");
 
-                    Server.Db.Users.Add(user);
-                    Server.Db.SaveChanges();
-                }
-                else
-                {
-                    user = users.First();
+					Server.Db.Users.Add(user);
+					Server.Db.SaveChanges();
+				}
+				else
+				{
+					user = users.First();
 
-                    Debug.WriteLine($"User found for steamid: {user.SteamId} with name: {user.Name} and ID: {user.Id}");
-                }
+					Debug.WriteLine($"User found for steamid: {user.SteamId} with name: {user.Name} and ID: {user.Id}");
+				}
 
-                transaction.Commit();
-            }
-            catch (Exception ex)
-            {
-                transaction.Rollback();
+				transaction.Commit();
+			}
+			catch (Exception ex)
+			{
+				transaction.Rollback();
 
-                Debug.Write(ex.Message);
-            }
+				Debug.Write(ex.Message);
+			}
 
-            return user;
-        }
-    }
+			return user;
+		}
+	}
 }
