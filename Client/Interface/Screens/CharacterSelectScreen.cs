@@ -7,6 +7,7 @@ using IgiCore.Client.Extensions;
 using IgiCore.Client.Interface.Hud;
 using IgiCore.Client.Models;
 using IgiCore.Client.Rpc;
+using IgiCore.Core;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
@@ -35,6 +36,7 @@ namespace IgiCore.Client.Interface.Screens
 			Nui.RegisterCallback("character-create", OnNuiCharacterCreate);
 			Nui.RegisterCallback("character-load", OnNuiCharacterLoad);
 			Nui.RegisterCallback("character-delete", OnNuiCharacterDelete);
+			Nui.RegisterCallback("disconnect", OnNuiDisconnect);
 		}
 
 		private async void OnCharactersList(object sender, CharactersEventArgs args)
@@ -44,13 +46,13 @@ namespace IgiCore.Client.Interface.Screens
 
 		protected void OnNuiRulesAgreed(dynamic _, CallbackDelegate callback)
 		{
-			Server.Trigger("igi:user:rules", DateTime.UtcNow);
+			Server.Trigger(RpcEvents.AcceptRules, DateTime.UtcNow);
 
 			callback("ok");
 		}
 		protected void OnNuiCharacterCreate(dynamic character, CallbackDelegate callback)
 		{
-			BaseScript.TriggerServerEvent("igi:character:create", JsonConvert.SerializeObject(new Character
+			BaseScript.TriggerServerEvent(RpcEvents.CharacterCreate, JsonConvert.SerializeObject(new Character
 			{
 				Forename = character.forename,
 				Middlename = character.middlename,
@@ -64,14 +66,21 @@ namespace IgiCore.Client.Interface.Screens
 
 		protected void OnNuiCharacterLoad(dynamic id, CallbackDelegate callback)
 		{
-			BaseScript.TriggerServerEvent("igi:character:load", id);
+			BaseScript.TriggerServerEvent(RpcEvents.CharacterLoad, id);
 
 			callback("ok");
 		}
 
 		protected void OnNuiCharacterDelete(dynamic id, CallbackDelegate callback)
 		{
-			BaseScript.TriggerServerEvent("igi:character:delete", id);
+			BaseScript.TriggerServerEvent(RpcEvents.CharacterDelete, id);
+
+			callback("ok");
+		}
+
+		protected void OnNuiDisconnect(dynamic _, CallbackDelegate callback)
+		{
+			BaseScript.TriggerServerEvent(RpcEvents.ClientDisconnect);
 
 			callback("ok");
 		}

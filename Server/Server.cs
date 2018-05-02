@@ -26,7 +26,7 @@ namespace IgiCore.Server
 	{
 		public static Server Instance { get; protected set; }
 		public static DB Db;
-		protected ServiceRegistry Services = new ServiceRegistry();
+		protected readonly ServiceRegistry Services = new ServiceRegistry();
 
 		public new PlayerList Players => base.Players;
 
@@ -41,9 +41,9 @@ namespace IgiCore.Server
 			this.Services.Add(new VehicleService(this));
 			this.Services.Initialise(this.EventHandlers);
 
-			//HandleEvent<string>("onResourceStarting", r => Debug.WriteLine($"Starting resource: {r}"));
-			//HandleEvent<string>("onResourceStart", r => Debug.WriteLine($"Start resource: {r}"));
-			//HandleEvent<string>("onResourceStop", r => Debug.WriteLine($"Stop resource: {r}"));
+			//HandleEvent<string>(ServerEvents.ResourceStarting, r => Debug.WriteLine($"Starting resource: {r}"));
+			//HandleEvent<string>(ServerEvents.ResourceStart, r => Debug.WriteLine($"Start resource: {r}"));
+			//HandleEvent<string>(ServerEvents.ResourceStop, r => Debug.WriteLine($"Stop resource: {r}"));
 
 			HandleEvent<Citizen>(ServerEvents.HostingSession, SessionManager.OnHostingSession);
 			HandleEvent<Citizen>(ServerEvents.HostedSession, SessionManager.OnHostedSession);
@@ -54,16 +54,17 @@ namespace IgiCore.Server
 			HandleEvent<int, string, string>("chatMessage", OnChatMessage);
 
 			HandleEvent<Citizen>(RpcEvents.GetServerInformation, ClientReady);
+			HandleEvent<Citizen>(RpcEvents.ClientDisconnect, ClientDisconnect);
 
-			HandleEvent<Citizen, string>("igi:user:rules", AcceptRules);
+			HandleEvent<Citizen, string>(RpcEvents.AcceptRules, AcceptRules);
 
 			HandleEvent<Citizen>(RpcEvents.GetUser, User.Load);
 			HandleEvent<Citizen>(RpcEvents.GetCharacters, GetCharacters);
 
 			HandleEvent<Citizen, string>(RpcEvents.CharacterLoad, LoadCharacter);
-			HandleEvent<Citizen, string>("igi:character:create", CreateCharacter);
-			//HandleEvent<Citizen, string>("igi:character:delete", DeleteCharacter);
-			HandleJsonEvent<Character>("igi:character:save", Character.Save);
+			HandleEvent<Citizen, string>(RpcEvents.CharacterCreate, CreateCharacter);
+			HandleEvent<Citizen, string>(RpcEvents.CharacterDelete, DeleteCharacter);
+			HandleJsonEvent<Character>(RpcEvents.CharacterSave, Character.Save);
 
 			//HandleEvent<string>("igi:car:save", VehicleActions.Save<Car>);
 			//HandleEvent<string, int>("igi:car:transfer", TransferObject<Car>);
@@ -81,13 +82,18 @@ namespace IgiCore.Server
 
 		private static void ClientReady([FromSource] Citizen citizen)
 		{
-			TriggerClientEvent(citizen, "igi:client:ready", JsonConvert.SerializeObject(new ServerInformation
+			TriggerClientEvent(citizen, RpcEvents.GetServerInformation, JsonConvert.SerializeObject(new ServerInformation
 			{
 				ResourceName = API.GetCurrentResourceName(),
 				ServerName = Config.ServerName,
 				DateTime = DateTime.UtcNow,
 				Weather = "EXTRASUNNY" // TODO
 			}));
+		}
+
+		private static void ClientDisconnect([FromSource] Citizen citizen)
+		{
+			// TODO: Kick player
 		}
 
 		private static async void AcceptRules([FromSource] Citizen citizen, string jsonDateTime)
@@ -106,7 +112,7 @@ namespace IgiCore.Server
 
 			if (user.Characters == null) user.Characters = new List<Character>();
 
-			TriggerClientEvent(citizen, "igi:user:characters", JsonConvert.SerializeObject(user.Characters.OrderByDescending(c => c.Created)));
+			TriggerClientEvent(citizen, RpcEvents.GetCharacters, JsonConvert.SerializeObject(user.Characters.OrderByDescending(c => c.Created)));
 		}
 
 		private static async void CreateCharacter([FromSource] Citizen citizen, string characterJson)
@@ -135,6 +141,11 @@ namespace IgiCore.Server
 			GetCharacters(citizen);
 		}
 
+		private static async void DeleteCharacter([FromSource] Citizen citizen, string id)
+		{
+			// TODO
+		}
+
 		private static async void LoadCharacter([FromSource] Citizen citizen, string characterId)
 		{
 			User user = await User.GetOrCreate(citizen);
@@ -143,7 +154,7 @@ namespace IgiCore.Server
 
 			var id = Guid.Parse(characterId);
 
-			TriggerClientEvent(citizen, "igi:character:load", JsonConvert.SerializeObject(user.Characters.FirstOrDefault(c => c.Id == id)));
+			TriggerClientEvent(citizen, RpcEvents.CharacterLoad, JsonConvert.SerializeObject(user.Characters.FirstOrDefault(c => c.Id == id)));
 		}
 
 		private void TransferObject<T>(string objJson, int playerId) where T : class, IObject
@@ -192,25 +203,6 @@ namespace IgiCore.Server
 
 			Db.Set<T>().AddOrUpdate(obj);
 			await Db.SaveChangesAsync();
-		}
-
-		private static async Task<Character> NewCharCommand(Citizen citizen, string charName)
-		{
-			User user = await User.GetOrCreate(citizen);
-			if (user.Characters == null) user.Characters = new List<Character>();
-
-			Character character = new Character
-			{
-				//Name = charName,
-				Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() }
-			};
-
-			user.Characters.Add(character);
-
-			Db.Users.AddOrUpdate(user);
-			await Db.SaveChangesAsync();
-
-			return character;
 		}
 
 		[Conditional("DEBUG")] public static void Log(string message) { Debug.WriteLine($"{DateTime.Now:s} [SERVER]: {message}"); }
