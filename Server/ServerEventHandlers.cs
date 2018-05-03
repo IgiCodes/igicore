@@ -32,9 +32,9 @@ namespace IgiCore.Server
 		{
 			var user = await User.GetOrCreate(citizen);
 
-			var session = await Session.End(user);
+			var session = await Session.End(user, disconnectMessage);
 
-			Log($"[DISCONNECT] [{session.Id}] Player \"{user.Name}\" disconnected");
+			Log($"[DISCONNECT] [{session.Id}] Player \"{user.Name}\" disconnected: {disconnectMessage}");
 		}
 
 		private async void OnChatMessage(int playerId, string playerName, string message)

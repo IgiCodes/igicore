@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Player;
+using JetBrains.Annotations;
 using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Server.Models.Player
@@ -16,6 +17,7 @@ namespace IgiCore.Server.Models.Player
 		public string IpAddress { get; set; }
 		public DateTime Connected { get; set; }
 		public DateTime? Disconnected { get; set; }
+		public string DisconnectReason { get; set; }
 
 		public Session()
 		{
@@ -37,7 +39,7 @@ namespace IgiCore.Server.Models.Player
 			return session;
 		}
 
-		public static async Task<Session> End(User user)
+		public static async Task<Session> End(User user, string disconnectMessage)
 		{
 			var session = Server.Db.Sessions.Where(s => s.Disconnected == null && s.User.Id == user.Id).OrderBy(s => s.Connected).FirstOrDefault();
 
@@ -48,6 +50,7 @@ namespace IgiCore.Server.Models.Player
 			}
 
 			session.Disconnected = DateTime.UtcNow;
+			session.DisconnectReason = disconnectMessage;
 
 			Server.Db.Sessions.AddOrUpdate(session);
 			await Server.Db.SaveChangesAsync();

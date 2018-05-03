@@ -8,5 +8,6 @@ namespace IgiCore.Core.Models.Player
 		string IpAddress { get; set; }
 		DateTime Connected { get; set; }
 		DateTime? Disconnected { get; set; }
+		string DisconnectReason { get; set; }
 	}
 }
