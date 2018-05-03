@@ -127,8 +127,9 @@ namespace IgiCore.Server
 			character.Health = 10000;
 			character.Armor = 0;
 			character.Ssn = "123-45-6789";
-			character.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
-			character.LastPlayed = DateTime.MinValue;
+            //character.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
+		    character.Position = new Vector3 { X = 153.7846f, Y = -1032.899f, Z = 29.33798f };
+            character.LastPlayed = DateTime.MinValue;
 			character.Created = DateTime.UtcNow;
 			character.Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() };
 			//character.Inventory = new Inventory { Id = GuidGenerator.GenerateTimeBasedGuid() };

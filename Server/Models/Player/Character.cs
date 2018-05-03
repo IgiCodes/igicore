@@ -55,8 +55,9 @@ namespace IgiCore.Server.Models.Player
 		public Character()
 		{
 			this.Id = GuidGenerator.GenerateTimeBasedGuid();
-			this.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
-			this.Alive = false;
+            //this.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
+		    this.Position = new Vector3 { X = 153.7846f, Y = -1032.899f, Z = 29.33798f };
+            this.Alive = false;
 		}
 
 		public static async Task<Character> GetOrCreate(User user, Guid charId)

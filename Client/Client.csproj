@@ -95,6 +95,7 @@
     <Compile Include="Registry.cs" />
     <Compile Include="Rpc\Server.cs" />
     <Compile Include="Services\AI\PedFilterService.cs" />
+    <Compile Include="Services\Bank\ATMService.cs" />
     <Compile Include="Services\IClientService.cs" />
     <Compile Include="Services\ClientService.cs" />
     <Compile Include="Services\Player\PlayerIndicatorService.cs" />

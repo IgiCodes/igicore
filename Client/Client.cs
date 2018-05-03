@@ -12,6 +12,7 @@ using IgiCore.Client.Models;
 using IgiCore.Client.Rpc;
 using IgiCore.Client.Services;
 using IgiCore.Client.Services.AI;
+using IgiCore.Client.Services.Bank;
 using IgiCore.Client.Services.Player;
 using IgiCore.Client.Services.Vehicle;
 using IgiCore.Client.Services.World;
@@ -81,7 +82,8 @@ namespace IgiCore.Client
 				new AiPoliceService(), // Disable AI police
 				new PlayerIndicatorService(), // Show nearby players
 				new DateTimeService(), // Set the date and time
-				new BlackoutService() // Allow city blackouts
+				new BlackoutService(), // Allow city blackouts
+                new ATMService() // Add ATMs
 			};
 
 			this.Services.Initialize(); // Attach handlers

@@ -47,6 +47,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\FloatExtentions.cs" />
     <Compile Include="RpcEvents.cs" />
     <Compile Include="Extensions\Guid.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
