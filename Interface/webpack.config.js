@@ -1,6 +1,7 @@
 const path = require('path')
 const StyleLintPlugin = require('stylelint-webpack-plugin')
 const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
+const { VueLoaderPlugin } = require('vue-loader')
 
 module.exports = {
 	target: 'web',
@@ -19,6 +20,7 @@ module.exports = {
 		hints: false
 	},
 	plugins: [
+		new VueLoaderPlugin(),
 		new StyleLintPlugin({
 			files: ['src/**/*.vue'],
 			syntax: 'scss'
@@ -30,8 +32,8 @@ module.exports = {
 			{
 				enforce: 'pre',
 				test: /\.(js|vue)$/,
-				loader: 'eslint-loader',
-				exclude: /node_modules/
+				exclude: /node_modules/,
+				loader: 'eslint-loader'
 			},
 			{
 				test: /\.css$/,
@@ -50,23 +52,16 @@ module.exports = {
 			},
 			{
 				test: /\.(woff2|png|jpg)$/,
-				loader: 'file-loader',
-				query: {
-					name: '[name].[ext]'
-				}
+				use: [{
+					loader: 'file-loader',
+					options: {
+						name: '[name].[ext]'
+					}
+				}]
 			},
 			{
 				test: /\.vue$/,
-				loader: 'vue-loader',
-				options: {
-					loaders: {
-						'scss': [
-							'vue-style-loader',
-							'css-loader',
-							'sass-loader'
-						]
-					}
-				}
+				loader: 'vue-loader'
 			}
 		]
 	}
