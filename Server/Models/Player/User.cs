@@ -15,19 +15,15 @@ namespace IgiCore.Server.Models.Player
 {
 	public class User : IUser
 	{
-		public virtual List<Character> Characters { get; set; }
-
 		[Key] public Guid Id { get; set; }
-
 		[MaxLength(17)]
 		[Index(IsUnique = true)]
 		public string SteamId { get; set; }
-
 		public string Name { get; set; }
 		public DateTime? AcceptedRules { get; set; }
-		public DateTime LastConnected { get; set; }
-		public string LastIpAddress { get; set; }
 		public DateTime Created { get; set; }
+
+		public virtual List<Character> Characters { get; set; }
 
 		public User()
 		{
@@ -57,9 +53,7 @@ namespace IgiCore.Server.Models.Player
 					{
 						SteamId = steamId,
 						Name = citizen.Name,
-						AcceptedRules = null,
-						LastConnected = DateTime.UtcNow,
-						LastIpAddress = citizen.EndPoint
+						AcceptedRules = null
 					};
 
 					Server.Db.Users.Add(user);

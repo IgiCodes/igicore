@@ -10,8 +10,6 @@ namespace IgiCore.Client.Models
         public string SteamId { get; set; }
         public string Name { get; set; }
 	    public DateTime? AcceptedRules { get; set; }
-	    public DateTime LastConnected { get; set; }
-	    public string LastIpAddress { get; set; }
 	    public DateTime Created { get; set; }
     }
 }

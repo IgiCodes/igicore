@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using CitizenFX.Core;
@@ -20,20 +19,22 @@ namespace IgiCore.Server
 			var user = await User.GetOrCreate(citizen);
 
 			user.Name = citizen.Name;
-			user.LastConnected = DateTime.UtcNow;
-			user.LastIpAddress = citizen.EndPoint;
 
 			Db.Users.AddOrUpdate(user);
 			await Db.SaveChangesAsync();
 
-			Log($"[CONNECT] [{user.SteamId}] Player \"{user.Name}\" connected from {user.LastIpAddress}");
+			var session = await Session.Create(citizen, user);
+
+			Log($"[CONNECT] [{session.Id}] Player \"{user.Name}\" connected from {session.IpAddress}");
 		}
 
 		private static async void OnPlayerDropped([FromSource] Citizen citizen, string disconnectMessage, CallbackDelegate kickReason)
 		{
 			var user = await User.GetOrCreate(citizen);
 
-			Log($"[DISCONNECT] [{user.SteamId}] Player \"{user.Name}\" disconnected");
+			var session = await Session.End(user);
+
+			Log($"[DISCONNECT] [{session.Id}] Player \"{user.Name}\" disconnected");
 		}
 
 		private async void OnChatMessage(int playerId, string playerName, string message)

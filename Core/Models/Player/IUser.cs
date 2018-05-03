@@ -8,8 +8,6 @@ namespace IgiCore.Core.Models.Player
 		string SteamId { get; set; }
 		string Name { get; set; }
 		DateTime? AcceptedRules { get; set; }
-		DateTime LastConnected { get; set; }
-		string LastIpAddress { get; set; }
 		DateTime Created { get; set; }
 	}
 }
