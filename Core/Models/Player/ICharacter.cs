@@ -23,6 +23,7 @@ namespace IgiCore.Core.Models.Player
 		string WalkingStyle { get; set; }
 		Inventory Inventory { get; set; }
 		DateTime LastPlayed { get; set; }
+		DateTime? Deleted { get; set; }
 		DateTime Created { get; set; }
 		List<Skill> Skills { get; set; }
 	}

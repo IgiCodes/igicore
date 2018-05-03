@@ -34,6 +34,7 @@ namespace IgiCore.Client.Models
 		public Inventory Inventory { get; set; }
 		public Style Style { get; set; }
 		public DateTime LastPlayed { get; set; }
+		public DateTime? Deleted { get; set; }
 		public DateTime Created { get; set; }
 		public List<Skill> Skills { get; set; }
 

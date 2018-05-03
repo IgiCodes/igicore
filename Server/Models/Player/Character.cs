@@ -34,6 +34,7 @@ namespace IgiCore.Server.Models.Player
 		public virtual Inventory Inventory { get; set; }
 		public virtual Style Style { get; set; }
 		public DateTime LastPlayed { get; set; }
+		public DateTime? Deleted { get; set; }
 		public DateTime Created { get; set; }
 		public virtual List<Skill> Skills { get; set; }
 

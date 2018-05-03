@@ -89,6 +89,7 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="Extentions\CitizenExtentions.cs" />
+    <Compile Include="Extentions\CharacterExtentions.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Economy\Banking\Bank.cs" />
     <Compile Include="Models\Economy\Banking\BankAccount.cs" />
