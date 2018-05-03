@@ -83,7 +83,7 @@ namespace IgiCore.Client
 				new PlayerIndicatorService(), // Show nearby players
 				new DateTimeService(), // Set the date and time
 				new BlackoutService(), // Allow city blackouts
-                new ATMService() // Add ATMs
+				new AtmService() // Add ATMs
 			};
 
 			this.Services.Initialize(); // Attach handlers

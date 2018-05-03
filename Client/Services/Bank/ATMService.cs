@@ -1,48 +1,38 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Utility;
 using IgiCore.Core.Extensions;
 
 namespace IgiCore.Client.Services.Bank
 {
-    public class ATMService : ClientService
+    public class AtmService : ClientService
     {
-        protected bool enabled;
+	    public readonly List<int> Models = new List<int>
+	    {
+		    // prop_fleeca_atm
+		    506770882
+		};
 
-        public event EventHandler<EventArgs> OnEnabled;
+		public override async Task Tick()
+		{
+			if (Game.Player.Character.IsInVehicle()) return;
 
-        public bool Enabled
-        {
-            get => this.enabled;
-            set
+            foreach (var atm in new ObjectList().Where(o => o.Model.IsValid && this.Models.Contains(o.Model.Hash) && Vector3.Distance(Game.Player.Character.Position, o.Position) < 2.0f)) // All nearby ATMs
             {
-                this.enabled = value;
+				if (!Vector3.Distance(Game.Player.Character.Position, atm.Position).IsBetween(1.0f, 1.5f)) continue;
+				if (Game.Player.Character.ForwardVector.DistanceToSquared(atm.ForwardVector) > 0.5f) continue;
+				
+				Vector3 toPlayer = atm.Position - Game.Player.Character.Position;
+				toPlayer.Normalize();
+				float toPlayerDot = Vector3.Dot(Game.Player.Character.ForwardVector, toPlayer);
+	            if (!toPlayerDot.IsBetween(0f, 0.8f)) continue;
 
-                this.OnEnabled?.Invoke(this, EventArgs.Empty);
-            }
-        }
-
-        public override async Task Tick()
-        {
-
-            foreach (var atm in new ObjectList().Where(o => o.Model.IsValid && o.Model.Hash == 506770882)) // prop_fleeca_atm
-            {
-                Vector3 atmToPlayer = atm.Position - Game.Player.Character.Position;
-                atmToPlayer.Normalize();
-                float atmToPlayerDot = Vector3.Dot(Game.Player.Character.ForwardVector, atmToPlayer);
-
-                if (Vector3.Distance(Game.Player.Character.Position, atm.Position).IsBetween(1.0f, 1.8f) && Game.Player.Character.ForwardVector.DistanceToSquared(atm.ForwardVector) < 1.0f && atmToPlayerDot.IsBetween(0.3f, 0.8f))
-                {
-                    new Text($"Allow ATM Access for {atm.Handle}", new PointF(230, Screen.Height - 100), 0.4f, Color.FromArgb(255, 255, 255), Font.ChaletLondon, Alignment.Left, false, true).Draw();
-                }
-            }
-
-            if (this.Enabled) return;
-        }
+				new Text($"ATM {atm.Handle} is nearby", new PointF(50, Screen.Height - 50), 0.4f, Color.FromArgb(255, 255, 255), Font.ChaletLondon, Alignment.Left, false, true).Draw();
+			}
+		}
     }
 }
