@@ -14,7 +14,7 @@
 		<section class="container-fluid mt-4">
 			<div class="row">
 				<div v-for="character in characters" :key="character.Id" class="col-auto mb-3">
-					<character :character="character" @select="selectCharacter" />
+					<character :character="character" @select="selectCharacter" @delete="deleteCharacter" />
 				</div>
 
 				<div class="col-auto mb-3">
@@ -171,10 +171,8 @@ export default {
 			this.$emit('select')
 		},
 
-		async deleteCharacter() {
-			await this.$store.dispatch('deleteCharacter', this.character.Id)
-
-			$(this.$refs.deleteModal).modal('hide')
+		async deleteCharacter(id) {
+			await this.$store.dispatch('deleteCharacter', id)
 		},
 
 		disconnect() {

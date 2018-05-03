@@ -30,7 +30,7 @@
 
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-						<button type="submit" class="btn btn-danger" @click="$emit('delete')">Delete Character</button>
+						<button type="submit" class="btn btn-danger" @click="deleteCharacter">Delete Character</button>
 					</div>
 				</div>
 			</div>
@@ -40,6 +40,7 @@
 
 <script>
 import 'bootstrap'
+import $ from 'jquery'
 import FontAwesomeIcon from '@fortawesome/vue-fontawesome'
 
 export default {
@@ -53,6 +54,14 @@ export default {
 		character: {
 			type: Object,
 			required: true
+		}
+	},
+
+	methods: {
+		deleteCharacter() {
+			this.$emit('delete', this.character.Id)
+
+			$(this.$refs.deleteModal).modal('hide')
 		}
 	}
 }

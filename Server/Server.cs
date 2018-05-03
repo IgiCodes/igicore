@@ -12,6 +12,7 @@ using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Connection;
 using IgiCore.Core.Models.Objects;
 using IgiCore.Core.Services;
+using IgiCore.Server.Extentions;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 using IgiCore.Server.Services;
@@ -93,7 +94,7 @@ namespace IgiCore.Server
 
 		private static void ClientDisconnect([FromSource] Citizen citizen)
 		{
-			// TODO: Kick player
+			citizen.Drop("Disconnected");
 		}
 
 		private static async void AcceptRules([FromSource] Citizen citizen, string jsonDateTime)
@@ -112,7 +113,7 @@ namespace IgiCore.Server
 
 			if (user.Characters == null) user.Characters = new List<Character>();
 
-			TriggerClientEvent(citizen, RpcEvents.GetCharacters, JsonConvert.SerializeObject(user.Characters.OrderByDescending(c => c.Created)));
+			TriggerClientEvent(citizen, RpcEvents.GetCharacters, JsonConvert.SerializeObject(user.Characters.NotDeleted().OrderBy(c => c.Created)));
 		}
 
 		private static async void CreateCharacter([FromSource] Citizen citizen, string characterJson)
@@ -127,9 +128,9 @@ namespace IgiCore.Server
 			character.Health = 10000;
 			character.Armor = 0;
 			character.Ssn = "123-45-6789";
-            //character.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
-		    character.Position = new Vector3 { X = 153.7846f, Y = -1032.899f, Z = 29.33798f };
-            character.LastPlayed = DateTime.MinValue;
+			//character.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
+			character.Position = new Vector3 { X = 153.7846f, Y = -1032.899f, Z = 29.33798f };
+			character.LastPlayed = DateTime.MinValue;
 			character.Created = DateTime.UtcNow;
 			character.Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() };
 			//character.Inventory = new Inventory { Id = GuidGenerator.GenerateTimeBasedGuid() };
@@ -142,9 +143,24 @@ namespace IgiCore.Server
 			GetCharacters(citizen);
 		}
 
-		private static async void DeleteCharacter([FromSource] Citizen citizen, string id)
+		private static async void DeleteCharacter([FromSource] Citizen citizen, string characterId)
 		{
-			// TODO
+			User user = await User.GetOrCreate(citizen);
+
+			if (user.Characters == null) user.Characters = new List<Character>();
+
+			var id = Guid.Parse(characterId);
+
+			var character = user.Characters.FirstOrDefault(c => c.Id == id);
+
+			if (character == null) return;
+
+			character.Deleted = DateTime.UtcNow;
+
+			Db.Characters.AddOrUpdate(character);
+			await Db.SaveChangesAsync();
+
+			GetCharacters(citizen);
 		}
 
 		private static async void LoadCharacter([FromSource] Citizen citizen, string characterId)
@@ -155,7 +171,16 @@ namespace IgiCore.Server
 
 			var id = Guid.Parse(characterId);
 
-			TriggerClientEvent(citizen, RpcEvents.CharacterLoad, JsonConvert.SerializeObject(user.Characters.FirstOrDefault(c => c.Id == id)));
+			var character = user.Characters.NotDeleted().FirstOrDefault(c => c.Id == id);
+
+			if (character == null) return;
+
+			character.LastPlayed = DateTime.UtcNow;
+
+			Db.Characters.AddOrUpdate(character);
+			await Db.SaveChangesAsync();
+
+			TriggerClientEvent(citizen, RpcEvents.CharacterLoad, JsonConvert.SerializeObject(character));
 		}
 
 		private void TransferObject<T>(string objJson, int playerId) where T : class, IObject
