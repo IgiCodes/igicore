@@ -19,6 +19,7 @@ namespace IgiCore.Server
 		{
 			var user = await User.GetOrCreate(citizen);
 
+			user.Name = citizen.Name;
 			user.LastConnected = DateTime.UtcNow;
 			user.LastIpAddress = citizen.EndPoint;
 
