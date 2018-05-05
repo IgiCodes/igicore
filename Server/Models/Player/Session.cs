@@ -5,7 +5,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Player;
-using JetBrains.Annotations;
 using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Server.Models.Player

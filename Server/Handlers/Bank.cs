@@ -5,7 +5,6 @@ using CitizenFX.Core;
 using IgiCore.Core;
 using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Server.Models.Economy.Banking;
-using IgiCore.Server.Models.Player;
 using Newtonsoft.Json;
 using Citizen = CitizenFX.Core.Player;
 
