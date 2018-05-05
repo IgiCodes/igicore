@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Server.Models.Economy.Banking;
 using IgiCore.Server.Models.Player;
-using IgiCore.Server.Storage.MySql;
 
 namespace IgiCore.Server.Services.Economy
 {

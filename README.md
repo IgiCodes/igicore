@@ -1,20 +1,42 @@
 # igicore
-Base framework for GTAV FiveM roleplaying servers build in C#.
+[![License](https://img.shields.io/github/license/Igirisujin/igicore.svg)](LICENSE)
 
-This repo is an absolute mess right now. Purely using it as online storage and for ease of collaboration when interacting with my stream [twitch.tv/igicodes](https://www.twitch.tv/igicodes).
-I'll tidy this up when the framework is more production worthy.
+Complete base framework for GTAV FiveM roleplay servers built entirely in managed C#.
+This project aims to replace existing FiveM server resources with a single managed framework to build upon.
+
+This project is primarily developed live on [my Twitch stream](https://www.twitch.tv/igicodes) with the help and input of viewers. Planned features and progress are tracked on [Trello](https://trello.com/b/cGGQ5tmV/igicore).
+
+**Currently a work in progress**
 
 ## Development
-This resource replaces ALL stock server resources; make sure you remove them from your configuration. The server will always try to load ``sessionmanager``, even if it is not in your configuration, so you must delete or rename the resource.
+Building the project will require [Visual Studio 2017](https://www.visualstudio.com/) and [Node.js](https://nodejs.org/) to be installed. A MySQL database is required for storage, [MariaDB](https://mariadb.org/) is recommended.
 
-Clone this repo inside your FiveM server's ``resources`` directory and build the project in Visual Studio 2017.
+This resource currently replaces *all* stock server resources; make sure you remove them from your configuration. The server will always try to load ``sessionmanager``, even if it is not in your configuration, so you must delete or rename the resource.
 
-Edit your ``server.cfg`` file to include the following line below your existing configuration:
+1. Clone this repo inside your FiveM server's ``resources`` directory:
+  ```sh
+  git clone https://github.com/Igirisujin/igicore.git
+  cd igicore
+  ```
 
-```
-exec resources\igicore\igicore.cfg
-```
+2. Build the project in Visual Studio.
 
-Set the options as needed in ``igicore.cfg`` .
+4. Install interface dependencies:
+  ```sh
+  cd Interface
+  npm install
+  ```
+
+5. Build interface:
+  ```sh
+  npm run build
+  ```
+
+5. Edit your ``server.cfg`` file to include the following line below your existing configuration:
+  ```
+  exec resources\igicore\igicore.cfg
+  ```
+
+6. Edit ``igicore.cfg`` with your database connection information as needed.
 
 Note: You may need to manually preconfigure your MySQL server to default the character set to Unicode. For MariaDB add ``--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci`` to the server arguments.

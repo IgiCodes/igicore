@@ -1,7 +1,6 @@
 ﻿using System;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
-using IgiCore.Core.Models.Economy.Banking;
 using Newtonsoft.Json;
 
 namespace IgiCore.Core.Models.Economy.Banking

@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using IgiCore.Core.Services;
 using IgiCore.Server.Models.Player;
 

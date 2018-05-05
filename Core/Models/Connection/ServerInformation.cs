@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using IgiCore.Core.Models.Objects.Items.Economy;
 using IgiCore.Core.Models.Economy.Banking;
 
 namespace IgiCore.Core.Models.Connection
