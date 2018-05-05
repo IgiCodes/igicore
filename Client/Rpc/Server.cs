@@ -129,31 +129,55 @@ namespace IgiCore.Client.Rpc
 			}
 		}
 
-		public static async Task<Tuple<T1, T2>> Request<T1, T2>(string eventName)
-		{
-			var tcs = new TaskCompletionSource<Tuple<string, string>>();
-			var handler = new Action<string, string>((r1, r2) => tcs.SetResult(new Tuple<string, string>(r1, r2)));
-			
-			try
-			{
-				Client.Instance.Handlers[eventName] += handler;
+	    public static async Task<T4> Request<T1, T2, T3, T4>(string eventName, T1 arg1, T2 arg2, T3 arg3)
+	    {
+	        var tcs = new TaskCompletionSource<string>();
+	        var handler = new Action<string>(r => tcs.SetResult(r));
 
-				BaseScript.TriggerServerEvent(eventName);
+	        try
+	        {
+	            Client.Instance.Handlers[eventName] += handler;
 
-				var result = await tcs.Task;
+	            BaseScript.TriggerServerEvent(
+	                eventName,
+	                JsonConvert.SerializeObject(arg1),
+	                JsonConvert.SerializeObject(arg2),
+	                JsonConvert.SerializeObject(arg3)
+	                );
 
-				return new Tuple<T1, T2>(
-					JsonConvert.DeserializeObject<T1>(result.Item1),
-					JsonConvert.DeserializeObject<T2>(result.Item2)
-				);
-			}
-			finally
-			{
-				Client.Instance.Handlers[eventName] -= handler;
-			}
-		}
+                return JsonConvert.DeserializeObject<T4>(await tcs.Task);
+	        }
+	        finally
+	        {
+	            Client.Instance.Handlers[eventName] -= handler;
+	        }
+	    }
 
-		public static async Task<Tuple<T1, T2, T3>> Request<T1, T2, T3>(string eventName)
+        public static async Task<Tuple<T1, T2>> Request<T1, T2>(string eventName)
+	    {
+	        var tcs = new TaskCompletionSource<Tuple<string, string>>();
+	        var handler = new Action<string, string>((r1, r2) => tcs.SetResult(new Tuple<string, string>(r1, r2)));
+
+	        try
+	        {
+	            Client.Instance.Handlers[eventName] += handler;
+
+	            BaseScript.TriggerServerEvent(eventName);
+
+	            var result = await tcs.Task;
+
+	            return new Tuple<T1, T2>(
+	                JsonConvert.DeserializeObject<T1>(result.Item1),
+	                JsonConvert.DeserializeObject<T2>(result.Item2)
+	            );
+	        }
+	        finally
+	        {
+	            Client.Instance.Handlers[eventName] -= handler;
+	        }
+	    }
+
+        public static async Task<Tuple<T1, T2, T3>> Request<T1, T2, T3>(string eventName)
 		{
 			var tcs = new TaskCompletionSource<Tuple<string, string, string>>();
 			var handler = new Action<string, string, string>((r1, r2, r3) => tcs.SetResult(new Tuple<string, string, string>(r1, r2, r3)));

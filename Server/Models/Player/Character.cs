@@ -6,6 +6,7 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Inventories.Characters;
@@ -50,10 +51,10 @@ namespace IgiCore.Server.Models.Player
 			}
 		}
 
-		[JsonIgnore]
-		public string FullName => $"{this.Forename} {this.Middlename} {this.Surname}".Replace("  ", " ");
+	    [JsonIgnore]
+	    public string FullName => $"{this.Forename} {this.Middlename} {this.Surname}".Replace("  ", " ");
 
-		public Character()
+        public Character()
 		{
 			this.Id = GuidGenerator.GenerateTimeBasedGuid();
             //this.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
@@ -116,7 +117,7 @@ namespace IgiCore.Server.Models.Player
 
 					Server.Db.Users.AddOrUpdate(user);
 					await Server.Db.SaveChangesAsync();
-				}
+                }
 				else
 				{
 					character = user.Characters.OrderBy(c => c.LastPlayed).Last();

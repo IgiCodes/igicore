@@ -12,7 +12,7 @@ using IgiCore.Client.Models;
 using IgiCore.Client.Rpc;
 using IgiCore.Client.Services;
 using IgiCore.Client.Services.AI;
-using IgiCore.Client.Services.Bank;
+using IgiCore.Client.Services.Economy;
 using IgiCore.Client.Services.Player;
 using IgiCore.Client.Services.Vehicle;
 using IgiCore.Client.Services.World;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;
 
 namespace IgiCore.Server.Models.Economy.Banking
@@ -16,5 +17,12 @@ namespace IgiCore.Server.Models.Economy.Banking
 
 		public virtual List<BankAccountMember> Members { get; set; }
 		public virtual List<BankAccountCard> Cards { get; set; }
-	}
+
+        public BankAccount()
+        {
+            this.Id = GuidGenerator.GenerateTimeBasedGuid();
+            Created = DateTime.UtcNow;
+            Locked = false;
+        }
+    }
 }

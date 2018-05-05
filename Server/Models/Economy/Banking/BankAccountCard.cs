@@ -1,4 +1,5 @@
 ﻿using System;
+using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Models.Objects.Items.Economy;
 
@@ -13,5 +14,11 @@ namespace IgiCore.Server.Models.Economy.Banking
 		public int Pin { get; set; }
 		public int Number { get; set; }
 		public string Name { get; set; }
-	}
+
+	    public BankAccountCard()
+	    {
+	        this.Id = GuidGenerator.GenerateTimeBasedGuid();
+	        Created = DateTime.UtcNow;
+	    }
+    }
 }

@@ -13,5 +13,11 @@
 		public const string CharacterLoad = "igi:character:load";
 		public const string CharacterDelete = "igi:character:delete";
 		public const string CharacterSave = "igi:character:save";
-	}
+
+	    public const string BankAtmWithdraw = "igi:bank:atm:withdraw";
+	    public const string BankBranchWithdraw = "igi:bank:branch:withdraw";
+	    public const string BankBranchDeposit = "igi:bank:branch:withdraw";
+	    public const string BankBranchTransfer = "igi:bank:branch:transfer";
+	    public const string BankOnlineTransfer = "igi:bank:online:transfer";
+    }
 }

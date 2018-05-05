@@ -90,12 +90,12 @@
     <Compile Include="Config.cs" />
     <Compile Include="Extentions\CitizenExtentions.cs" />
     <Compile Include="Extentions\CharacterExtentions.cs" />
+    <Compile Include="Handlers\Bank.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Economy\Banking\Bank.cs" />
     <Compile Include="Models\Economy\Banking\BankAccount.cs" />
     <Compile Include="Models\Economy\Banking\BankAccountCard.cs" />
     <Compile Include="Models\Economy\Banking\BankAccountMember.cs" />
-    <Compile Include="Models\Economy\Banking\BankATM.cs" />
     <Compile Include="Models\Economy\Banking\BankBranch.cs" />
     <Compile Include="Models\Player\Character.cs" />
     <Compile Include="Models\Groups\Group.cs" />
@@ -103,6 +103,7 @@
     <Compile Include="Models\Groups\GroupRole.cs" />
     <Compile Include="Models\Player\Session.cs" />
     <Compile Include="Rpc\ServerEvents.cs" />
+    <Compile Include="Services\Economy\BankService.cs" />
     <Compile Include="Services\IServerService.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleActions.cs" />
     <Compile Include="Services\ServerService.cs" />

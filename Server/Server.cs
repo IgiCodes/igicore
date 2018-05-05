@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
@@ -10,12 +11,15 @@ using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Connection;
+using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Models.Objects;
 using IgiCore.Core.Services;
 using IgiCore.Server.Extentions;
+using IgiCore.Server.Models.Economy.Banking;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 using IgiCore.Server.Services;
+using IgiCore.Server.Services.Economy;
 using IgiCore.Server.Storage.MySql;
 using Newtonsoft.Json;
 using Citizen = CitizenFX.Core.Player;
@@ -31,7 +35,9 @@ namespace IgiCore.Server
 
 		public new PlayerList Players => base.Players;
 
-		public Server()
+	    public event EventHandler<EventArgs> OnCharacterCreate;
+
+        public Server()
 		{
 			// Singleton
 			Instance = this;
@@ -39,7 +45,8 @@ namespace IgiCore.Server
 			Db = new DB();
 			Db.Database.CreateIfNotExists();
 
-			this.Services.Add(new VehicleService(this));
+			this.Services.Add(new VehicleService());
+            this.Services.Add(new BankService());
 			this.Services.Initialise(this.EventHandlers);
 
 			//HandleEvent<string>(ServerEvents.ResourceStarting, r => Debug.WriteLine($"Starting resource: {r}"));
@@ -67,6 +74,8 @@ namespace IgiCore.Server
 			HandleEvent<Citizen, string>(RpcEvents.CharacterDelete, DeleteCharacter);
 			HandleJsonEvent<Character>(RpcEvents.CharacterSave, Character.Save);
 
+            HandleEvent<Citizen, string, string, string>(RpcEvents.BankAtmWithdraw, Handlers.Bank.AtmWithdraw);
+
 			//HandleEvent<string>("igi:car:save", VehicleActions.Save<Car>);
 			//HandleEvent<string, int>("igi:car:transfer", TransferObject<Car>);
 			//HandleEvent<Citizen, string>("igi:car:claim", ClaimObject<Car>);
@@ -79,6 +88,37 @@ namespace IgiCore.Server
 
 			API.SetGameType("Roleplay");
 			API.SetMapName("Los Santos");
+
+
+		    Db.Banks.AddOrUpdate(
+		        new Bank
+		        {
+                    Name = "Fleeca",
+                    Branches = new List<BankBranch>
+                    {
+                        new BankBranch
+                        {
+                            Name = "Legion Square"
+                        }
+                    },
+                    ATMs = new List<BankAtm>
+                    {
+                        new BankAtm
+                        {
+                            Name = "FLCA LSS 0001",
+                            Hash = 506770882,
+                            Position = new Vector3(147.4731f, -1036.218f, 28.36778f)
+                        },
+                        new BankAtm
+                        {
+                            Name = "FLCA LSS 0002",
+                            Hash = 506770882,
+                            Position = new Vector3(145.8392f, -1035.625f, 28.36778f)
+                        }
+                    },
+                    Accounts = new List<BankAccount>()
+		        });
+		    Db.SaveChangesAsync();
 		}
 
 		private static void ClientReady([FromSource] Citizen citizen)
@@ -88,8 +128,10 @@ namespace IgiCore.Server
 				ResourceName = API.GetCurrentResourceName(),
 				ServerName = Config.ServerName,
 				DateTime = DateTime.UtcNow,
-				Weather = "EXTRASUNNY" // TODO
+				Weather = "EXTRASUNNY", // TODO
+                Atms = Db.BankATMs.ToList()
 			}));
+            
 		}
 
 		private static void ClientDisconnect([FromSource] Citizen citizen)
@@ -133,9 +175,11 @@ namespace IgiCore.Server
 			character.LastPlayed = DateTime.MinValue;
 			character.Created = DateTime.UtcNow;
 			character.Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() };
-			//character.Inventory = new Inventory { Id = GuidGenerator.GenerateTimeBasedGuid() };
+            //character.Inventory = new Inventory { Id = GuidGenerator.GenerateTimeBasedGuid() };
 
-			user.Characters.Add(character);
+		    foreach (ServerService service in Server.Instance.Services) character = await service.OnCharacterCreate(character);
+
+            user.Characters.Add(character);
 
 			Db.Users.AddOrUpdate(user);
 			await Db.SaveChangesAsync();
@@ -241,7 +285,9 @@ namespace IgiCore.Server
 
 		public void HandleEvent<T1, T2, T3>(string name, Action<T1, T2, T3> action) { this.EventHandlers[name] += action; }
 
-		public void HandleJsonEvent<T>(string eventName, Action<T> action) { this.EventHandlers[eventName] += new Action<string>(json => action(JsonConvert.DeserializeObject<T>(json))); }
+	    public void HandleEvent<T1, T2, T3, T4>(string name, Action<T1, T2, T3, T4> action) { this.EventHandlers[name] += action; }
+
+        public void HandleJsonEvent<T>(string eventName, Action<T> action) { this.EventHandlers[eventName] += new Action<string>(json => action(JsonConvert.DeserializeObject<T>(json))); }
 
 		public void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action) { this.EventHandlers[eventName] += new Action<string, string>((j1, j2) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2))); }
 
