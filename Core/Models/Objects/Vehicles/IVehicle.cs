@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace IgiCore.Core.Models.Objects.Vehicles
 {
     public interface IVehicle : IObject
     {
-        Guid Id { get; set; }
         string VIN { get; set; }
         float BodyHealth { get; set; }
         float EngineHealth { get; set; }
@@ -13,12 +11,10 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         float FuelLevel { get; set; }
         float OilLevel { get; set; }
         float PetrolTankHealth { get; set; }
-        float Speed { get; set; }
-        float SteeringAngle { get; set; }
         float TowingCraneRaisedAmount { get; set; }
         bool HasAlarm { get; set; }
         bool IsAlaramed { get; set; }
-        bool HasLock { get; set; }        
+        bool HasLock { get; set; }
         bool IsDriveable { get; set; }
         bool IsEngineRunning { get; set; }
         bool HasSeatbelts { get; set; }

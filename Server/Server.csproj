@@ -28,7 +28,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -52,8 +52,8 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CitizenFX.Core">
-      <HintPath>..\..\..\..\..\citizen\clr2\lib\mono\4.5\CitizenFX.Core.dll</HintPath>
+    <Reference Include="CitizenFX.Server">
+      <HintPath>..\lib\CitizenFX.Server.dll</HintPath>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
@@ -66,6 +66,10 @@
     </Reference>
     <Reference Include="I18N.West">
       <HintPath>..\lib\I18N.West.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MySql.Data, Version=6.10.6.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.10.6\lib\net452\MySql.Data.dll</HintPath>
@@ -84,10 +88,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Config.cs" />
+    <Compile Include="Extentions\CitizenExtentions.cs" />
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Character.cs" />
-    <Compile Include="Models\User.cs" />
+    <Compile Include="Models\Economy\Banking\Bank.cs" />
+    <Compile Include="Models\Economy\Banking\BankAccount.cs" />
+    <Compile Include="Models\Economy\Banking\BankAccountCard.cs" />
+    <Compile Include="Models\Economy\Banking\BankAccountMember.cs" />
+    <Compile Include="Models\Economy\Banking\BankATM.cs" />
+    <Compile Include="Models\Economy\Banking\BankBranch.cs" />
+    <Compile Include="Models\Player\Character.cs" />
+    <Compile Include="Models\Groups\Group.cs" />
+    <Compile Include="Models\Groups\GroupMember.cs" />
+    <Compile Include="Models\Groups\GroupRole.cs" />
+    <Compile Include="Rpc\ServerEvents.cs" />
+    <Compile Include="Services\IServerService.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleActions.cs" />
+    <Compile Include="Services\ServerService.cs" />
+    <Compile Include="Models\Player\User.cs" />
     <Compile Include="ServerEventHandlers.cs" />
+    <Compile Include="Services\VehicleService.cs" />
+    <Compile Include="SessionManager.cs" />
     <Compile Include="Storage\MySql\DB.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

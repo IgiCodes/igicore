@@ -1,166 +1,298 @@
 using System;
-using System.Runtime.InteropServices;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using CitizenFX.Core.UI;
+using IgiCore.Client.Events;
+using IgiCore.Client.Interface;
+using IgiCore.Client.Interface.Hud;
+using IgiCore.Client.Interface.Menu;
+using IgiCore.Client.Managers;
 using IgiCore.Client.Models;
-using Newtonsoft.Json;
-using static CitizenFX.Core.Native.API;
+using IgiCore.Client.Rpc;
+using IgiCore.Client.Services;
+using IgiCore.Client.Services.AI;
+using IgiCore.Client.Services.Bank;
+using IgiCore.Client.Services.Player;
+using IgiCore.Client.Services.Vehicle;
+using IgiCore.Client.Services.World;
+using IgiCore.Core;
+using IgiCore.Core.Models.Connection;
+using JetBrains.Annotations;
+using Debug = CitizenFX.Core.Debug;
+using Screen = CitizenFX.Core.UI.Screen;
 
 namespace IgiCore.Client
 {
-    public class Client : BaseScript
-    {
-        protected User User;
+	[PublicAPI]
+	public class Client : BaseScript
+	{
+		/// <summary>
+		/// Gets or sets the global singleton instance reference.
+		/// </summary>
+		/// <value>
+		/// The singleton <see cref="Client"/> instance.
+		/// </value>
+		public static Client Instance { get; protected set; }
 
-        public new event Func<Task> Tick;
+		public event EventHandler<ServerInformationEventArgs> OnClientReady;
+		public event EventHandler<UserEventArgs> OnUserLoaded;
+		public event EventHandler<CharactersEventArgs> OnCharactersList;
+		public event EventHandler<CharacterEventArgs> OnCharacterLoaded;
 
-        public new Player LocalPlayer => base.LocalPlayer;
+		public ManagerRegistry Managers { get; protected set; }
 
-        public Client()
-        {
-            // Forward tick event
-            base.Tick += () => this.Tick?.Invoke();
+		public ServiceRegistry Services { get; protected set; }
 
-            // Notify server that client is loaded
-            TriggerServerEvent("igi:client:ready");
+		public EventHandlerDictionary Handlers => this.EventHandlers;
 
-            HandleJsonEvent<User>("igi:user:load", UserLoad);
+		/// <summary>
+		/// Gets or sets the currently loaded user.
+		/// </summary>
+		/// <value>
+		/// The loaded user.
+		/// </value>
+		public User User { get; protected set; }
 
-            // Load the user
-            TriggerServerEvent("igi:user:load");
+		/// <summary>
+		/// Primary client entrypoint.
+		/// Initializes a new instance of the <see cref="Client"/> class.
+		/// </summary>
+		public Client()
+		{
+			// -- INIT
+			Log("Init");
 
-            HandleEvent<string>("igi:vehicle:spawn", SpawnVehicle);
+			// Singleton
+			Instance = this;
 
-            // Set pause screen title
-            Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", "TEST");
-        }
+			this.Managers = new ManagerRegistry
+			{
+				new HudManager(), // Resets and hides all HUD elements
+				new MapManager(), // Loads IPLs and blips
+				new MenuManager() // Set initial menu options
+			};
 
-        public async void SpawnVehicle(string vehicle)
-        {
-            Vehicle veh = await World.CreateVehicle(new Model(GetHashKey(vehicle)), this.LocalPlayer.Character.Position);
-        }
+			this.Services = new ServiceRegistry
+			{
+				new VehicleRollService(), // Disable rolling cars back over
+				new PlayerDeathService(), // Knock down players rather than death
+				new PlayerIdleService(), // Kick idle players
+				new PedFilterService(), // Block blacklisted peds
+				new AiPoliceService(), // Disable AI police
+				new PlayerIndicatorService(), // Show nearby players
+				new DateTimeService(), // Set the date and time
+				new BlackoutService(), // Allow city blackouts
+                new ATMService() // Add ATMs
+			};
 
-        protected async void UserLoad(User user)
-        {
-            Assert(user != null, "User param is empty");
-            Assert(this.User == null, "User already loaded");
+			this.Services.Initialize(); // Attach handlers
 
-            // Store the user
-            this.User = user;
+			// -- SERVICE EVENTS
 
-            //HandleJsonEvent<Character>("igi:character:new", CharacterLoad); // Does the client care?
-            HandleJsonEvent<Character>("igi:character:load", CharacterLoad);
+			// Player Death Service
+			this.Services.First<PlayerDeathService>().OnDowned += (s, e) =>
+			{
+				UI.ShowNotification("Downed");
 
-            await SpawnPlayer();
-        }
+				if (this.LocalPlayer.Character.Weapons.Current.Group != WeaponGroup.Unarmed) this.LocalPlayer.Character.Weapons.Remove(this.LocalPlayer.Character.Weapons.Current);
+			};
 
-        protected void FreezePlayer(bool freeze)
-        {
-            Assert(PlayerId() == this.LocalPlayer.Handle, "HANDLE 1");
-            Assert(GetPlayerPed(-1) == this.LocalPlayer.Character.Handle, "HANDLE 2");
+			this.Services.First<PlayerDeathService>().OnRevived += (s, e) =>
+			{
+				Screen.ShowNotification("Revived");
+			};
 
-            Game.Player.CanControlCharacter = !freeze;
+			//HandleEvent("igi:character:revive", this.Services.First<PlayerDeathService>().Revive);
 
-            this.LocalPlayer.Character.IsVisible = !freeze;
+			//HandleEvent<string>("igi:car:spawn", SpawnVehicle<Car>);
+			//HandleEvent<string>("igi:car:claim", ClaimVehicle<Car>);
+			//HandleEvent<string>("igi:car:unclaim", UnclaimVehicle<Car>);
+			//HandleEvent<string>("igi:bike:spawn", SpawnVehicle<Bike>);
+			//HandleEvent<string>("igi:bike:claim", ClaimVehicle<Bike>);
+			//HandleEvent<string>("igi:bike:unclaim", UnclaimVehicle<Bike>);
 
-            if (!this.LocalPlayer.Character.IsInVehicle())
-            {
-                this.LocalPlayer.Character.IsCollisionEnabled = !freeze;
-            }
+			Startup();
+		}
 
-            this.LocalPlayer.Character.IsPositionFrozen = freeze;
+		/// <summary>
+		/// Loads initial data from the server, raises events and attaches handlers.
+		/// </summary>
+		public async Task Startup()
+		{
+			Log("Startup");
 
-            this.LocalPlayer.Character.IsInvincible = freeze;
+			// Load server details
+			this.OnClientReady?.Invoke(this, new ServerInformationEventArgs(await Server.Request<ServerInformation>(RpcEvents.GetServerInformation)));
 
-            if (!this.LocalPlayer.Character.IsDead && freeze)
-            {
-                this.LocalPlayer.Character.Task.ClearAllImmediately();
-            }
-        }
+			// Load user
+			this.User = await Server.Request<User>(RpcEvents.GetUser);
+			this.OnUserLoaded?.Invoke(this, new UserEventArgs(this.User));
 
-        protected async Task SpawnPlayer()
-        {
-            Screen.Fading.FadeOut(500);
-            while (Screen.Fading.IsFadingOut) await Delay(10);
+			// Load user's characters
+			this.OnCharactersList?.Invoke(this, new CharactersEventArgs(await Server.Request<List<Character>>(RpcEvents.GetCharacters)));
 
-            FreezePlayer(true);
+			Server.On<List<Character>>(RpcEvents.GetCharacters, list => this.OnCharactersList?.Invoke(this, new CharactersEventArgs(list)));
+			Server.On<Character>(RpcEvents.CharacterLoad, CharacterLoad);
 
-            // Swap model
-            if (!await this.LocalPlayer.ChangeModel(new Model(PedHash.FreemodeMale01))) throw new ExternalException("ChangeModel failed");
+			Log("Waiting for character selection...");
+		}
 
-            // Not naked
-            Game.Player.Character.Style.SetDefaultClothes();
+		/// <summary>
+		/// Event: igi:character:load
+		/// Raises <see cref="OnCharacterLoaded"/> with the loaded and initialized character.
+		/// </summary>
+		/// <param name="character">The loaded character.</param>
+		protected async void CharacterLoad(Character character)
+		{
+			Log("igi:character:load");
 
-            this.LocalPlayer.Character.Position = new Vector3(-802.311f, 175.056f, 72.8446f);
-            this.LocalPlayer.Character.Resurrect();
-            this.LocalPlayer.Character.Task.ClearAllImmediately();
-            this.LocalPlayer.Character.Weapons.Drop();
-            this.LocalPlayer.WantedLevel = 0;
+			// Unload old character
+			this.User.Character?.Dispose();
 
-            this.LocalPlayer.Character.Weapons.Give(WeaponHash.AssaultRifle, 100, true, true);
+			// Store the character
+			this.User.Character = character ?? throw new ArgumentNullException(nameof(character));
 
-            ShutdownLoadingScreen();
+			// Setup character
+			this.User.Character.Initialize();
 
-            Screen.Fading.FadeIn(500);
-            while (Screen.Fading.IsFadingIn) await Delay(10);
+			// Render new character
+			this.User.Character.Render();
 
-            FreezePlayer(false);
+			this.OnCharacterLoaded?.Invoke(this, new CharacterEventArgs(this.User.Character));
 
-            // Temporary respawning
-            this.Tick += async () =>
-            {
-                if (!this.LocalPlayer.Character.IsAlive)
-                {
-                    this.LocalPlayer.Character.Resurrect();
-                    this.LocalPlayer.WantedLevel = 0;
-                }
-                await Delay(10);
-            };
 
-            Screen.ShowNotification($"{Game.Player.Name} connected at {DateTime.Now:s}");
-        }
 
-        protected void CharacterLoad(Character character)
-        {
-            // Unload old character
-            this.User.Character?.Dispose();
+			//// Spawn character
+			//await Game.Player.Spawn(this.User.Character.Position);
 
-            // Store the character
-            this.User.Character = character ?? throw new ArgumentNullException(nameof(character));
-            this.User.Character.Initialize(this); // Fake ctor
+			//DisableAutomaticRespawn(true);
+			//Game.Player.Character.DropsWeaponsOnDeath = false;
+			//Game.Player.Character.Health = Game.Player.Character.MaxHealth;
 
-            // Render new character
-            this.User.Character.Render();
+			//// Enable PvP
+			//NetworkSetFriendlyFireOption(true);
+			//SetCanAttackFriendly(Game.Player.Character.Handle, true, false);
 
-            Screen.ShowNotification($"{this.User.Character.Name} loaded at {DateTime.Now:s}");
-        }
+			//this.Managers.First<HudManager>().Visible = true;
 
-        [System.Diagnostics.Conditional("DEBUG")]
-        public static void Log(string message)
-        {
-            Debug.WriteLine($"{DateTime.Now:s} [CLIENT]: {message}");
-        }
 
-        [System.Diagnostics.Conditional("DEBUG")]
-        public static void Assert(bool condition)
-        {
-            System.Diagnostics.Debug.Assert(condition);
-        }
 
-        [System.Diagnostics.Conditional("DEBUG")]
-        public static void Assert(bool condition, string message)
-        {
-            System.Diagnostics.Debug.Assert(condition, message);
-        }
 
-        public void HandleEvent(string name, Action action) => this.EventHandlers[name] += action;
-        public void HandleEvent<T1>(string name, Action<T1> action) => this.EventHandlers[name] += action;
-        public void HandleEvent<T1, T2>(string name, Action<T1, T2> action) => this.EventHandlers[name] += action;
-        public void HandleEvent<T1, T2, T3>(string name, Action<T1, T2, T3> action) => this.EventHandlers[name] += action;
-        public void HandleJsonEvent<T>(string eventName, Action<T> action) => this.EventHandlers[eventName] += new Action<string>(json => action(JsonConvert.DeserializeObject<T>(json)));
-        public void HandleJsonEvent<T1, T2>(string eventName, Action<T1, T2> action) => this.EventHandlers[eventName] += new Action<string, string>((j1, j2) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2)));
-        public void HandleJsonEvent<T1, T2, T3>(string eventName, Action<T1, T2, T3> action) => this.EventHandlers[eventName] += new Action<string, string, string>((j1, j2, j3) => action(JsonConvert.DeserializeObject<T1>(j1), JsonConvert.DeserializeObject<T2>(j2), JsonConvert.DeserializeObject<T3>(j3)));
-    }
+
+
+			//var bone = Game.Player.Character.Bones[Bone.PH_R_Hand];
+
+			//var board = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), Game.Player.Character.Position, Game.Player.Character.Rotation, false, false);
+			//board.AttachTo(bone);
+
+			//var text = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), board.Position, board.Rotation, false, false);
+			//text.AttachTo(board);
+
+			//Game.Player.Character.Task.PlayAnimation("mp_character_creation@lineup@male_a", "loop_raised", 1, -1, AnimationFlags.Loop);
+
+			//var scaleformHandle = new Scaleform("mugshot_board_01");
+			//scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "002134234", this.User.Character.FullName, DateTime.Now.ToString("d"), 0);
+
+
+			//var renderTargetName = "ID_Text";
+			//int renderTargetHash = -955488312;
+			////RegisterNamedRendertarget(renderTargetName, true);
+			////LinkNamedRendertarget((uint) new Model(GetHashKey("prop_police_id_board")).Hash);
+			////var renderTargetID = GetNamedRendertargetRenderId(renderTargetName);
+			////var renderTargetID = CreateNamedRenderTargetForModel(renderTargetName, text);
+
+
+			//if (!IsNamedRendertargetRegistered(renderTargetName)) RegisterNamedRendertarget(renderTargetName, true);
+			//if (!Function.Call<bool>((Hash)0x113750538FA31298, renderTargetHash)) Function.Call((Hash)0xF6C09E276AEB3F2D, renderTargetHash);// IsNamedRendertargetLinked LinkNamedRendertarget(-955488312);
+
+			//var renderTargetID = IsNamedRendertargetRegistered(renderTargetName) ? GetNamedRendertargetRenderId(renderTargetName) : 0;
+
+
+
+			//AttachTickHandler(async () =>
+			//{
+			//	SetTextRenderId(renderTargetID);
+
+			//	scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "543-01-1349", DateTime.Now.ToString("d"), this.User.Character.FullName, 0);
+
+			//	//DrawScaleformMovie(scale.Handle, 0.405f, 0.37f, 0.81f, 0.74f, 255, 255, 255, 255, 1);
+			//	//scale.Render3D(text.Position - new Vector3(0.022f, 0, 0), text.Rotation - new Vector3(0.022f, 0, 0), new Vector3(0.35f, 0.15f, 0));
+
+			//	SetTextRenderId(GetDefaultScriptRendertargetRenderId());
+			//});
+
+			////Screen.ShowNotification($"{this.User.Character.FullName} loaded at {DateTime.Now:h:mm:ss tt}");
+		}
+
+		[Conditional("DEBUG")]
+		public static void Log(string message) => Debug.Write($"{DateTime.Now:s} [CLIENT]: {message}");
+
+		public void AttachTickHandler(Func<Task> task) => this.Tick += task;
+
+		public void DettachTickHandler(Func<Task> task) => this.Tick -= task;
+
+		//public void ClaimVehicle<T>(string vehJson) where T : Vehicle
+		//{
+		//	T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
+
+		//	Log($"Claiming vehicle with netId: {vehicle.NetId}");
+
+		//	var vehHandle = NetToVeh(vehicle.NetId ?? 0);
+		//	if (vehHandle == 0) return;
+
+		//	Log($"Handle found for net id: {vehHandle}");
+
+		//	CitizenFX.Core.Vehicle citizenVehicle = new CitizenFX.Core.Vehicle(vehHandle);
+		//	VehToNet(citizenVehicle.Handle);
+		//	NetworkRegisterEntityAsNetworked(citizenVehicle.Handle);
+		//	var netId = NetworkGetNetworkIdFromEntity(citizenVehicle.Handle);
+
+		//	Log($"Sending {vehicle.Id}");
+
+		//	TriggerServerEvent("igi:car:claim", vehicle.Id.ToString());
+
+		//	this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
+
+		//	Log($"Tracked vehicle count in claim: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+		//}
+
+		//public void UnclaimVehicle<T>(string vehJson) where T : Vehicle
+		//{
+		//	T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
+
+		//	Log($"Unclaiming car: {vehicle.Id} with NetId: {vehicle.NetId}");
+		//	Log($"Currently tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+
+		//	this.Services.First<VehicleService>().Tracked.Remove(new Tuple<Type, int>(typeof(T), vehicle.NetId ?? 0));
+
+		//	Log($"Now tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+		//}
+
+		//public async void SpawnVehicle<T>(string vehJson) where T : Vehicle
+		//{
+		//	T vehToSpawn = JsonConvert.DeserializeObject<T>(vehJson);
+		//	Log($"Spawning {vehToSpawn.Id}");
+
+		//	CitizenFX.Core.Vehicle spawnedVehicle = await vehToSpawn.ToCitizenVehicle();
+		//	VehToNet(spawnedVehicle.Handle);
+		//	NetworkRegisterEntityAsNetworked(spawnedVehicle.Handle);
+		//	var netId = NetworkGetNetworkIdFromEntity(spawnedVehicle.Handle);
+		//	//SetNetworkIdExistsOnAllMachines(netId, true);
+
+		//	Log($"Spawned {spawnedVehicle.Handle} with netId {netId}");
+
+		//	Vehicle vehicle = spawnedVehicle;
+		//	vehicle.Id = vehToSpawn.Id;
+		//	vehicle.TrackingUserId = this.User.Id;
+		//	vehicle.Handle = spawnedVehicle.Handle;
+		//	vehicle.NetId = netId;
+
+		//	Log($"Sending {vehicle.Id} with event \"igi:{typeof(T).VehicleType().Name}:save\"");
+
+		//	TriggerServerEvent($"igi:{typeof(T).VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
+
+		//	this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
+		//}
+	}
 }

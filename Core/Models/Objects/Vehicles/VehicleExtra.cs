@@ -9,9 +9,6 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public int Index { get; set; }
         public bool IsOn { get; set; }
 
-        public VehicleExtra()
-        {
-            this.Id = GuidGenerator.GenerateTimeBasedGuid();
-        }
+        public VehicleExtra() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
     }
 }

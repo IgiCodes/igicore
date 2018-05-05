@@ -1,0 +1,43 @@
+{
+  "name": "igicore",
+  "version": "1.0.0",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "webpack --mode=development --hide-modules",
+    "watch": "webpack --watch --mode=development --hide-modules",
+    "build": "webpack -p --mode=production --hide-modules"
+  },
+  "devDependencies": {
+    "@fortawesome/fontawesome": "^1.1.6",
+    "@fortawesome/fontawesome-free-regular": "^5.0.11",
+    "@fortawesome/fontawesome-free-solid": "^5.0.11",
+    "@fortawesome/vue-fontawesome": "0.0.22",
+    "@mapbox/stylelint-processor-arbitrary-tags": "^0.2.0",
+    "bootstrap": "^4.1.1",
+    "css-loader": "^0.28.11",
+    "eslint": "^4.19.1",
+    "eslint-loader": "^2.0.0",
+    "eslint-plugin-vue": "^4.5.0",
+    "file-loader": "^1.1.11",
+    "friendly-errors-webpack-plugin": "^1.7.0",
+    "jquery": "^3.3.1",
+    "lodash": "^4.17.10",
+    "node-sass": "^4.9.0",
+    "popper.js": "^1.14.3",
+    "sass-loader": "^7.0.1",
+    "style-loader": "^0.21.0",
+    "stylelint": "^9.2.0",
+    "stylelint-config-recess-order": "^2.0.0",
+    "stylelint-config-sass-guidelines": "^5.0.0",
+    "stylelint-config-standard": "^18.2.0",
+    "stylelint-webpack-plugin": "^0.10.4",
+    "vue": "^2.5.16",
+    "vue-loader": "^14.2.2",
+    "vue-style-loader": "^4.1.0",
+    "vue-template-compiler": "^2.5.16",
+    "vuex": "^3.0.1",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.1.2"
+  }
+}

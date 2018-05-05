@@ -5,7 +5,7 @@
     {
         Compacts,
         Sedans,
-        SUVs, 
+        SUVs,
         Coupes,
         Muscle,
         SportsClassics,

@@ -25,24 +25,87 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CitizenFX.Client">
+      <HintPath>..\lib\CitizenFX.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extensions\FloatExtentions.cs" />
+    <Compile Include="RpcEvents.cs" />
     <Compile Include="Extensions\Guid.cs" />
+    <Compile Include="Extensions\ReflectionExtensions.cs" />
+    <Compile Include="Extensions\VehicleExtensions.cs" />
     <Compile Include="Models\Appearance\Prop.cs" />
     <Compile Include="Models\Appearance\Component.cs" />
     <Compile Include="Models\Appearance\PropTypes.cs" />
     <Compile Include="Models\Appearance\ComponentTypes.cs" />
     <Compile Include="Models\Appearance\Style.cs" />
     <Compile Include="Models\Color.cs" />
+    <Compile Include="Models\Connection\ServerInformation.cs" />
+    <Compile Include="Models\Economy\Banking\BankAccountTypes.cs" />
+    <Compile Include="Models\Economy\Banking\IBank.cs" />
+    <Compile Include="Models\Economy\Banking\IBankAccount.cs" />
+    <Compile Include="Models\Economy\Banking\IBankAccountCard.cs" />
+    <Compile Include="Models\Economy\Banking\IBankAccountMembers.cs" />
+    <Compile Include="Models\Economy\Banking\IBankATM.cs" />
+    <Compile Include="Models\Economy\Banking\IBankBranch.cs" />
+    <Compile Include="Models\Groups\IGroup.cs" />
+    <Compile Include="Models\Groups\IGroupMember.cs" />
+    <Compile Include="Models\Groups\IGroupRole.cs" />
+    <Compile Include="Models\Inventories\Characters\Arm.cs" />
+    <Compile Include="Models\Inventories\Characters\Foot.cs" />
+    <Compile Include="Models\Inventories\Characters\Inventory.cs" />
+    <Compile Include="Models\Inventories\Characters\Arms.cs" />
+    <Compile Include="Models\Inventories\Characters\Back.cs" />
+    <Compile Include="Models\Inventories\Characters\BackGun.cs" />
+    <Compile Include="Models\Inventories\Characters\Backpack.cs" />
+    <Compile Include="Models\Inventories\Characters\Feet.cs" />
+    <Compile Include="Models\Inventories\Characters\Hand.cs" />
+    <Compile Include="Models\Inventories\Characters\Hands.cs" />
+    <Compile Include="Models\Inventories\Characters\Head.cs" />
+    <Compile Include="Models\Inventories\Characters\Holster.cs" />
+    <Compile Include="Models\Inventories\Characters\IComponent.cs" />
+    <Compile Include="Models\Inventories\Characters\InventoryComponent.cs" />
+    <Compile Include="Models\Inventories\Characters\InventorySlot.cs" />
+    <Compile Include="Models\Inventories\Characters\IProp.cs" />
+    <Compile Include="Models\Inventories\Characters\Leg.cs" />
+    <Compile Include="Models\Inventories\Characters\Pocket.cs" />
+    <Compile Include="Models\Inventories\Characters\InventoryProp.cs" />
+    <Compile Include="Models\Inventories\Characters\Torso.cs" />
+    <Compile Include="Models\Inventories\Characters\TorsoUnder.cs" />
+    <Compile Include="Models\Inventories\Characters\Legs.cs" />
+    <Compile Include="Models\Inventories\Characters\TorsoOver.cs" />
+    <Compile Include="Models\Inventories\Characters\Wrists.cs" />
+    <Compile Include="Models\Inventories\Container.cs" />
+    <Compile Include="Models\Inventories\IContainer.cs" />
+    <Compile Include="Models\Objects\IStorable.cs" />
+    <Compile Include="Models\Objects\Items\Economy\BankCard.cs" />
+    <Compile Include="Models\Objects\Items\Economy\Cash.cs" />
+    <Compile Include="Models\Objects\Items\Clothing.cs" />
+    <Compile Include="Models\Objects\Items\IEquipable.cs" />
+    <Compile Include="Models\Objects\Items\IStackable.cs" />
+    <Compile Include="Models\Objects\Items\Item.cs" />
+    <Compile Include="Models\Objects\Items\Phone.cs" />
+    <Compile Include="Models\Objects\Items\StorableItem.cs" />
+    <Compile Include="Models\Objects\Items\Weapon.cs" />
+    <Compile Include="Models\Objects\Vehicles\Bike.cs" />
     <Compile Include="Models\Objects\Vehicles\Car.cs" />
     <Compile Include="Models\Objects\Vehicles\IAerialVehicle.cs" />
     <Compile Include="Models\Objects\Vehicles\IAirship.cs" />
@@ -69,6 +132,7 @@
     <Compile Include="Models\Objects\Vehicles\VehicleDoor.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleDoorIndex.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleExtra.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleHash.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleLockStatus.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleMod.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleModType.cs" />
@@ -83,9 +147,18 @@
     <Compile Include="Models\Player\IUser.cs" />
     <Compile Include="Models\Player\ICharacter.cs" />
     <Compile Include="Models\Objects\Items\IWeapon.cs" />
+    <Compile Include="Models\Player\MentalSkillType.cs" />
+    <Compile Include="Models\Player\PhysicalSkillType.cs" />
+    <Compile Include="Models\Player\Skill.cs" />
+    <Compile Include="Models\Player\SkillType.cs" />
     <Compile Include="Models\RadioStation.cs" />
+    <Compile Include="Services\IService.cs" />
+    <Compile Include="Services\Service.cs" />
+    <Compile Include="Services\ServiceRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

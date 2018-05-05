@@ -10,9 +10,6 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public VehicleSeatIndex Index { get; set; }
         public ICharacter Character { get; set; }
 
-        public VehicleSeat()
-        {
-            this.Id = GuidGenerator.GenerateTimeBasedGuid();
-        }
+        public VehicleSeat() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
     }
 }

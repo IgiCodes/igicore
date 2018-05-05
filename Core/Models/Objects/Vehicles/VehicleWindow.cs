@@ -10,9 +10,6 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public bool IsIntact { get; set; }
         public bool IsRolledDown { get; set; }
 
-        public VehicleWindow()
-        {
-            this.Id = GuidGenerator.GenerateTimeBasedGuid();
-        }
+        public VehicleWindow() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
     }
 }

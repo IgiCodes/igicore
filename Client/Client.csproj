@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
+    <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -50,23 +50,82 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CitizenFX.Core">
-      <HintPath>..\..\..\..\..\src\code\bin\five\debug\citizen\clr2\lib\mono\4.5\CitizenFX.Core.dll</HintPath>
+    <Reference Include="CitizenFX.Client">
+      <HintPath>..\lib\CitizenFX.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="NativeUI">
+      <HintPath>..\lib\NativeUI.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\CharacterEventArgs.cs" />
+    <Compile Include="Events\CharactersEventArgs.cs" />
+    <Compile Include="Events\UserEventArgs.cs" />
+    <Compile Include="Events\ServerInformationEventArgs.cs" />
+    <Compile Include="Extensions\PlayerExtensions.cs" />
+    <Compile Include="Extensions\NumberExtensions.cs" />
+    <Compile Include="Extensions\VectorExtensions.cs" />
+    <Compile Include="Extensions\VehicleExtensions.cs" />
+    <Compile Include="Handlers\TickHandler.cs" />
+    <Compile Include="Input\Input.cs" />
+    <Compile Include="Input\InputModifier.cs" />
+    <Compile Include="Interface\Hud\Elements\Element.cs" />
+    <Compile Include="Interface\Hud\Elements\Speedometer.cs" />
+    <Compile Include="Interface\Hud\Elements\Location.cs" />
+    <Compile Include="Interface\Nui.cs" />
+    <Compile Include="Interface\Screens\InventoryScreen.cs" />
+    <Compile Include="Managers\Manager.cs" />
+    <Compile Include="Managers\IManager.cs" />
+    <Compile Include="Managers\ManagerRegistry.cs" />
     <Compile Include="Models\Character.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Client.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registry.cs" />
+    <Compile Include="Rpc\Server.cs" />
+    <Compile Include="Services\AI\PedFilterService.cs" />
+    <Compile Include="Services\Bank\ATMService.cs" />
+    <Compile Include="Services\IClientService.cs" />
+    <Compile Include="Services\ClientService.cs" />
+    <Compile Include="Services\Player\PlayerIndicatorService.cs" />
+    <Compile Include="Services\Player\PlayerIdleService.cs" />
+    <Compile Include="Services\Player\PlayerDeathService.cs" />
+    <Compile Include="Services\ServiceRegistry.cs" />
+    <Compile Include="Services\Vehicle\VehicleRollService.cs" />
+    <Compile Include="Services\Vehicle\VehicleService.cs" />
+    <Compile Include="Services\World\AiPoliceService.cs" />
+    <Compile Include="Services\World\BlackoutService.cs" />
+    <Compile Include="Services\World\DateTimeService.cs" />
+    <Compile Include="Services\World\WeatherService.cs" />
+    <Compile Include="Interface\Hud\HudManager.cs" />
+    <Compile Include="Interface\Map\BlipConfig.cs" />
+    <Compile Include="Managers\MapManager.cs" />
+    <Compile Include="Interface\Map\Loaders\CargoShip.cs" />
+    <Compile Include="Interface\Map\Loaders\Yacht.cs" />
+    <Compile Include="Interface\Map\Loaders\GrapeseedFarm.cs" />
+    <Compile Include="Interface\Map\Loaders\TrevorsTrailer.cs" />
+    <Compile Include="Interface\Map\Loaders\BahamaMamasWest.cs" />
+    <Compile Include="Interface\Map\MapRegistry.cs" />
+    <Compile Include="Interface\Map\MapLoader.cs" />
+    <Compile Include="Interface\Menu\CharacterMenu.cs" />
+    <Compile Include="Interface\Menu\MenuManager.cs" />
+    <Compile Include="Interface\Screens\CharacterSelectScreen.cs" />
+    <Compile Include="Interface\Screens\Screen.cs" />
+    <Compile Include="Interface\UI.cs" />
+    <Compile Include="Utility\ObjectList.cs" />
+    <Compile Include="Utility\VehicleList.cs" />
+    <Compile Include="Utility\PedList.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
@@ -74,5 +133,9 @@
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

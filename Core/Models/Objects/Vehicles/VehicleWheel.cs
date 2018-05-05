@@ -10,9 +10,6 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public int Index { get; set; }
         public bool IsBurst { get; set; }
 
-        public VehicleWheel()
-        {
-            this.Id = GuidGenerator.GenerateTimeBasedGuid();
-        }
+        public VehicleWheel() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
     }
 }

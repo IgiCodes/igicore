@@ -12,9 +12,6 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public int Count { get; set; }
         public VehicleModType Type { get; set; }
 
-        public VehicleMod()
-        {
-            this.Id = GuidGenerator.GenerateTimeBasedGuid();
-        }
+        public VehicleMod() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
     }
 }
