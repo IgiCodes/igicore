@@ -1,17 +1,13 @@
-﻿using IgiCore.Core.Services;
-using System.Collections.Generic;
-using Citizen = CitizenFX.Core.Player;
-using IgiCore.Core.Commands;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
+using CitizenFX.Core;
 using IgiCore.Server.Commands;
 
 namespace IgiCore.Server.Services
 {
-	public class CommandService : Service, IService
+	public class CommandService : ServerService
 	{
-
-		private static List<Command> cmds = new List<Command>();
+		protected readonly List<Command> Commands = new List<Command>();
 
 		public CommandService()
 		{
@@ -20,46 +16,38 @@ namespace IgiCore.Server.Services
 
 		public override void Initialise()
 		{
-			registerCommands();
+			this.Register(new GpsCommand());
+			this.Register(new ComponentCommand());
+			this.Register(new PropCommand());
+			this.Register(new CarCommand());
+			this.Register(new BikeCommand());
+			this.Register(new GroupCommand());
 		}
 
-		public static void registerCommands()
+		public void Register(Command command)
 		{
-			cmds.Add(new GPSCommand());
+			this.Commands.Add(command);
 		}
 
-		public async void OnChatMessage(int playerId, string playerName, string message)
+		protected async void OnChatMessage(int playerId, string playerName, string message)
 		{
-			Citizen citizen = Server.Instance.Players[playerId];
+			Player player = Server.Instance.Players[playerId];
 
 			var args = message.Split(' ').ToList();
 			var name = args.First().ToLowerInvariant();
 			args = args.Skip(1).ToList();
 
-			Command cmd = null;
+			var command = this.Commands.FirstOrDefault(c => c.Name.ToLowerInvariant() == name);
 
-			foreach (Command command in cmds)
+			if (command == null)
 			{
-				if (command.getName() == name)
-				{
-					cmd = command;
-				}
+				Server.Log($"Unknown command /{name}");
+				return;
 			}
 
-			if (cmd != null)
-			{
+			Server.Log($"/{name} command called");
 
-				await Task.Run(() => {
-					cmd.RunCommand(citizen, args);
-				});
-
-			} else
-			{
-				await Task.Run(() => {
-					Server.Log("Unknown command " + name);
-				});
-			}
+			await command.RunCommand(player, args);
 		}
-
 	}
 }

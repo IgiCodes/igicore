@@ -47,8 +47,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\Command.cs" />
-    <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Extensions\FloatExtentions.cs" />
     <Compile Include="Models\Economy\Banking\BankAtm.cs" />
     <Compile Include="Models\Economy\Banking\BankBranch.cs" />

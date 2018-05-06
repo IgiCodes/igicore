@@ -59,8 +59,6 @@ namespace IgiCore.Server
 			HandleEvent<Citizen, string, CallbackDelegate>(ServerEvents.PlayerConnecting, OnPlayerConnecting);
 			HandleEvent<Citizen, string, CallbackDelegate>(ServerEvents.PlayerDropped, OnPlayerDropped);
 
-			//HandleEvent<int, string, string>("chatMessage", OnChatMessage);
-
 			HandleEvent<Citizen>(RpcEvents.GetServerInformation, ClientReady);
 			HandleEvent<Citizen>(RpcEvents.ClientDisconnect, ClientDisconnect);
 

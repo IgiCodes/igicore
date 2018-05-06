@@ -87,7 +87,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\GPSCommand.cs" />
+    <Compile Include="Commands\BikeCommand.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\ComponentCommand.cs" />
+    <Compile Include="Commands\GroupCommand.cs" />
+    <Compile Include="Commands\PropCommand.cs" />
+    <Compile Include="Commands\CarCommand.cs" />
+    <Compile Include="Commands\GpsCommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Extentions\CitizenExtentions.cs" />
     <Compile Include="Extentions\CharacterExtentions.cs" />
