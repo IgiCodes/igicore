@@ -28,7 +28,8 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public Guid TrackingUserId { get; set; }
         public int? NetId { get; set; }
         public string VIN { get; set; }
-        public float BodyHealth { get; set; } = 1000;
+	    public string LicensePlate { get; set; }
+		public float BodyHealth { get; set; } = 1000;
         public float EngineHealth { get; set; } = 1000;
         public float DirtLevel { get; set; }
         public float FuelLevel { get; set; } = 1000;
@@ -61,7 +62,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public bool NeedsToBeHotwired { get; set; } = false;
         public bool CanTiresBurst { get; set; } = true;
         public VehicleColor PrimaryColor { get; set; } = new VehicleColor();
-        public VehicleColor SecondayColor { get; set; } = new VehicleColor();
+        public VehicleColor SecondaryColor { get; set; } = new VehicleColor();
         public VehicleColor PearescentColor { get; set; } = new VehicleColor();
         public VehicleColor DashboardColor { get; set; } = new VehicleColor();
         public VehicleColor RimColor { get; set; } = new VehicleColor();

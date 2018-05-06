@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Data.Entity.Migrations;
+using System.Drawing;
 using System.Linq;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
+using IgiCore.Core.Models;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Server.Extentions;
 using IgiCore.Server.Models.Groups;
@@ -151,18 +153,35 @@ namespace IgiCore.Server
 						Doors = new List<VehicleDoor>
 						{
 							new VehicleDoor
-								{Index = VehicleDoorIndex.FrontLeftDoor},
+							{
+								Index = VehicleDoorIndex.FrontLeftDoor
+							},
 							new VehicleDoor
-								{Index = VehicleDoorIndex.FrontRightDoor},
+							{
+								Index = VehicleDoorIndex.FrontRightDoor
+							},
 							new VehicleDoor
-								{Index = VehicleDoorIndex.BackLeftDoor},
+							{
+								Index = VehicleDoorIndex.BackLeftDoor
+							},
 							new VehicleDoor
-								{Index = VehicleDoorIndex.BackRightDoor},
+							{
+								Index = VehicleDoorIndex.BackRightDoor
+							},
 							new VehicleDoor
-								{Index = VehicleDoorIndex.Hood},
+							{
+								Index = VehicleDoorIndex.Hood
+							},
 							new VehicleDoor
-								{Index = VehicleDoorIndex.Trunk}
-						}
+							{
+								Index = VehicleDoorIndex.Trunk
+							}
+						},
+						WindowTint = VehicleWindowTint.PureBlack,
+						PrimaryColor = new VehicleColor { StockColor = VehicleStockColor.MetallicBlack },
+						SecondaryColor = new VehicleColor { CustomColor = Color.FromArgb(255, 0, 0) },
+						VIN = "123",
+						LicensePlate = "1ABC234"
 					};
 
 					Db.Cars.Add(car);
@@ -180,7 +199,11 @@ namespace IgiCore.Server
 					{
 						Id = GuidGenerator.GenerateTimeBasedGuid(),
 						Hash = (uint)VehicleHash.Double,
-						Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f }
+						Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f },
+						PrimaryColor = new VehicleColor { StockColor = VehicleStockColor.MetallicBlack },
+						SecondaryColor = new VehicleColor { StockColor = VehicleStockColor.MetallicCandyRed },
+						VIN = "123",
+						LicensePlate = "1ABC234"
 					};
 
 					Db.Bikes.Add(bike);
