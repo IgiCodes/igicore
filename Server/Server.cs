@@ -46,6 +46,7 @@ namespace IgiCore.Server
 
 			this.Services.Add(new VehicleService());
             this.Services.Add(new BankService());
+			this.Services.Add(new CommandService());
 			this.Services.Initialise(this.EventHandlers);
 
 			//HandleEvent<string>(ServerEvents.ResourceStarting, r => Debug.WriteLine($"Starting resource: {r}"));
@@ -57,8 +58,6 @@ namespace IgiCore.Server
 
 			HandleEvent<Citizen, string, CallbackDelegate>(ServerEvents.PlayerConnecting, OnPlayerConnecting);
 			HandleEvent<Citizen, string, CallbackDelegate>(ServerEvents.PlayerDropped, OnPlayerDropped);
-
-			HandleEvent<int, string, string>("chatMessage", OnChatMessage);
 
 			HandleEvent<Citizen>(RpcEvents.GetServerInformation, ClientReady);
 			HandleEvent<Citizen>(RpcEvents.ClientDisconnect, ClientDisconnect);
