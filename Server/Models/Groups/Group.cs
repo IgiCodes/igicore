@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Groups;
 using IgiCore.Server.Models.Player;
-using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Server.Models.Groups
 {
@@ -12,13 +11,18 @@ namespace IgiCore.Server.Models.Groups
 	{
 		public Guid Id { get; set; }
 		public string Name { get; set; }
-		public DateTime Created { get; set; } = DateTime.UtcNow;
+		public DateTime Created { get; set; }
 		public DateTime? Deleted { get; set; }
 
 		public virtual List<GroupRole> Roles { get; set; }
 		public virtual List<GroupMember> Members { get; set; }
 
-		public Group() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
+		public Group()
+		{
+			this.Id = GuidGenerator.GenerateTimeBasedGuid();
+			this.Name = string.Empty;
+			this.Created = DateTime.UtcNow;
+		}
 
 		public static async Task<Group> Create(Character owner, string name)
 		{
