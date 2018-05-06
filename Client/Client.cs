@@ -18,6 +18,7 @@ using IgiCore.Client.Services.Vehicle;
 using IgiCore.Client.Services.World;
 using IgiCore.Core;
 using IgiCore.Core.Models.Connection;
+using IgiCore.Core.Models.Economy.Banking;
 using JetBrains.Annotations;
 using Debug = CitizenFX.Core.Debug;
 using Screen = CitizenFX.Core.UI.Screen;
@@ -83,7 +84,8 @@ namespace IgiCore.Client
 				new PlayerIndicatorService(), // Show nearby players
 				new DateTimeService(), // Set the date and time
 				new BlackoutService(), // Allow city blackouts
-				new AtmService() // Add ATMs
+				new AtmService(), // Add ATMs
+                new BranchService()
 			};
 
 			this.Services.Initialize(); // Attach handlers

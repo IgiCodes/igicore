@@ -11,5 +11,6 @@ namespace IgiCore.Core.Models.Connection
 		public DateTime DateTime { get; set; }
 		public string Weather { get; set; }
 	    public List<BankAtm> Atms { get; set; }
-	} 
+	    public List<BankBranch> Branches { get; set; }
+    } 
 }

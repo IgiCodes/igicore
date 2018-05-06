@@ -7,9 +7,11 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Events;
+using IgiCore.Client.Extensions;
 using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;
+using Newtonsoft.Json;
 
 namespace IgiCore.Client.Services.Economy
 {
@@ -32,7 +34,7 @@ namespace IgiCore.Client.Services.Economy
 		    -870868698, // prop_atm_01
 		    -1126237515, // prop_atm_02
 		    -1364697528, // prop_atm_03
-		};
+        };
 
         public override async Task Tick()
         {
@@ -43,34 +45,41 @@ namespace IgiCore.Client.Services.Economy
             }
             if (Game.Player.Character.IsInVehicle() || this.InAnim) return;
 
-            var i = 1;
-            foreach (BankAtm bankAtm in this.Atms)
-            {
-                CitizenFX.Core.World.DrawMarker(MarkerType.HorizontalCircleSkinny, bankAtm.Position, Vector3.Zero, Vector3.Zero, Vector3.One * 5, Color.FromArgb(50, 239, 239, 239));
-                new Text($"{Vector3.Dot(Game.Player.Character.ForwardVector, Vector3.Normalize(bankAtm.Position - Game.Player.Character.Position))}", new PointF(50, Screen.Height - (i * 50) - 50), 0.4f, Color.FromArgb(255, 255, 255), Font.ChaletLondon, Alignment.Left, false, true).Draw();
-                i++;
-            }
-
-
-
             Tuple<BankAtm, Prop> atm = this.Atms
-                .Where(a => a.Position.DistanceToSquared(Game.Player.Character.Position) < 5.0F) // Nearby
-                .Select(a => new Tuple<BankAtm, Prop>(a, new Prop(API.GetClosestObjectOfType(a.PosX, a.PosY, a.PosZ, 1, a.Hash, false, false, false))))
-                .Where(p => p.Item2.Model.IsValid)
-                .Where(a => Vector3.Dot(a.Item2.ForwardVector, Vector3.Normalize(a.Item2.Position - Game.Player.Character.Position)).IsBetween(0f, 1.0f)) // In front of
-                .OrderBy(a => a.Item2.Position.DistanceToSquared(Game.Player.Character.Position))
+                .Select(a => new { atm = a, distance = a.Position.DistanceToSquared(Game.Player.Character.Position) })
+                .Where(a => a.distance < 5.0F) // Nearby
+                .Select(a => new { a.atm, prop = new Prop(API.GetClosestObjectOfType(a.atm.PosX, a.atm.PosY, a.atm.PosZ, 1, (uint)a.atm.Hash, false, false, false)), a.distance })
+                .Where(p => p.prop.Model.IsValid)
+                .Where(a => Vector3.Dot(a.prop.ForwardVector, Vector3.Normalize(a.prop.Position - Game.Player.Character.Position)).IsBetween(0f, 1.0f)) // In front of
+                .OrderBy(a => a.distance)
+                .Select(a => new Tuple<BankAtm, Prop>(a.atm, a.prop))
                 .FirstOrDefault();
 
+            //var i = 0;
+            //foreach (var tatm in this.Atms)
+            //{
+            //    i++;
+            //    var prop = new Prop(API.GetClosestObjectOfType(tatm.PosX, tatm.PosY, tatm.PosZ, 1, (uint)tatm.Hash, false, false, false));
+            //    CitizenFX.Core.World.DrawMarker(MarkerType.HorizontalCircleSkinny, prop.Position - (prop.Position - prop.Position.TranslateDir(prop.Heading - 90, 0.4f)) + Vector3.Up * 0.1f, Vector3.Zero, Vector3.Zero, Vector3.One * 2, Color.FromArgb(50, 239, 239, 239));
+            //}
+
             if (atm == null) return;
+
 
             new Text("Press M to use ATM", new PointF(50, Screen.Height - 50), 0.4f, Color.FromArgb(255, 255, 255), Font.ChaletLondon, Alignment.Left, false, true).Draw();
 
             if (!Input.Input.IsControlJustPressed(Control.InteractionMenu)) return;
 
-            Game.Player.Character.Task.GoTo(atm.Item2, Vector3.Zero, 2000); // Need to provide an offset or the player tried to walk inside the model
-            await BaseScript.Delay(2000);
-            Game.Player.Character.Task.TurnTo(atm.Item2, 1500);
-            await BaseScript.Delay(1500);
+            TaskSequence ts = new TaskSequence();
+            ts.AddTask.LookAt(atm.Item2);
+            //ts.AddTask.GoTo(atm.Item2, atm.Item2.Position.TranslateDir(atm.Item2.Heading - 90, 0.4f) - atm.Item2.Position, 2000);
+            ts.AddTask.GoTo(atm.Item2, Vector3.Zero, 2000);
+            ts.AddTask.AchieveHeading(atm.Item2.Heading);
+            ts.AddTask.ClearLookAt();
+            ts.Close();
+            Game.Player.Character.Task.PerformSequence(ts);
+            while (Game.Player.Character.TaskSequenceProgress < 0) await BaseScript.Delay(100);
+            while (Game.Player.Character.TaskSequenceProgress > 0) await BaseScript.Delay(100);
 
             API.SetScenarioTypeEnabled("PROP_HUMAN_ATM", true);
             API.ResetScenarioTypesEnabled();

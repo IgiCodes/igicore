@@ -12,5 +12,7 @@ namespace IgiCore.Client.Extensions
 
 			return new Vector2(x, y);
 		}
-	}
+
+	    public static Vector3 TranslateDir(this Vector3 pos, float angleInDegrees, float distance) => new Vector3(pos.X + (float)Math.Cos(MathUtil.DegreesToRadians(angleInDegrees)) * distance, pos.Y + (float)Math.Sin(MathUtil.DegreesToRadians(angleInDegrees)) * distance, pos.Z);
+    }
 }

@@ -29,10 +29,11 @@ namespace IgiCore.Client.Services.Player
 
 		public override async Task Tick()
 		{
-			new Text($"Health: {Game.Player.Character.Health} | Killer: {this.LastKiller?.Handle ?? 0} | Ground: {CitizenFX.Core.World.GetGroundHeight(Game.Player.Character.Position)} | Pos: {Game.Player.Character.Position}", new PointF(20, 10), 0.25f).Draw();
+			new Text($"Health: {Game.Player.Character.Health} | Killer: {this.LastKiller?.Handle ?? 0} | Ground: {CitizenFX.Core.World.GetGroundHeight(Game.Player.Character.Position)} | Pos: {Game.Player.Character.Position} | Dir: {Game.Player.Character.Heading}", new PointF(20, 10), 0.25f).Draw();
+		    new Text($"Sequence Status: {Game.Player.Character.TaskSequenceProgress} | Performing Task: {IsPedUsingAnyScenario(Game.Player.Character.Handle)} | Walking: {Game.Player.Character.IsWalking}", new PointF(50, 50), 0.4f, Color.FromArgb(255, 255, 255), Font.ChaletLondon, Alignment.Left, false, true).Draw();
 
-			// Disable heath regeneration
-			SetPlayerHealthRechargeMultiplier(Game.Player.Handle, 0);
+            // Disable heath regeneration
+            SetPlayerHealthRechargeMultiplier(Game.Player.Handle, 0);
 
 			if (Game.Player.Character.IsAlive && !this.IsDowned) return;
 

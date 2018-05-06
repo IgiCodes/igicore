@@ -11,7 +11,7 @@ namespace IgiCore.Core.Models.Economy.Banking
         public DateTime Created { get; set; }
         public DateTime? Deleted { get; set; }
         public string Name { get; set; }
-        public uint Hash { get; set; }
+        public long Hash { get; set; }
         public float PosX { get; set; }
         public float PosY { get; set; }
         public float PosZ { get; set; }

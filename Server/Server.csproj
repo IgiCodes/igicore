@@ -96,7 +96,6 @@
     <Compile Include="Models\Economy\Banking\BankAccount.cs" />
     <Compile Include="Models\Economy\Banking\BankAccountCard.cs" />
     <Compile Include="Models\Economy\Banking\BankAccountMember.cs" />
-    <Compile Include="Models\Economy\Banking\BankBranch.cs" />
     <Compile Include="Models\Player\Character.cs" />
     <Compile Include="Models\Groups\Group.cs" />
     <Compile Include="Models\Groups\GroupMember.cs" />

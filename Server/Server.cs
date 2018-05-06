@@ -92,12 +92,16 @@ namespace IgiCore.Server
 		    Db.Banks.AddOrUpdate(
 		        new Bank
 		        {
+                    Id = new Guid("f02469f1-a16e-4c37-8b51-35825c79f14f"),
                     Name = "Fleeca",
                     Branches = new List<BankBranch>
                     {
                         new BankBranch
                         {
-                            Name = "Legion Square"
+                            Id = new Guid("5cf64e64-2556-49b6-8729-ff012b4b63c8"),
+                            Name = "Legion Square",
+                            Position = new Vector3(149.7f, -1042.2f, 28.33f),
+                            Heading = 336.00f
                         }
                     },
                     ATMs = new List<BankAtm>
@@ -113,7 +117,14 @@ namespace IgiCore.Server
                             Name = "FLCA LSS 0002",
                             Hash = 506770882,
                             Position = new Vector3(145.8392f, -1035.625f, 28.36778f)
-                        }
+                        },
+                        new BankAtm
+                        {
+                            Name = "Standup ATM 0001",
+                            Hash = -870868698,
+                            Position = new Vector3(228.0324f, 337.8501f, 104.5013f)
+                        },
+
                     },
                     Accounts = new List<BankAccount>()
 		        });
@@ -128,7 +139,8 @@ namespace IgiCore.Server
 				ServerName = Config.ServerName,
 				DateTime = DateTime.UtcNow,
 				Weather = "EXTRASUNNY", // TODO
-                Atms = Db.BankATMs.ToList()
+                Atms = Db.BankATMs.ToList(),
+                Branches = Db.BankBranches.ToList()
 			}));
             
 		}

@@ -73,6 +73,7 @@
     <Compile Include="Events\CharactersEventArgs.cs" />
     <Compile Include="Events\UserEventArgs.cs" />
     <Compile Include="Events\ServerInformationEventArgs.cs" />
+    <Compile Include="Extensions\PedExtensions.cs" />
     <Compile Include="Extensions\PlayerExtensions.cs" />
     <Compile Include="Extensions\NumberExtensions.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
@@ -95,6 +96,7 @@
     <Compile Include="Registry.cs" />
     <Compile Include="Rpc\Server.cs" />
     <Compile Include="Services\AI\PedFilterService.cs" />
+    <Compile Include="Services\Economy\BranchService.cs" />
     <Compile Include="Services\Economy\ATMService.cs" />
     <Compile Include="Services\IClientService.cs" />
     <Compile Include="Services\ClientService.cs" />
