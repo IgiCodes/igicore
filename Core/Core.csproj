@@ -60,7 +60,6 @@
     <Compile Include="Models\Appearance\PropTypes.cs" />
     <Compile Include="Models\Appearance\ComponentTypes.cs" />
     <Compile Include="Models\Appearance\Style.cs" />
-    <Compile Include="Models\Color.cs" />
     <Compile Include="Models\Connection\ServerInformation.cs" />
     <Compile Include="Models\Economy\Banking\BankAccountTypes.cs" />
     <Compile Include="Models\Economy\Banking\IBank.cs" />

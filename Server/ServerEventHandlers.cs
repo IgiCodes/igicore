@@ -1,4 +1,4 @@
-﻿using System.Data.Entity.Migrations;
+using System.Data.Entity.Migrations;
 using CitizenFX.Core;
 using IgiCore.Server.Models.Player;
 using Citizen = CitizenFX.Core.Player;

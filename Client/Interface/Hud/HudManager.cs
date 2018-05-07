@@ -16,9 +16,11 @@ namespace IgiCore.Client.Interface.Hud
 	[PublicAPI]
 	public class HudManager : Manager
 	{
+		protected static readonly uint MP0_WALLET_BALANCE = (uint)API.GetHashKey("MP0_WALLET_BALANCE");
+
 		protected string ServerNameValue = string.Empty;
 		protected bool ChatVisibleValue = true;
-		
+
 		public List<Screens.Screen> Screens { get; } = new List<Screens.Screen>();
 		public List<Element> Elements { get; } = new List<Element>();
 
@@ -30,7 +32,7 @@ namespace IgiCore.Client.Interface.Hud
 				this.ServerNameValue = value;
 
 				// Set pause screen title
-				Function.Call(Hash.ADD_TEXT_ENTRY, "FE_THDR_GTAO", value);
+				API.AddTextEntry("FE_THDR_GTAO", value);
 			}
 		}
 
@@ -45,6 +47,9 @@ namespace IgiCore.Client.Interface.Hud
 			get => Screen.Hud.IsRadarVisible;
 			set => Screen.Hud.IsRadarVisible = value;
 		}
+
+		public bool ShowReticle { get; set; } = false;
+		public bool ShowReticleWhenAiming { get; set; } = true;
 
 		public HudManager()
 		{
@@ -65,7 +70,7 @@ namespace IgiCore.Client.Interface.Hud
 		private async void OnClientReady(object s, ServerInformationEventArgs a)
 		{
 			this.ServerName = a.Information.ServerName; // Set pause screen menu server name
-			
+
 			API.SetPauseMenuActive(true); // TODO: When?
 			API.SetNoLoadingScreen(true);
 
@@ -89,13 +94,26 @@ namespace IgiCore.Client.Interface.Hud
 			await UI.FadeScreenOut(500);
 
 			foreach (var screen in this.Screens) await screen.Hide();
-			
+
 			// Fade in screen
 			await UI.FadeScreenIn(500);
 		}
 
 		public async Task Render()
 		{
+			API.StatSetInt(MP0_WALLET_BALANCE, 123, true);
+
+			if (this.ShowReticleWhenAiming)
+			{
+				//bool isFirstPersonAimCamActive = Function.Call<bool>(Hash.IS_FIRST_PERSON_AIM_CAM_ACTIVE); // TODO: Doesn't work?
+
+				if (!Function.Call<bool>(Hash.IS_AIM_CAM_ACTIVE) && !this.ShowReticle) Screen.Hud.HideComponentThisFrame(HudComponent.Reticle);
+			}
+			else
+			{
+				if (!this.ShowReticle) Screen.Hud.HideComponentThisFrame(HudComponent.Reticle);
+			}
+
 			Screen.Hud.HideComponentThisFrame(HudComponent.WeaponIcon);
 			Screen.Hud.HideComponentThisFrame(HudComponent.Cash);
 			Screen.Hud.HideComponentThisFrame(HudComponent.MpCash);
@@ -116,7 +134,7 @@ namespace IgiCore.Client.Interface.Hud
 			foreach (var screen in this.Screens) await screen.Render();
 			foreach (var element in this.Elements) await element.Render();
 		}
-		
+
 		public override void Dispose()
 		{
 			TickHandler.Dettach<HudManager>();

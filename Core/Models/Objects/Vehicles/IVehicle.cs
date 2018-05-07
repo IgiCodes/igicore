@@ -5,7 +5,8 @@ namespace IgiCore.Core.Models.Objects.Vehicles
     public interface IVehicle : IObject
     {
         string VIN { get; set; }
-        float BodyHealth { get; set; }
+	    string LicensePlate { get; set; }
+		float BodyHealth { get; set; }
         float EngineHealth { get; set; }
         float DirtLevel { get; set; }
         float FuelLevel { get; set; }
@@ -34,7 +35,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         bool NeedsToBeHotwired { get; set; }
         bool CanTiresBurst { get; set; }
         VehicleColor PrimaryColor { get; set; }
-        VehicleColor SecondayColor { get; set; }
+        VehicleColor SecondaryColor { get; set; }
         VehicleColor PearescentColor { get; set; }
         VehicleColor DashboardColor { get; set; }
         VehicleColor RimColor { get; set; }

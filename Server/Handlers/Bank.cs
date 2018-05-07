@@ -18,7 +18,7 @@ namespace IgiCore.Server.Handlers
             try
             {
                 Guid atmId = JsonConvert.DeserializeObject<Guid>(atmIdString);
-                BankAtm atm = Server.Db.BankATMs.First(a => a.Id == atmId);
+                BankAtm atm = Server.Db.BankAtms.First(a => a.Id == atmId);
                 Guid memberId = JsonConvert.DeserializeObject<Guid>(memberIdString);
                 BankAccountMember member = Server.Db.BankAccountMembers.First(m => m.Id == memberId);
                 double amount = JsonConvert.DeserializeObject<double>(amountString);
