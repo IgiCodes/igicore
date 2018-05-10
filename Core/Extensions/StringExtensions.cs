@@ -1,6 +1,6 @@
-﻿namespace IgiCore.Client.Extensions
+﻿namespace IgiCore.Core.Extensions
 {
-	public static class NumberExtensions
+	public static class StringExtensions
 	{
 		public static string Pluralize(this string str, int value, string extention = "s")
 		{

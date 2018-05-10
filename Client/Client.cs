@@ -105,7 +105,7 @@ namespace IgiCore.Client
 				Screen.ShowNotification("Revived");
 			};
 
-			//HandleEvent("igi:character:revive", this.Services.First<PlayerDeathService>().Revive);
+			Rpc.Server.On("igi:character:revive", new Action(this.Services.First<PlayerDeathService>().Revive));
 
 			//HandleEvent<string>("igi:car:spawn", SpawnVehicle<Car>);
 			//HandleEvent<string>("igi:car:claim", ClaimVehicle<Car>);

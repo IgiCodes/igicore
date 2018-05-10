@@ -77,9 +77,7 @@ namespace IgiCore.Client.Services.Economy
             ts.AddTask.AchieveHeading(atm.Item2.Heading);
             ts.AddTask.ClearLookAt();
             ts.Close();
-            Game.Player.Character.Task.PerformSequence(ts);
-            while (Game.Player.Character.TaskSequenceProgress < 0) await BaseScript.Delay(100);
-            while (Game.Player.Character.TaskSequenceProgress > 0) await BaseScript.Delay(100);
+            await Game.Player.Character.RunTaskSequence(ts);
 
             API.SetScenarioTypeEnabled("PROP_HUMAN_ATM", true);
             API.ResetScenarioTypesEnabled();

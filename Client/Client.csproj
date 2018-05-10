@@ -75,8 +75,6 @@
     <Compile Include="Events\ServerInformationEventArgs.cs" />
     <Compile Include="Extensions\PedExtensions.cs" />
     <Compile Include="Extensions\PlayerExtensions.cs" />
-    <Compile Include="Extensions\NumberExtensions.cs" />
-    <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Extensions\VehicleExtensions.cs" />
     <Compile Include="Handlers\TickHandler.cs" />
     <Compile Include="Input\Input.cs" />

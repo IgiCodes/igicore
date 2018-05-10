@@ -48,6 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\FloatExtentions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\VectorExtensions.cs" />
+    <Compile Include="Helpers\MathHelpers.cs" />
     <Compile Include="Models\Economy\Banking\BankAtm.cs" />
     <Compile Include="Models\Economy\Banking\BankBranch.cs" />
     <Compile Include="Models\Player\ISession.cs" />

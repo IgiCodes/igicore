@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Extensions;
+using IgiCore.Core.Extensions;
 
 namespace IgiCore.Client.Services.Player
 {

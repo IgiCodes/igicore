@@ -200,6 +200,10 @@ namespace IgiCore.Server
 					await Group.Create(await citizen.ToLastCharacter(), groupName);
 
 					break;
+                case "/revive":
+                    Log("/revive command called");
+                    TriggerClientEvent(citizen, "igi:character:revive");
+                    break;
 				default:
 					Log("Unknown command");
 

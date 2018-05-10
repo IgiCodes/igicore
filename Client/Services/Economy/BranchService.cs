@@ -10,6 +10,7 @@ using IgiCore.Client.Events;
 using IgiCore.Client.Extensions;
 using IgiCore.Core;
 using IgiCore.Core.Extensions;
+using IgiCore.Core.Helpers;
 using IgiCore.Core.Models.Economy.Banking;
 
 namespace IgiCore.Client.Services.Economy
@@ -18,6 +19,7 @@ namespace IgiCore.Client.Services.Economy
     {
         protected bool CharLoaded = false;
         protected bool InAnim = false;
+        protected Camera Camera;
         protected List<BankBranch> Branches;
         protected Dictionary<BankBranch, Ped> Tellers = new Dictionary<BankBranch, Ped>();
 
@@ -39,11 +41,15 @@ namespace IgiCore.Client.Services.Economy
                 Game.Player.Character.Task.ClearAllImmediately(); // Cancel animation
                 this.InAnim = false;
             }
-            if (Game.Player.Character.IsInVehicle() || this.InAnim) return;
 
             foreach (BankBranch bankBranch in this.Branches)
             {
-                if (this.Tellers.ContainsKey(bankBranch) && this.Tellers[bankBranch].Handle != 0) continue;
+                if (this.Tellers.ContainsKey(bankBranch) && this.Tellers[bankBranch].Handle != 0)
+                {
+                    this.Tellers[bankBranch].Position = bankBranch.Position;
+                    this.Tellers[bankBranch].Heading = bankBranch.Heading;
+                    continue;
+                }
                 var tellerModel = new Model(PedHash.Bankman);
                 await tellerModel.Request(-1);
                 this.Tellers[bankBranch] = await CitizenFX.Core.World.CreatePed(tellerModel, bankBranch.Position, bankBranch.Heading);
@@ -53,7 +59,19 @@ namespace IgiCore.Client.Services.Economy
                 this.Tellers[bankBranch].IsInvincible = true;
                 this.Tellers[bankBranch].IsPositionFrozen = true;
                 this.Tellers[bankBranch].BlockPermanentEvents = true;
+                this.Tellers[bankBranch].IsCollisionProof = false;
             }
+
+            if (this.InAnim && Input.Input.IsControlJustPressed(Control.MoveUpOnly))
+            {
+                Game.Player.Character.Task.ClearAll();
+                Game.Player.Character.Task.ClearLookAt();
+                CitizenFX.Core.World.DestroyAllCameras();
+                CitizenFX.Core.World.RenderingCamera = null;
+                this.InAnim = false;
+            }
+
+            if (Game.Player.Character.IsInVehicle() || this.InAnim) return;
 
             //foreach (var banker in this.Tellers.Select(x=>x.Value))
             //{
@@ -74,15 +92,36 @@ namespace IgiCore.Client.Services.Economy
 
             if (!Input.Input.IsControlJustPressed(Control.InteractionMenu)) return;
 
-            TaskSequence ts = new TaskSequence();
-            ts.AddTask.LookAt(teller.Value);
-            //ts.AddTask.GoTo(teller.Value, teller.Value.Position - teller.Value.Position.TranslateDir(teller.Value.Heading - 90, 1.5f), 2000);
-            ts.AddTask.GoTo(teller.Value.GetPositionInFront(1.5f));
-            ts.AddTask.AchieveHeading(teller.Value.Heading - 180);
-            ts.AddTask.ClearLookAt();
-            ts.Close();
-            Game.Player.Character.Task.PerformSequence(ts);
+            this.InAnim = true;
 
+            Ped bankTeller = teller.Value;
+
+            TaskSequence ts = new TaskSequence();
+            ts.AddTask.LookAt(bankTeller);
+            ts.AddTask.GoTo(bankTeller.GetPositionInFront(1.5f));
+            ts.AddTask.AchieveHeading(bankTeller.Heading - 180);
+            ts.Close();
+            await Game.Player.Character.RunTaskSequence(ts);
+            Client.Log("Task ended");
+            Game.Player.Character.Task.LookAt(bankTeller);
+            Game.Player.Character.Task.StandStill(-1);
+
+            // Camera
+            if (this.Camera == null) this.Camera = CitizenFX.Core.World.CreateCamera(GameplayCamera.Position, GameplayCamera.Rotation, GameplayCamera.FieldOfView);
+            CitizenFX.Core.World.RenderingCamera = this.Camera;
+
+            for (float t=0; t<1f; t+=0.01f)
+            {
+                var interval = (float)(t < 0.5 ? 2.0 * t * t : -2.0 * t * t + 4.0 * t - 1.0);
+                this.Camera.Position = VectorExtensions.Lerp(
+                    GameplayCamera.Position,
+                    teller.Value.Position.TranslateDir(bankTeller.Heading + 110, 2.2f) + Vector3.UnitZ * 0.8f,
+                    interval
+                );
+                this.Camera.PointAt(VectorExtensions.Lerp(Game.PlayerPed.Position, bankTeller.Position, interval) + Vector3.UnitZ * 0.4f);
+                this.Camera.FieldOfView = MathHelpers.Lerp(GameplayCamera.FieldOfView, 30, interval);
+                await BaseScript.Delay(1);
+            }
         }
     }
 }

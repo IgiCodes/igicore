@@ -98,10 +98,15 @@ namespace IgiCore.Server
                     {
                         new BankBranch
                         {
-                            Id = new Guid("5cf64e64-2556-49b6-8729-ff012b4b63c8"),
                             Name = "Legion Square",
                             Position = new Vector3(149.7f, -1042.2f, 28.33f),
                             Heading = 336.00f
+                        },
+                        new BankBranch
+                        {
+                            Name = "Legion Square 02",
+                            Position = new Vector3(163.7f, -1004.2f, 28.35f),
+                            Heading = 280.00f
                         }
                     },
                     ATMs = new List<BankAtm>

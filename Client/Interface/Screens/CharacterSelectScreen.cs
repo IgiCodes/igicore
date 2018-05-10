@@ -8,6 +8,7 @@ using IgiCore.Client.Interface.Hud;
 using IgiCore.Client.Models;
 using IgiCore.Client.Rpc;
 using IgiCore.Core;
+using IgiCore.Core.Extensions;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
