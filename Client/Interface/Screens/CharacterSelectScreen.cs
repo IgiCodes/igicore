@@ -8,6 +8,7 @@ using IgiCore.Client.Interface.Hud;
 using IgiCore.Client.Models;
 using IgiCore.Client.Rpc;
 using IgiCore.Core;
+using IgiCore.Core.Rpc;
 using JetBrains.Annotations;
 
 namespace IgiCore.Client.Interface.Screens

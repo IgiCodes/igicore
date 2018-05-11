@@ -4,6 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.Core;
 using IgiCore.Core.Models.Objects.Vehicles;
+using IgiCore.Core.Rpc;
 using IgiCore.Core.Services;
 using IgiCore.Server.Handlers;
 using IgiCore.Server.Managers;

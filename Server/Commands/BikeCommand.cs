@@ -4,6 +4,7 @@ using CitizenFX.Core;
 using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
+using IgiCore.Core.Rpc;
 using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Commands

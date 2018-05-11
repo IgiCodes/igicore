@@ -4,6 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.Core;
 using IgiCore.Core.Models.Connection;
+using IgiCore.Core.Rpc;
 using IgiCore.Server.Managers;
 using IgiCore.Server.Rpc;
 

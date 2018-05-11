@@ -7,6 +7,7 @@ using CitizenFX.Core.Native;
 using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
+using IgiCore.Core.Rpc;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 using Newtonsoft.Json;

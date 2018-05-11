@@ -51,7 +51,7 @@
     <Compile Include="Models\Economy\Banking\BankAtm.cs" />
     <Compile Include="Models\Economy\Banking\BankBranch.cs" />
     <Compile Include="Models\Player\ISession.cs" />
-    <Compile Include="RpcEvents.cs" />
+    <Compile Include="Rpc\RpcEvents.cs" />
     <Compile Include="Extensions\Guid.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="Extensions\VehicleExtensions.cs" />

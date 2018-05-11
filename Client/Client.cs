@@ -18,6 +18,7 @@ using IgiCore.Client.Services.Vehicle;
 using IgiCore.Client.Services.World;
 using IgiCore.Core;
 using IgiCore.Core.Models.Connection;
+using IgiCore.Core.Rpc;
 using JetBrains.Annotations;
 using Debug = CitizenFX.Core.Debug;
 using Screen = CitizenFX.Core.UI.Screen;

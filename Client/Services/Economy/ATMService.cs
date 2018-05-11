@@ -10,6 +10,7 @@ using IgiCore.Client.Events;
 using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;
+using IgiCore.Core.Rpc;
 
 namespace IgiCore.Client.Services.Economy
 {

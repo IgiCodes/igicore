@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core;
+using IgiCore.Core.Rpc;
 using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Commands

@@ -1,4 +1,4 @@
-﻿namespace IgiCore.Core
+﻿namespace IgiCore.Core.Rpc
 {
 	public static class RpcEvents
 	{
