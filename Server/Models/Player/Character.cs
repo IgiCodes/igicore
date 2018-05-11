@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
@@ -16,7 +15,7 @@ namespace IgiCore.Server.Models.Player
 {
 	public class Character : ICharacter
 	{
-		[Key] public Guid Id { get; set; }
+		public Guid Id { get; set; }
 		public string Forename { get; set; }
 		public string Middlename { get; set; }
 		public string Surname { get; set; }
@@ -31,12 +30,16 @@ namespace IgiCore.Server.Models.Player
 		public float PosZ { get; set; }
 		public string Model { get; set; }
 		public string WalkingStyle { get; set; }
-		public virtual Inventory Inventory { get; set; }
-		public virtual Style Style { get; set; }
-		public DateTime LastPlayed { get; set; }
-		public DateTime? Deleted { get; set; }
+		public DateTime? LastPlayed { get; set; }
 		public DateTime Created { get; set; }
+		public DateTime? Deleted { get; set; }
+
 		public virtual List<Skill> Skills { get; set; }
+		public virtual Style Style { get; set; }
+		public virtual Inventory Inventory { get; set; }
+
+		[JsonIgnore]
+		public string FullName => $"{this.Forename} {this.Middlename} {this.Surname}".Replace("  ", " ");
 
 		[JsonIgnore]
 		public Vector3 Position
@@ -50,15 +53,13 @@ namespace IgiCore.Server.Models.Player
 			}
 		}
 
-		[JsonIgnore]
-		public string FullName => $"{this.Forename} {this.Middlename} {this.Surname}".Replace("  ", " ");
-
 		public Character()
 		{
 			this.Id = GuidGenerator.GenerateTimeBasedGuid();
+			this.Alive = false;
 			//this.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
 			this.Position = new Vector3 { X = 153.7846f, Y = -1032.899f, Z = 29.33798f };
-			this.Alive = false;
+			this.Created = DateTime.UtcNow;
 		}
 
 		public static async Task<Character> GetOrCreate(User user, Guid charId)
@@ -133,15 +134,6 @@ namespace IgiCore.Server.Models.Player
 			}
 
 			return character;
-		}
-
-		public static async void Save(Character newChar)
-		{
-			Server.Log("Character save called");
-
-			Server.Db.Styles.AddOrUpdate(newChar.Style);
-			Server.Db.Characters.AddOrUpdate(newChar);
-			await Server.Db.SaveChangesAsync();
 		}
 
 		public override string ToString() { return $"Character [{this.Id}]: {this.FullName}, {this.Position}"; }

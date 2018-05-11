@@ -87,10 +87,22 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands\BikeCommand.cs" />
+    <Compile Include="Commands\Command.cs" />
+    <Compile Include="Commands\ComponentCommand.cs" />
+    <Compile Include="Commands\GroupCommand.cs" />
+    <Compile Include="Commands\PropCommand.cs" />
+    <Compile Include="Commands\CarCommand.cs" />
+    <Compile Include="Commands\GpsCommand.cs" />
     <Compile Include="Config.cs" />
     <Compile Include="Extentions\CitizenExtentions.cs" />
     <Compile Include="Extentions\CharacterExtentions.cs" />
-    <Compile Include="Handlers\Bank.cs" />
+    <Compile Include="Handlers\BankingActions.cs" />
+    <Compile Include="Handlers\ClientActions.cs" />
+    <Compile Include="Handlers\PlayerActions.cs" />
+    <Compile Include="Handlers\UserActions.cs" />
+    <Compile Include="Handlers\CharacterActions.cs" />
+    <Compile Include="Handlers\OwnershipActions.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Economy\Banking\Bank.cs" />
     <Compile Include="Models\Economy\Banking\BankAccount.cs" />
@@ -101,15 +113,21 @@
     <Compile Include="Models\Groups\GroupMember.cs" />
     <Compile Include="Models\Groups\GroupRole.cs" />
     <Compile Include="Models\Player\Session.cs" />
+    <Compile Include="Rpc\Client.cs" />
+    <Compile Include="Rpc\RpcExtensions.cs" />
+    <Compile Include="Rpc\RpcHandler.cs" />
+    <Compile Include="Rpc\RpcRequest.cs" />
+    <Compile Include="Rpc\RpcSerializer.cs" />
+    <Compile Include="Rpc\RpcTrigger.cs" />
     <Compile Include="Rpc\ServerEvents.cs" />
+    <Compile Include="Services\CommandService.cs" />
     <Compile Include="Services\Economy\BankService.cs" />
     <Compile Include="Services\IServerService.cs" />
-    <Compile Include="Models\Objects\Vehicles\VehicleActions.cs" />
+    <Compile Include="Handlers\VehicleActions.cs" />
     <Compile Include="Services\ServerService.cs" />
     <Compile Include="Models\Player\User.cs" />
-    <Compile Include="ServerEventHandlers.cs" />
     <Compile Include="Services\VehicleService.cs" />
-    <Compile Include="SessionManager.cs" />
+    <Compile Include="Managers\SessionManager.cs" />
     <Compile Include="Storage\MySql\DB.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -125,6 +143,5 @@
       <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

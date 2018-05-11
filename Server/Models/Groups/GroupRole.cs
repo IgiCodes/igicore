@@ -10,7 +10,7 @@ namespace IgiCore.Server.Models.Groups
 		public Guid Id { get; set; }
 		public string Name { get; set; }
 		public int Rank { get; set; }
-		public DateTime Created { get; set; } = DateTime.UtcNow;
+		public DateTime Created { get; set; }
 		public DateTime? Deleted { get; set; }
 
 		public virtual List<GroupMember> Members { get; set; }
@@ -18,6 +18,9 @@ namespace IgiCore.Server.Models.Groups
 		public GroupRole()
 		{
 			this.Id = GuidGenerator.GenerateTimeBasedGuid();
+			this.Name = string.Empty;
+			this.Rank = 0;
+			this.Created = DateTime.UtcNow;
 		}
 	}
 }

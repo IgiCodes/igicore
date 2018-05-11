@@ -15,7 +15,7 @@ namespace IgiCore.Core.Models.Economy.Banking
         public float PosX { get; set; }
         public float PosY { get; set; }
         public float PosZ { get; set; }
-
+		
         [JsonIgnore]
         public Vector3 Position
         {
@@ -31,7 +31,7 @@ namespace IgiCore.Core.Models.Economy.Banking
         public BankAtm()
         {
             this.Id = GuidGenerator.GenerateTimeBasedGuid();
-            Created = DateTime.UtcNow;
+	        this.Created = DateTime.UtcNow;
         }
     }
 }

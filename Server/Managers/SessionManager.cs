@@ -1,56 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
+using CitizenFX.Core.Native;
 
-namespace IgiCore.Server
+namespace IgiCore.Server.Managers
 {
 	public static class SessionManager
 	{
 		private static readonly List<Action> Callbacks = new List<Action>();
 
 		public static Player CurrentHost { get; private set; }
-		
+
 		static SessionManager()
 		{
-			//Server.Log("Starting Session Manager");
-
-			EnableEnhancedHostSupport(true);
+			API.EnableEnhancedHostSupport(true);
 		}
 
 		public static async void OnHostingSession([FromSource] Player player)
 		{
-			//Server.Log($"OnHostingSession: {player.Handle}");
-
 			if (CurrentHost != null)
 			{
-				//Server.Log("sessionHostResult wait");
-				BaseScript.TriggerClientEvent(player, "sessionHostResult", "wait");
+				player.TriggerEvent("sessionHostResult", "wait");
 
-				Callbacks.Add(() =>
-				{
-					//Server.Log("sessionHostResult free");
-					BaseScript.TriggerClientEvent(player, "sessionHostResult", "free");
-				});
+				Callbacks.Add(() => player.TriggerEvent("sessionHostResult", "free"));
 
 				return;
 			}
 
 			string hostId;
-			
+
 			try
 			{
-				hostId = GetHostId();
+				hostId = API.GetHostId();
 			}
 			catch (NullReferenceException)
 			{
 				hostId = null;
 			}
 
-			if (!string.IsNullOrEmpty(hostId) && GetPlayerLastMsg(GetHostId()) < 1000)
+			if (!string.IsNullOrEmpty(hostId) && API.GetPlayerLastMsg(API.GetHostId()) < 1000)
 			{
-				//Server.Log("sessionHostResult conflict");
-				BaseScript.TriggerClientEvent(player, "sessionHostResult", "conflict");
+				player.TriggerEvent("sessionHostResult", "conflict");
 
 				return;
 			}
@@ -60,8 +50,7 @@ namespace IgiCore.Server
 
 			Server.Log($"[SESSIONMANAGER] Game host is now \"{CurrentHost.Name}\"");
 
-			//Server.Log("sessionHostResult go");
-			BaseScript.TriggerClientEvent(player, "sessionHostResult", "go");
+			player.TriggerEvent("sessionHostResult", "go");
 
 			await BaseScript.Delay(5000);
 
@@ -71,8 +60,6 @@ namespace IgiCore.Server
 
 		public static void OnHostedSession([FromSource] Player player)
 		{
-			//Server.Log($"OnHostedSession: {player.Handle}");
-
 			if (CurrentHost != null && CurrentHost != player) return;
 
 			Callbacks.ForEach(c => c());

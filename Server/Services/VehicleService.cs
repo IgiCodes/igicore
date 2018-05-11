@@ -4,150 +4,149 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
+using IgiCore.Core.Rpc;
 using IgiCore.Server.Models.Player;
+using IgiCore.Server.Rpc;
 using Newtonsoft.Json;
-using Citizen = CitizenFX.Core.Player;
-using static IgiCore.Server.Server;
 
 namespace IgiCore.Server.Services
 {
-    public class VehicleService : ServerService
-    {
-        private const int VehicleLoadDistance = 500;
+	public class VehicleService : ServerService
+	{
+		private const int VehicleLoadDistance = 500;
 
-        public VehicleService()
-        {
-            HandleEvent<Citizen, string>("igi:character:save", LoadNearbyVehicles);
-            HandleEvent<Citizen, string, CallbackDelegate>("playerDropped", ReassignTrackedVehicles);
-        }
+		public VehicleService()
+		{
+			Client.Event(RpcEvents.CharacterSave).On(LoadNearbyVehicles);
+			Client.Event(ServerEvents.PlayerDropped).On(ReassignTrackedVehicles);
+		}
 
-        public override void Initialise() { ResetVehicleTracking(); }
+		public override void Initialize()
+		{
+			ResetVehicleTracking();
+		}
 
-        private async static void ResetVehicleTracking()
-        {
-            foreach (Vehicle dbVehicle in Db.Vehicles.ToArray())
-            {
-                dbVehicle.Handle = null;
-                dbVehicle.NetId = null;
-                dbVehicle.TrackingUserId = Guid.Empty;
+		private static async void ResetVehicleTracking()
+		{
+			foreach (Vehicle vehicle in Server.Db.Vehicles.ToList())
+			{
+				vehicle.Handle = null;
+				vehicle.NetId = null;
+				vehicle.TrackingUserId = Guid.Empty;
 
-                Db.Vehicles.AddOrUpdate(dbVehicle);
-            }
+				Server.Db.Vehicles.AddOrUpdate(vehicle);
+			}
 
-            await Db.SaveChangesAsync();
-        }
+			await Server.Db.SaveChangesAsync();
+		}
 
-        private async void ReassignTrackedVehicles(
-            [FromSource] Citizen disconnectedCitizen, string disconnectMessage,
-            CallbackDelegate kickReason)
-        {
-            Log("ReassignTrackedVehicles called");
+		private async void ReassignTrackedVehicles([FromSource] Player disconnectedCitizen, string disconnectMessage, CallbackDelegate kickReason)
+		{
+			Server.Log("ReassignTrackedVehicles called");
 
-            var disconnectedSteamId = disconnectedCitizen.Identifiers["steam"];
-            Log($"Disconnected user steam id: {disconnectedSteamId}");
+			var disconnectedSteamId = disconnectedCitizen.Identifiers["steam"];
+			Server.Log($"Disconnected user steam id: {disconnectedSteamId}");
 
-            User disconnectedUser = Db.Users.FirstOrDefault(u => u.SteamId == disconnectedSteamId);
-            if (disconnectedUser == null) return;
-            Log($"Reassigning tracked vehicles for disconnected player: {disconnectedUser.Name}");
+			User disconnectedUser = Server.Db.Users.FirstOrDefault(u => u.SteamId == disconnectedSteamId);
+			if (disconnectedUser == null) return;
+			Server.Log($"Reassigning tracked vehicles for disconnected player: {disconnectedUser.Name}");
 
-            var vehicles = Db.Vehicles.Where(v => v.TrackingUserId == disconnectedUser.Id).ToList();
-            if (!vehicles.Any()) return;
+			var vehicles = Server.Db.Vehicles.Where(v => v.TrackingUserId == disconnectedUser.Id).ToList();
+			if (!vehicles.Any()) return;
 
-            Log("Vehicles found, looking up online users");
+			Server.Log("Vehicles found, looking up online users");
 
-            var users = new List<User>();
-            foreach (Citizen serverPlayer in Server.Instance.Players)
-            {
-                var steamId = serverPlayer.Identifiers["steam"];
-                if (steamId == disconnectedSteamId) continue;
+			var users = new List<User>();
+			foreach (Player serverPlayer in Server.Instance.Players)
+			{
+				var steamId = serverPlayer.Identifiers["steam"];
+				if (steamId == disconnectedSteamId) continue;
 
-                users.Add(Db.Users.First(u => u.SteamId == steamId));
-            }
+				users.Add(Server.Db.Users.First(u => u.SteamId == steamId));
+			}
 
-            Log("Looping through vehicles to assign players");
+			Server.Log("Looping through vehicles to assign players");
 
-            var assignedVehicles = new Dictionary<Vehicle, Tuple<User, Character>>();
-            foreach (Vehicle vehicle in vehicles)
-            {
-                foreach (User user in users)
-                {
-                    foreach (Character character in user.Characters)
-                    {
-                        if (!(Vector3.Distance(character.Position, vehicle.Position) < VehicleLoadDistance)) continue;
+			var assignedVehicles = new Dictionary<Vehicle, Tuple<User, Character>>();
+			foreach (Vehicle vehicle in vehicles)
+			{
+				foreach (User user in users)
+				{
+					foreach (Character character in user.Characters)
+					{
+						if (!(Vector3.Distance(character.Position, vehicle.Position) < VehicleLoadDistance)) continue;
 
-                        if (!assignedVehicles.ContainsKey(vehicle))
-                        {
-                            assignedVehicles.Add(vehicle, new Tuple<User, Character>(user, character));
-                        }
-                        else
-                        {
-                            if (Vector3.Distance(character.Position, vehicle.Position) <
-                                Vector3.Distance(assignedVehicles[vehicle].Item2.Position, vehicle.Position)) assignedVehicles[vehicle] = new Tuple<User, Character>(user, character);
-                        }
-                    }
-                }
-            }
+						if (!assignedVehicles.ContainsKey(vehicle))
+						{
+							assignedVehicles.Add(vehicle, new Tuple<User, Character>(user, character));
+						}
+						else
+						{
+							if (Vector3.Distance(character.Position, vehicle.Position) < Vector3.Distance(assignedVehicles[vehicle].Item2.Position, vehicle.Position)) assignedVehicles[vehicle] = new Tuple<User, Character>(user, character);
+						}
+					}
+				}
+			}
 
-            if (!assignedVehicles.Any())
-            {
-                Log("No vehicles assigned to anyone");
+			if (!assignedVehicles.Any())
+			{
+				Server.Log("No vehicles assigned to anyone");
 
-                Citizen hostClient = null;
-                try { hostClient = Server.Instance.Players.First(p => p.Handle == API.GetHostId()); }
-                catch (Exception ex) { Log(ex.Message); }
+				Player hostClient = null;
+				try
+				{
+					hostClient = Server.Instance.Players.First(p => p.Handle == API.GetHostId());
+				}
+				catch (Exception ex)
+				{
+					Server.Log(ex.Message);
+				}
 
-                foreach (Vehicle vehicle in vehicles)
-                {
-                    if (hostClient != null) BaseScript.TriggerClientEvent(hostClient, "igi:entity:delete", vehicle.NetId, vehicle.Hash);
+				foreach (Vehicle vehicle in vehicles)
+				{
+					if (hostClient != null) BaseScript.TriggerClientEvent(hostClient, "igi:entity:delete", vehicle.NetId, vehicle.Hash);
 
-                    vehicle.NetId = null;
-                    vehicle.Handle = null;
-                    vehicle.TrackingUserId = Guid.Empty;
+					vehicle.NetId = null;
+					vehicle.Handle = null;
+					vehicle.TrackingUserId = Guid.Empty;
 
-                    Db.Vehicles.AddOrUpdate(vehicle);
-                    await Db.SaveChangesAsync();
-                }
-            }
+					Server.Db.Vehicles.AddOrUpdate(vehicle);
+					await Server.Db.SaveChangesAsync();
+				}
+			}
 
-            foreach (var assignedVehicle in assignedVehicles)
-            {
-                Citizen citizen = Server.Instance.Players.First(
-                    c =>
-                        c.Identifiers["steam"] == Db.Users.First(u => u.Id == assignedVehicle.Value.Item1.Id).SteamId);
+			foreach (var assignedVehicle in assignedVehicles)
+			{
+				Player citizen = Server.Instance.Players.First(c => c.Identifiers["steam"] == Server.Db.Users.First(u => u.Id == assignedVehicle.Value.Item1.Id).SteamId);
 
-                AssignVehicle(assignedVehicle.Key, citizen);
-            }
-        }
+				AssignVehicle(assignedVehicle.Key, citizen);
+			}
+		}
 
-        private static void AssignVehicle(IVehicle vehicle, Citizen citizen)
-        {
-            Log($"Assinging vehicle to {citizen.Name} via event: 'igi:{vehicle.VehicleType().Name}:claim'");
+		private static void AssignVehicle(IVehicle vehicle, Player citizen)
+		{
+			Server.Log($"Assinging vehicle to {citizen.Name} via event: 'igi:{vehicle.VehicleType().Name}:claim'");
 
-            BaseScript.TriggerClientEvent(
-                citizen,
-                $"igi:{vehicle.VehicleType().Name}:claim",
-                JsonConvert.SerializeObject(vehicle));
-        }
+			BaseScript.TriggerClientEvent(citizen, $"igi:{vehicle.VehicleType().Name}:claim", JsonConvert.SerializeObject(vehicle));
+		}
 
-        private static void LoadNearbyVehicles([FromSource] Citizen citizen, string charJson)
-        {
-            Character character = JsonConvert.DeserializeObject<Character>(charJson);
+		private static void LoadNearbyVehicles([FromSource] Player citizen, string charJson)
+		{
+			Character character = JsonConvert.DeserializeObject<Character>(charJson);
 
-            Log($"Checking nearby vehicles to spawn to position {character.Position.ToString()}");
+			Server.Log($"Checking nearby vehicles to spawn to position {character.Position.ToString()}");
 
-            foreach (Vehicle vehicle in Db.Vehicles.Where(v => v.Handle == null).ToArray())
-            {
-                Log($"Checking {vehicle.Id} with position {vehicle.Position}");
-                if (!(Vector3.Distance(vehicle.Position, character.Position) < VehicleLoadDistance)) continue;
+			foreach (Vehicle vehicle in Server.Db.Vehicles.Where(v => v.Handle == null).ToArray())
+			{
+				Server.Log($"Checking {vehicle.Id} with position {vehicle.Position}");
+				if (!(Vector3.Distance(vehicle.Position, character.Position) < VehicleLoadDistance)) continue;
 
-                Log($"Spawning vehicle to {citizen.Name} via event: 'igi:{vehicle.VehicleType().Name}:spawn'");
-                BaseScript.TriggerClientEvent(
-                    citizen,
-                    $"igi:{vehicle.VehicleType().Name}:spawn",
-                    JsonConvert.SerializeObject(vehicle));
-            }
-        }
-    }
+				Server.Log($"Spawning vehicle to {citizen.Name} via event: 'igi:{vehicle.VehicleType().Name}:spawn'");
+				BaseScript.TriggerClientEvent(citizen, $"igi:{vehicle.VehicleType().Name}:spawn", JsonConvert.SerializeObject(vehicle));
+			}
+		}
+	}
 }

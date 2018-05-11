@@ -8,8 +8,6 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Player;
-using Newtonsoft.Json;
-using Citizen = CitizenFX.Core.Player;
 
 namespace IgiCore.Server.Models.Player
 {
@@ -30,21 +28,16 @@ namespace IgiCore.Server.Models.Player
 			this.Id = GuidGenerator.GenerateTimeBasedGuid();
 			this.Created = DateTime.UtcNow;
 		}
-
-		public static async void Load([FromSource] Citizen citizen)
-		{
-			BaseScript.TriggerClientEvent(citizen, "igi:user:load", JsonConvert.SerializeObject(await GetOrCreate(citizen)));
-		}
-
-		public static async Task<User> GetOrCreate(Citizen citizen)
+		
+		public static async Task<User> GetOrCreate(CitizenFX.Core.Player player)
 		{
 			User user = null;
 
 			DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
-			var steamId = citizen.Identifiers["steam"];
 
 			try
 			{
+				var steamId = player.Identifiers["steam"];
 				var users = Server.Db.Users.Where(u => u.SteamId == steamId).ToList();
 
 				if (!users.Any())
@@ -52,7 +45,7 @@ namespace IgiCore.Server.Models.Player
 					user = new User
 					{
 						SteamId = steamId,
-						Name = citizen.Name,
+						Name = player.Name,
 						AcceptedRules = null
 					};
 

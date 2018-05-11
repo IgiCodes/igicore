@@ -18,7 +18,7 @@ using IgiCore.Client.Services.Vehicle;
 using IgiCore.Client.Services.World;
 using IgiCore.Core;
 using IgiCore.Core.Models.Connection;
-using IgiCore.Core.Models.Economy.Banking;
+using IgiCore.Core.Rpc;
 using JetBrains.Annotations;
 using Debug = CitizenFX.Core.Debug;
 using Screen = CitizenFX.Core.UI.Screen;
@@ -125,17 +125,36 @@ namespace IgiCore.Client
 			Log("Startup");
 
 			// Load server details
-			this.OnClientReady?.Invoke(this, new ServerInformationEventArgs(await Server.Request<ServerInformation>(RpcEvents.GetServerInformation)));
+			this.OnClientReady?.Invoke(this, new ServerInformationEventArgs(await Server
+				.Event(RpcEvents.GetServerInformation)
+				.Request<ServerInformation>()
+			));
 
 			// Load user
-			this.User = await Server.Request<User>(RpcEvents.GetUser);
+			this.User = await Server
+				.Event(RpcEvents.GetUser)
+				.Request<User>();
+
 			this.OnUserLoaded?.Invoke(this, new UserEventArgs(this.User));
 
 			// Load user's characters
-			this.OnCharactersList?.Invoke(this, new CharactersEventArgs(await Server.Request<List<Character>>(RpcEvents.GetCharacters)));
+			this.OnCharactersList?.Invoke(this, new CharactersEventArgs(await Server
+				.Event(RpcEvents.GetCharacters)
+				.Request<List<Character>>()
+			));
 
-			Server.On<List<Character>>(RpcEvents.GetCharacters, list => this.OnCharactersList?.Invoke(this, new CharactersEventArgs(list)));
-			Server.On<Character>(RpcEvents.CharacterLoad, CharacterLoad);
+			Server
+				.Event(RpcEvents.GetCharacters)
+				.On<List<Character>>(list =>
+				{
+					Log($"GOT {list.Count} CHARS");
+
+					this.OnCharactersList?.Invoke(this, new CharactersEventArgs(list));
+				});
+
+			Server
+				.Event(RpcEvents.CharacterLoad)
+				.On<Character>(CharacterLoad);
 
 			Log("Waiting for character selection...");
 		}

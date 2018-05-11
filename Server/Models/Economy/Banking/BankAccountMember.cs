@@ -11,13 +11,13 @@ namespace IgiCore.Server.Models.Economy.Banking
 		public DateTime Created { get; set; }
 		public DateTime? Deleted { get; set; }
 
-        public virtual BankAccount Account { get; set; }
+		public virtual BankAccount Account { get; set; }
 		public virtual Character Member { get; set; }
 
-	    public BankAccountMember()
-	    {
-	        this.Id = GuidGenerator.GenerateTimeBasedGuid();
-	        Created = DateTime.UtcNow;
-	    }
-    }
+		public BankAccountMember()
+		{
+			this.Id = GuidGenerator.GenerateTimeBasedGuid();
+			this.Created = DateTime.UtcNow;
+		}
+	}
 }

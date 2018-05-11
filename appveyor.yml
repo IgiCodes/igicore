@@ -1,0 +1,35 @@
+image: Visual Studio 2017
+configuration: Release
+platform: Any CPU
+clone_depth: 1
+version: '{branch}-{build}'
+
+pull_requests:
+  do_not_increment_build_number: true
+
+cache:
+  - packages -> **\packages.config
+  - '%APPDATA%\npm-cache -> Interface\package-lock.json'
+
+install:
+  - ps: Install-Product node Current
+  - npm install --global npm@latest
+
+before_build:
+  - nuget restore
+
+build:
+  verbosity: minimal
+
+after_build:
+  - cd Interface
+  - npm ci
+  - npm run build
+  - cd ..
+  - 7z a igicore.zip *.dll README.md LICENSE igicore.cfg Interface\dist Interface\loading-screen
+
+test: off
+
+artifacts:
+- path: igicore.zip
+  name: IgiCore

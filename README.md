@@ -4,7 +4,7 @@
 Complete base framework for GTAV FiveM roleplay servers built entirely in managed C#.
 This project aims to replace existing FiveM server resources with a single managed framework to build upon.
 
-This project is primarily developed live on [my Twitch stream](https://www.twitch.tv/igicodes) with the help and input of viewers. Planned features and progress are tracked on [Trello](https://trello.com/b/cGGQ5tmV/igicore).
+This project is primarily developed live on [my Twitch stream](https://www.twitch.tv/igicodes) with the help and input of viewers. Planned features and progress is tracked on [Trello](https://trello.com/b/cGGQ5tmV/igicore).
 
 **Currently a work in progress**
 
@@ -13,7 +13,7 @@ Building the project will require [Visual Studio 2017](https://www.visualstudio.
 
 This resource currently replaces *all* stock server resources; make sure you remove them from your configuration. The server will always try to load ``sessionmanager``, even if it is not in your configuration, so you must delete or rename the resource.
 
-1. Clone this repo inside your FiveM server's ``resources`` directory:
+1. Clone this repo inside of your FiveM server's ``resources`` directory:
   ```sh
   git clone https://github.com/Igirisujin/igicore.git
   cd igicore
@@ -21,13 +21,13 @@ This resource currently replaces *all* stock server resources; make sure you rem
 
 2. Build the project in Visual Studio.
 
-4. Install interface dependencies:
+3. Install the interface dependencies:
   ```sh
   cd Interface
   npm install
   ```
 
-5. Build interface:
+4. Build the interface:
   ```sh
   npm run build
   ```

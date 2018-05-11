@@ -33,7 +33,7 @@ namespace IgiCore.Client.Models
 		public string WalkingStyle { get; set; }
 		public Inventory Inventory { get; set; }
 		public Style Style { get; set; }
-		public DateTime LastPlayed { get; set; }
+		public DateTime? LastPlayed { get; set; }
 		public DateTime? Deleted { get; set; }
 		public DateTime Created { get; set; }
 		public List<Skill> Skills { get; set; }
@@ -55,8 +55,8 @@ namespace IgiCore.Client.Models
 
 		public void Initialize()
 		{
-			Server.On<int, int, int>("igi:character:component:set", SetComponent);
-			Server.On<int, int, int>("igi:character:prop:set", SetProp);
+			Server.Event("igi:character:component:set").On<int, int, int>(SetComponent);
+			Server.Event("igi:character:prop:set").On<int, int, int>(SetProp);
 		}
 
 		public void Save()
@@ -65,7 +65,7 @@ namespace IgiCore.Client.Models
 			{
 				this.Position = Game.Player.Character.Position;
 
-				Server.Trigger("igi:character:save", this);
+				Server.Event("igi:character:save").Attach(this).Trigger();
 			}
 		}
 

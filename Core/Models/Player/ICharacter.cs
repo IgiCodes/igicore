@@ -21,10 +21,10 @@ namespace IgiCore.Core.Models.Player
 		float PosZ { get; set; }
 		string Model { get; set; }
 		string WalkingStyle { get; set; }
-		Inventory Inventory { get; set; }
-		DateTime LastPlayed { get; set; }
-		DateTime? Deleted { get; set; }
+		DateTime? LastPlayed { get; set; }
 		DateTime Created { get; set; }
+		DateTime? Deleted { get; set; }
 		List<Skill> Skills { get; set; }
+		Inventory Inventory { get; set; }
 	}
 }
