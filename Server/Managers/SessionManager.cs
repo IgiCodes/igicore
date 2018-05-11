@@ -20,9 +20,9 @@ namespace IgiCore.Server.Managers
 		{
 			if (CurrentHost != null)
 			{
-				BaseScript.TriggerClientEvent(player, "sessionHostResult", "wait");
+				player.TriggerEvent("sessionHostResult", "wait");
 
-				Callbacks.Add(() => BaseScript.TriggerClientEvent(player, "sessionHostResult", "free"));
+				Callbacks.Add(() => player.TriggerEvent("sessionHostResult", "free"));
 
 				return;
 			}
@@ -40,7 +40,7 @@ namespace IgiCore.Server.Managers
 
 			if (!string.IsNullOrEmpty(hostId) && API.GetPlayerLastMsg(API.GetHostId()) < 1000)
 			{
-				BaseScript.TriggerClientEvent(player, "sessionHostResult", "conflict");
+				player.TriggerEvent("sessionHostResult", "conflict");
 
 				return;
 			}
@@ -50,7 +50,7 @@ namespace IgiCore.Server.Managers
 
 			Server.Log($"[SESSIONMANAGER] Game host is now \"{CurrentHost.Name}\"");
 
-			BaseScript.TriggerClientEvent(player, "sessionHostResult", "go");
+			player.TriggerEvent("sessionHostResult", "go");
 
 			await BaseScript.Delay(5000);
 

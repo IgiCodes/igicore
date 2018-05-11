@@ -154,6 +154,12 @@
     <Compile Include="Models\Player\Skill.cs" />
     <Compile Include="Models\Player\SkillType.cs" />
     <Compile Include="Models\RadioStation.cs" />
+    <Compile Include="Rpc\IRpcHandler.cs" />
+    <Compile Include="Rpc\IRpcSerializer.cs" />
+    <Compile Include="Rpc\IRpcTrigger.cs" />
+    <Compile Include="Rpc\RpcMessage.cs" />
+    <Compile Include="Rpc\RpcRequest.cs" />
+    <Compile Include="Rpc\RpcResponse.cs" />
     <Compile Include="Services\IService.cs" />
     <Compile Include="Services\Service.cs" />
     <Compile Include="Services\ServiceRegistry.cs" />

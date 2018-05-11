@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
-using Newtonsoft.Json;
+using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Commands
 {
@@ -111,7 +112,10 @@ namespace IgiCore.Server.Commands
 			Server.Db.Cars.Add(car);
 			await Server.Db.SaveChangesAsync();
 
-			BaseScript.TriggerClientEvent(player, "igi:car:spawn", JsonConvert.SerializeObject(car));
+			player
+				.Event(RpcEvents.CarSpawn)
+				.Attach(car)
+				.Trigger();
 		}
 	}
 }

@@ -136,15 +136,6 @@ namespace IgiCore.Server.Models.Player
 			return character;
 		}
 
-		public static async void Save(Character newChar)
-		{
-			Server.Log("Character save called");
-
-			Server.Db.Styles.AddOrUpdate(newChar.Style);
-			Server.Db.Characters.AddOrUpdate(newChar);
-			await Server.Db.SaveChangesAsync();
-		}
-
 		public override string ToString() { return $"Character [{this.Id}]: {this.FullName}, {this.Position}"; }
 	}
 }

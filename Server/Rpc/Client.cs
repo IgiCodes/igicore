@@ -1,6 +1,6 @@
-﻿namespace IgiCore.Client.Rpc
+﻿namespace IgiCore.Server.Rpc
 {
-	public static class Server
+	public static class Client
 	{
 		public static RpcRequest Event(string @event)
 		{

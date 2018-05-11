@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using IgiCore.Core;
+using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Commands
 {
@@ -10,13 +12,12 @@ namespace IgiCore.Server.Commands
 
 		public override async Task RunCommand(Player player, List<string> args)
 		{
-			BaseScript.TriggerClientEvent(
-				player,
-				"igi:character:component:set",
-				int.Parse(args[0]),
-				int.Parse(args[1]),
-				int.Parse(args[2])
-			);
+			player
+				.Event(RpcEvents.CharacterComponentSet)
+				.Attach(int.Parse(args[0]))
+				.Attach(int.Parse(args[1]))
+				.Attach(int.Parse(args[2]))
+				.Trigger();
 		}
 	}
 }

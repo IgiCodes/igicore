@@ -9,7 +9,6 @@ using IgiCore.Client.Models;
 using IgiCore.Client.Rpc;
 using IgiCore.Core;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 
 namespace IgiCore.Client.Interface.Screens
 {
@@ -46,41 +45,55 @@ namespace IgiCore.Client.Interface.Screens
 
 		protected void OnNuiRulesAgreed(dynamic _, CallbackDelegate callback)
 		{
-			Server.Trigger(RpcEvents.AcceptRules, DateTime.UtcNow);
-
+			Server
+				.Event(RpcEvents.AcceptRules)
+				.Attach(DateTime.UtcNow)
+				.Trigger();
+			
 			callback("ok");
 		}
 		protected void OnNuiCharacterCreate(dynamic character, CallbackDelegate callback)
 		{
-			BaseScript.TriggerServerEvent(RpcEvents.CharacterCreate, JsonConvert.SerializeObject(new Character
-			{
-				Forename = character.forename,
-				Middlename = character.middlename,
-				Surname = character.surname,
-				Gender = (short)character.gender,
-				DateOfBirth = DateTime.Parse(character.dob)
-			}));
+			Server
+				.Event(RpcEvents.CharacterCreate)
+				.Attach(new Character
+				{
+					Forename = character.forename,
+					Middlename = character.middlename,
+					Surname = character.surname,
+					Gender = (short)character.gender,
+					DateOfBirth = DateTime.Parse(character.dob)
+				})
+				.Trigger();
 
 			callback("ok");
 		}
 
 		protected void OnNuiCharacterLoad(dynamic id, CallbackDelegate callback)
 		{
-			BaseScript.TriggerServerEvent(RpcEvents.CharacterLoad, id);
+			Server
+				.Event(RpcEvents.CharacterLoad)
+				.Attach(id)
+				.Trigger();
 
 			callback("ok");
 		}
 
 		protected void OnNuiCharacterDelete(dynamic id, CallbackDelegate callback)
 		{
-			BaseScript.TriggerServerEvent(RpcEvents.CharacterDelete, id);
+			Server
+				.Event(RpcEvents.CharacterDelete)
+				.Attach(id)
+				.Trigger();
 
 			callback("ok");
 		}
 
 		protected void OnNuiDisconnect(dynamic _, CallbackDelegate callback)
 		{
-			BaseScript.TriggerServerEvent(RpcEvents.ClientDisconnect);
+			Server
+				.Event(RpcEvents.ClientDisconnect)
+				.Trigger();
 
 			callback("ok");
 		}

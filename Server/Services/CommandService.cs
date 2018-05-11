@@ -11,17 +11,19 @@ namespace IgiCore.Server.Services
 
 		public CommandService()
 		{
-			HandleEvent<int, string, string>("chatMessage", OnChatMessage);
+			Rpc.Client
+				.Event("chatMessage")
+				.On(OnChatMessage);
 		}
 
-		public override void Initialise()
+		public override void Initialize()
 		{
-			this.Register(new GpsCommand());
-			this.Register(new ComponentCommand());
-			this.Register(new PropCommand());
-			this.Register(new CarCommand());
-			this.Register(new BikeCommand());
-			this.Register(new GroupCommand());
+			Register(new GpsCommand());
+			Register(new ComponentCommand());
+			Register(new PropCommand());
+			Register(new CarCommand());
+			Register(new BikeCommand());
+			Register(new GroupCommand());
 		}
 
 		public void Register(Command command)

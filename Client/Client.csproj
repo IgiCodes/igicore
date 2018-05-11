@@ -94,6 +94,10 @@
     <Compile Include="Client.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Registry.cs" />
+    <Compile Include="Rpc\RpcHandler.cs" />
+    <Compile Include="Rpc\RpcRequest.cs" />
+    <Compile Include="Rpc\RpcSerializer.cs" />
+    <Compile Include="Rpc\RpcTrigger.cs" />
     <Compile Include="Rpc\Server.cs" />
     <Compile Include="Services\AI\PedFilterService.cs" />
     <Compile Include="Services\Economy\BranchService.cs" />

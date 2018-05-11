@@ -7,11 +7,9 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Events;
-using IgiCore.Client.Extensions;
 using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;
-using Newtonsoft.Json;
 
 namespace IgiCore.Client.Services.Economy
 {
@@ -86,12 +84,12 @@ namespace IgiCore.Client.Services.Economy
             API.TaskStartScenarioInPlace(Game.PlayerPed.Handle, "PROP_HUMAN_ATM", 0, true);
             this.InAnim = true;
 
-            bool result = await Rpc.Server.Request<Guid, Guid, double, bool>(
-                RpcEvents.BankAtmWithdraw,
-                atm.Item1.Id,
-                Guid.Parse("e9286e6f-e74d-4510-855b-5318ef0f71af"),
-                100
-            );
+            bool result = await Rpc.Server
+	            .Event(RpcEvents.BankAtmWithdraw)
+				.Attach(atm.Item1.Id)
+				.Attach(Guid.Parse("e9286e6f-e74d-4510-855b-5318ef0f71af"))
+				.Attach(100)
+	            .Request<bool>();
 
             Client.Log($"ATM Withdraw response: {result}");
 

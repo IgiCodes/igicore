@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Commands
 {
@@ -10,7 +11,9 @@ namespace IgiCore.Server.Commands
 
 		public override async Task RunCommand(Player player, List<string> args)
 		{
-			BaseScript.TriggerClientEvent(player, "igi:user:gps");
+			player
+				.Event("igi:dev:gps")
+				.Trigger();
 		}
 	}
 }

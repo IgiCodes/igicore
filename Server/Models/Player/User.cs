@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Player;
-using Newtonsoft.Json;
 
 namespace IgiCore.Server.Models.Player
 {
@@ -29,12 +28,7 @@ namespace IgiCore.Server.Models.Player
 			this.Id = GuidGenerator.GenerateTimeBasedGuid();
 			this.Created = DateTime.UtcNow;
 		}
-
-		public static async void Load([FromSource] CitizenFX.Core.Player player)
-		{
-			BaseScript.TriggerClientEvent(player, "igi:user:load", JsonConvert.SerializeObject(await GetOrCreate(player)));
-		}
-
+		
 		public static async Task<User> GetOrCreate(CitizenFX.Core.Player player)
 		{
 			User user = null;

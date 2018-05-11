@@ -14,10 +14,25 @@
 		public const string CharacterDelete = "igi:character:delete";
 		public const string CharacterSave = "igi:character:save";
 
+		public const string CharacterComponentSet = "igi:character:component:set";
+		public const string CharacterPropSet = "igi:character:prop:set";
+		
 		public const string BankAtmWithdraw = "igi:bank:atm:withdraw";
 		public const string BankBranchWithdraw = "igi:bank:branch:withdraw";
 		public const string BankBranchDeposit = "igi:bank:branch:withdraw";
 		public const string BankBranchTransfer = "igi:bank:branch:transfer";
 		public const string BankOnlineTransfer = "igi:bank:online:transfer";
+
+		public const string CarSpawn = "igi:car:spawn";
+		public const string CarSave = "igi:car:save";
+		public const string CarTransfer = "igi:car:transfer";
+		public const string CarClaim = "igi:car:claim";
+		public const string CarUnclaim = "igi:car:unclaim";
+
+		public const string BikeSpawn = "igi:bike:spawn";
+		public const string BikeSave = "igi:bike:save";
+		public const string BikeTransfer = "igi:bike:transfer";
+		public const string BikeClaim = "igi:bike:claim";
+		public const string BikeUnclaim = "igi:bike:unclaim";
 	}
 }
