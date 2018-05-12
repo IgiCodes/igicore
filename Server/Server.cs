@@ -4,7 +4,6 @@ using System.Data.Entity.Migrations;
 using System.Diagnostics;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using IgiCore.Core;
 using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Rpc;
@@ -12,7 +11,6 @@ using IgiCore.Core.Services;
 using IgiCore.Server.Controllers;
 using IgiCore.Server.Managers;
 using IgiCore.Server.Models.Economy.Banking;
-using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 using IgiCore.Server.Services;
 using IgiCore.Server.Services.Economy;
@@ -38,6 +36,9 @@ namespace IgiCore.Server
 		{
 			// Singleton
 			Instance = this;
+
+			API.SetGameType(ConfigurationManager.Configuration.GameType);
+			API.SetMapName(ConfigurationManager.Configuration.MapName);
 
 			Db = new DB();
 			Db.Database.CreateIfNotExists();
@@ -80,10 +81,7 @@ namespace IgiCore.Server
 			Client.Event(RpcEvents.BikeTransfer).On(OwnershipActions.TransferObject<Bike>);
 			Client.Event(RpcEvents.BikeClaim).On(OwnershipActions.ClaimObject<Bike>);
 			Client.Event(RpcEvents.BikeUnclaim).On(OwnershipActions.UnclaimObject<Bike>);
-
-			API.SetGameType("Roleplay");
-			API.SetMapName("Los Santos");
-
+			
 		    Db.Banks.AddOrUpdate(
 		        new Bank
 		        {

@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
 using System.Data.Entity.Infrastructure;
 using System.Data.Entity.Migrations;
-using CitizenFX.Core;
-using IgiCore.Core.Models.Economy.Banking;
-using IgiCore.Server.Models.Economy.Banking;
+using IgiCore.Server.Managers;
 using IgiCore.Server.Storage.MySql;
 
 namespace IgiCore.Server.Migrations
@@ -13,9 +9,21 @@ namespace IgiCore.Server.Migrations
 	{
 		public Configuration()
 		{
-			this.TargetDatabase = new DbConnectionInfo(Config.MySqlConnString, "MySql.Data.MySqlClient");
+			this.TargetDatabase = new DbConnectionInfo(ConfigurationManager.Configuration.Database.ToString(), "MySql.Data.MySqlClient");
+
+#if true
 			this.AutomaticMigrationsEnabled = true;
+#else
+			this.AutomaticMigrationsEnabled = false;
+#endif
 		}
 
-    }
+		protected override void Seed(DB context)
+		{
+			//  This method will be called after migrating to the latest version.
+
+			//  You can use the DbSet<T>.AddOrUpdate() helper extension method 
+			//  to avoid creating duplicate seed data.
+		}
+	}
 }

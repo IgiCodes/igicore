@@ -1,0 +1,13 @@
+# Display options
+ServerName: igicore
+GameType: Roleplay
+MapName: Los Santos
+
+# MySQL database connection
+Database:
+  Host: localhost
+  Port: 3306
+  Database: fivem
+  User: root
+  Password: password
+  Charset: utf8mb4

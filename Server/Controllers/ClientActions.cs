@@ -4,6 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.Core.Models.Connection;
 using IgiCore.Core.Rpc;
+using IgiCore.Server.Managers;
 using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Controllers
@@ -17,7 +18,7 @@ namespace IgiCore.Server.Controllers
 				.Attach(new ServerInformation
 				{
 					ResourceName = API.GetCurrentResourceName(),
-					ServerName = Config.ServerName,
+					ServerName = ConfigurationManager.Configuration.ServerName,
 					DateTime = DateTime.UtcNow,
 					Weather = "EXTRASUNNY", // TODO
 					Atms = Server.Db.BankAtms.ToList(),
