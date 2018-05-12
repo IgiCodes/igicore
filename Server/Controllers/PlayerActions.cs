@@ -2,7 +2,7 @@ using System.Data.Entity.Migrations;
 using CitizenFX.Core;
 using IgiCore.Server.Models.Player;
 
-namespace IgiCore.Server.Handlers
+namespace IgiCore.Server.Controllers
 {
     public static class PlayerActions
 	{

@@ -7,7 +7,7 @@ using IgiCore.Core.Rpc;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 
-namespace IgiCore.Server.Handlers
+namespace IgiCore.Server.Controllers
 {
     public static class OwnershipActions
 	{

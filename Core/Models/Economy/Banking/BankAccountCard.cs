@@ -1,9 +1,8 @@
 ﻿using System;
 using IgiCore.Core.Extensions;
-using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Models.Objects.Items.Economy;
 
-namespace IgiCore.Server.Models.Economy.Banking
+namespace IgiCore.Core.Models.Economy.Banking
 {
 	public class BankAccountCard : IBankAccountCard
 	{

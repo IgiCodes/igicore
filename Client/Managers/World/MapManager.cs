@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using IgiCore.Client.Interface.Map;
 using IgiCore.Client.Interface.Map.Loaders;
-using static CitizenFX.Core.Native.API;
 
-namespace IgiCore.Client.Managers
+namespace IgiCore.Client.Managers.World
 {
 	public class MapManager : Manager
 	{
@@ -498,8 +498,8 @@ namespace IgiCore.Client.Managers
 
 		public MapManager()
 		{
-			LoadMpDlcMaps(); // TODO: Needed?
-			EnableMpDlcMaps(true); // TODO: Needed?
+			API.LoadMpDlcMaps(); // TODO: Needed?
+			API.EnableMpDlcMaps(true); // TODO: Needed?
 
 			this.Maps = new MapRegistry
 			{
@@ -512,7 +512,7 @@ namespace IgiCore.Client.Managers
 
 			foreach (var blipConfig in this.BlipConfig)
 			{
-				var blip = World.CreateBlip(blipConfig.Position);
+				var blip = CitizenFX.Core.World.CreateBlip(blipConfig.Position);
 				blip.Sprite = blipConfig.Sprite;
 				blip.Scale = blipConfig.SpriteScale;
 				blip.Name = blipConfig.Name;

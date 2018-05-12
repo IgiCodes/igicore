@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IgiCore.Core.Models.Economy.Banking;
+using IgiCore.Core.Models.Player;
 using IgiCore.Server.Models.Economy.Banking;
 using IgiCore.Server.Models.Player;
 
@@ -27,7 +28,6 @@ namespace IgiCore.Server.Services.Economy
 				{
 					new BankAccountMember
 					{
-						Id = Guid.Parse("e9286e6f-e74d-4510-855b-5318ef0f71af"),
 						Member = character
 					}
 				}

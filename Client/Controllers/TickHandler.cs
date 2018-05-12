@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace IgiCore.Client.Handlers
+namespace IgiCore.Client.Controllers
 {
 	/// <summary>
 	/// Handles attaching actions to the global tick cycle.

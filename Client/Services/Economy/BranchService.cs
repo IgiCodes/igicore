@@ -36,11 +36,6 @@ namespace IgiCore.Client.Services.Economy
         public override async Task Tick()
         {
             if (!this.CharLoaded) return;
-            if (this.InAnim && Input.Input.IsControlJustPressed(Control.MoveUpOnly))
-            {
-                Game.Player.Character.Task.ClearAllImmediately(); // Cancel animation
-                this.InAnim = false;
-            }
 
             foreach (BankBranch bankBranch in this.Branches)
             {
@@ -67,6 +62,7 @@ namespace IgiCore.Client.Services.Economy
                 Game.Player.Character.Task.ClearAll();
                 Game.Player.Character.Task.ClearLookAt();
                 CitizenFX.Core.World.DestroyAllCameras();
+                this.Camera = null;
                 CitizenFX.Core.World.RenderingCamera = null;
                 this.InAnim = false;
             }

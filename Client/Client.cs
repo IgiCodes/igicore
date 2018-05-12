@@ -8,6 +8,7 @@ using IgiCore.Client.Interface;
 using IgiCore.Client.Interface.Hud;
 using IgiCore.Client.Interface.Menu;
 using IgiCore.Client.Managers;
+using IgiCore.Client.Managers.World;
 using IgiCore.Client.Models;
 using IgiCore.Client.Rpc;
 using IgiCore.Client.Services;
@@ -104,8 +105,6 @@ namespace IgiCore.Client
 			{
 				Screen.ShowNotification("Revived");
 			};
-
-			Rpc.Server.On("igi:character:revive", new Action(this.Services.First<PlayerDeathService>().Revive));
 
 			//HandleEvent<string>("igi:car:spawn", SpawnVehicle<Car>);
 			//HandleEvent<string>("igi:car:claim", ClaimVehicle<Car>);

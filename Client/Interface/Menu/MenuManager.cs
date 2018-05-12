@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CitizenFX.Core;
-using IgiCore.Client.Handlers;
+using IgiCore.Client.Controllers;
 using IgiCore.Client.Managers;
 using NativeUI;
 

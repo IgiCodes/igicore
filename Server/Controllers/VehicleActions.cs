@@ -5,7 +5,7 @@ using CitizenFX.Core;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Rpc;
 
-namespace IgiCore.Server.Handlers
+namespace IgiCore.Server.Controllers
 {
     public static class VehicleActions
     {

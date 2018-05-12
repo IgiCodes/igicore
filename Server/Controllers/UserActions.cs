@@ -1,12 +1,11 @@
 using System;
 using System.Data.Entity.Migrations;
 using CitizenFX.Core;
-using IgiCore.Core;
 using IgiCore.Core.Rpc;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 
-namespace IgiCore.Server.Handlers
+namespace IgiCore.Server.Controllers
 {
     public static class UserActions
 	{

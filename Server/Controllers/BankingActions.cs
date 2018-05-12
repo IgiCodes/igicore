@@ -2,13 +2,12 @@
 using System.Data.Entity.Migrations;
 using System.Linq;
 using CitizenFX.Core;
-using IgiCore.Core;
 using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Rpc;
 using IgiCore.Server.Models.Economy.Banking;
 using IgiCore.Server.Rpc;
 
-namespace IgiCore.Server.Handlers
+namespace IgiCore.Server.Controllers
 {
 	public static class BankingActions
 	{

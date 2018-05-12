@@ -7,6 +7,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Events;
+using IgiCore.Client.Extensions;
 using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;

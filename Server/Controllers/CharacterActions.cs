@@ -1,18 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Data.Entity.Migrations;
 using System.Linq;
+using System.Threading.Tasks;
 using CitizenFX.Core;
-using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Appearance;
+using IgiCore.Core.Models.Player;
 using IgiCore.Core.Rpc;
 using IgiCore.Server.Extentions;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 using IgiCore.Server.Services;
 
-namespace IgiCore.Server.Handlers
+namespace IgiCore.Server.Controllers
 {
     public static class CharacterActions
 	{
@@ -28,7 +30,44 @@ namespace IgiCore.Server.Handlers
 				.Trigger();
 		}
 
-		public static async void Create([FromSource] Player player, string json)
+	    public static async Task<Character> GetLatestOrCreate(User user)
+	    {
+	        Character character = null;
+	        DbContextTransaction transaction = Server.Db.Database.BeginTransaction();
+
+	        try
+	        {
+	            if (user.Characters.Count == 0)
+	            {
+	                Debug.WriteLine($"Character not found, creating new char for userid: {user.Id} ");
+
+	                character = new Character
+	                    { Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() } };
+
+	                user.Characters.Add(character);
+
+	                Server.Db.Users.AddOrUpdate(user);
+	                await Server.Db.SaveChangesAsync();
+	            }
+	            else
+	            {
+	                character = user.Characters.OrderBy(c => c.LastPlayed).Last();
+	                Debug.WriteLine($"Character found for userId: {user.Id}  ID: {character.Id}");
+	            }
+
+	            transaction.Commit();
+	        }
+	        catch (Exception ex)
+	        {
+	            transaction.Rollback();
+
+	            Debug.Write(ex.Message);
+	        }
+
+	        return character;
+	    }
+
+        public static async void Create([FromSource] Player player, string json)
 		{
 			var response = RpcResponse<Character>.Parse(json);
 

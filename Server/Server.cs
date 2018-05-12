@@ -1,13 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Data.Entity.Migrations;
 using System.Diagnostics;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.Core;
+using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Rpc;
 using IgiCore.Core.Services;
-using IgiCore.Server.Handlers;
+using IgiCore.Server.Controllers;
 using IgiCore.Server.Managers;
+using IgiCore.Server.Models.Economy.Banking;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 using IgiCore.Server.Services;
@@ -79,7 +83,53 @@ namespace IgiCore.Server
 
 			API.SetGameType("Roleplay");
 			API.SetMapName("Los Santos");
-		}
+
+		    Db.Banks.AddOrUpdate(
+		        new Bank
+		        {
+                    Id = new Guid("39e662f1-4dfe-96b3-ae2f-e36da99c1e80"),
+                    Name = "Fleeca",
+		            Branches = new List<BankBranch>
+		            {
+		                new BankBranch
+		                {
+		                    Name = "Legion Square",
+		                    Position = new Vector3(149.7f, -1042.2f, 28.33f),
+		                    Heading = 336.00f
+		                },
+		                new BankBranch
+		                {
+		                    Name = "Legion Square 02",
+		                    Position = new Vector3(163.7f, -1004.2f, 28.35f),
+		                    Heading = 280.00f
+		                }
+		            },
+		            Atms = new List<BankAtm>
+		            {
+		                new BankAtm
+		                {
+		                    Name = "FLCA LSS 0001",
+		                    Hash = 506770882,
+		                    Position = new Vector3(147.4731f, -1036.218f, 28.36778f)
+		                },
+		                new BankAtm
+		                {
+		                    Name = "FLCA LSS 0002",
+		                    Hash = 506770882,
+		                    Position = new Vector3(145.8392f, -1035.625f, 28.36778f)
+		                },
+		                new BankAtm
+		                {
+		                    Name = "Standup ATM 0001",
+		                    Hash = -870868698,
+		                    Position = new Vector3(228.0324f, 337.8501f, 104.5013f)
+		                },
+
+		            },
+		            Accounts = new List<BankAccount>()
+		        });
+		    Db.SaveChangesAsync();
+        }
 
 		[Conditional("DEBUG")]
 		public static void Log(string message) => Debug.WriteLine($"{DateTime.Now:s} [SERVER]: {message}");

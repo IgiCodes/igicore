@@ -6,7 +6,6 @@ namespace IgiCore.Core.Models.Player
 {
 	public interface ICharacter
 	{
-		Guid Id { get; set; }
 		string Forename { get; set; }
 		string Middlename { get; set; }
 		string Surname { get; set; }
@@ -22,8 +21,6 @@ namespace IgiCore.Core.Models.Player
 		string Model { get; set; }
 		string WalkingStyle { get; set; }
 		DateTime? LastPlayed { get; set; }
-		DateTime Created { get; set; }
-		DateTime? Deleted { get; set; }
 		List<Skill> Skills { get; set; }
 		Inventory Inventory { get; set; }
 	}

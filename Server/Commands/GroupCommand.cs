@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using IgiCore.Server.Controllers;
 using IgiCore.Server.Extentions;
-using IgiCore.Server.Models.Groups;
 
 namespace IgiCore.Server.Commands
 {
@@ -14,7 +14,7 @@ namespace IgiCore.Server.Commands
 		{
 			if (args[0] == null) return;
 
-			await Group.Create(await player.ToLastCharacter(), args[0]);
+			await GroupController.Create(await player.ToLastCharacter(), args[0]);
 		}
 	}
 }
