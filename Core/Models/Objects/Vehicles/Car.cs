@@ -7,7 +7,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public Trailer Trailer { get; set; }
         public Vehicle TowedVehicle { get; set; }
 
-        public static implicit operator Car(CitizenFX.Core.Vehicle vehicle)
+        public static explicit operator Car(CitizenFX.Core.Vehicle vehicle)
         {
             return new Car
             {
@@ -24,5 +24,5 @@ namespace IgiCore.Core.Models.Objects.Vehicles
                 PetrolTankHealth = vehicle.PetrolTankHealth
             };
         }
-    }
+	}
 }

@@ -8,7 +8,7 @@ using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Controllers
 {
-    public static class ClientActions
+    public static class ClientController
 	{
 		public static void Ready([FromSource] Player player)
 		{

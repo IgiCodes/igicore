@@ -8,6 +8,6 @@ namespace IgiCore.Server.Extentions
 {
 	public static class CitizenExtentions
 	{
-		public static async Task<Character> ToLastCharacter(this Citizen citizen) => await CharacterActions.GetLatestOrCreate(await User.GetOrCreate(citizen));
+		public static async Task<Character> ToLastCharacter(this Citizen citizen) => await CharacterController.GetLatestOrCreate(await User.GetOrCreate(citizen));
 	}
 }

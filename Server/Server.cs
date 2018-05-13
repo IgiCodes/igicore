@@ -54,32 +54,33 @@ namespace IgiCore.Server
 			Client.Event(ServerEvents.HostingSession).On(SessionManager.OnHostingSession);
 			Client.Event(ServerEvents.HostedSession).On(SessionManager.OnHostedSession);
 
-			Client.Event(ServerEvents.PlayerConnecting).On(PlayerActions.Connecting);
-			Client.Event(ServerEvents.PlayerDropped).On(PlayerActions.Dropped);
+			Client.Event(ServerEvents.PlayerConnecting).On(PlayerController.Connecting);
+			Client.Event(ServerEvents.PlayerDropped).On(PlayerController.Dropped);
 
-			Client.Event(RpcEvents.GetServerInformation).On(ClientActions.Ready);
-			Client.Event(RpcEvents.ClientDisconnect).On(ClientActions.Disconnect);
+			Client.Event(RpcEvents.GetServerInformation).On(ClientController.Ready);
+			Client.Event(RpcEvents.ClientDisconnect).On(ClientController.Disconnect);
 
-			Client.Event(RpcEvents.AcceptRules).On(UserActions.AcceptRules);
-			Client.Event(RpcEvents.GetUser).On(UserActions.Load);
+			Client.Event(RpcEvents.AcceptRules).On(UserController.AcceptRules);
+			Client.Event(RpcEvents.GetUser).On(UserController.Load);
 
-			Client.Event(RpcEvents.GetCharacters).On(CharacterActions.List);
-			Client.Event(RpcEvents.CharacterLoad).On(CharacterActions.Load);
-			Client.Event(RpcEvents.CharacterCreate).On(CharacterActions.Create);
-			Client.Event(RpcEvents.CharacterDelete).On(CharacterActions.Delete);
-			Client.Event(RpcEvents.CharacterSave).On(CharacterActions.Save);
+			Client.Event(RpcEvents.GetCharacters).On(CharacterController.List);
+			Client.Event(RpcEvents.CharacterLoad).On(CharacterController.Load);
+			Client.Event(RpcEvents.CharacterCreate).On(CharacterController.Create);
+			Client.Event(RpcEvents.CharacterDelete).On(CharacterController.Delete);
+			Client.Event(RpcEvents.CharacterSave).On(CharacterController.Save);
 
-			Client.Event(RpcEvents.BankAtmWithdraw).On(BankingActions.AtmWithdraw);
+			Client.Event(RpcEvents.BankAtmWithdraw).On(BankingController.AtmWithdraw);
 
-			Client.Event(RpcEvents.CarSave).On(VehicleActions.Save<Car>);
-			Client.Event(RpcEvents.CarTransfer).On(OwnershipActions.TransferObject<Car>);
-			Client.Event(RpcEvents.CarClaim).On(OwnershipActions.ClaimObject<Car>);
-			Client.Event(RpcEvents.CarUnclaim).On(OwnershipActions.UnclaimObject<Car>);
+			Client.Event(RpcEvents.CarCreate).On(VehicleController.Create<Car>);
+			Client.Event(RpcEvents.CarSave).On(VehicleController.Save<Car>);
+			Client.Event(RpcEvents.CarTransfer).On(OwnershipController.TransferObject<Car>);
+			Client.Event(RpcEvents.CarClaim).On(OwnershipController.ClaimObject<Car>);
+			Client.Event(RpcEvents.CarUnclaim).On(OwnershipController.UnclaimObject<Car>);
 
-			Client.Event(RpcEvents.BikeSave).On(VehicleActions.Save<Bike>);
-			Client.Event(RpcEvents.BikeTransfer).On(OwnershipActions.TransferObject<Bike>);
-			Client.Event(RpcEvents.BikeClaim).On(OwnershipActions.ClaimObject<Bike>);
-			Client.Event(RpcEvents.BikeUnclaim).On(OwnershipActions.UnclaimObject<Bike>);
+			Client.Event(RpcEvents.BikeSave).On(VehicleController.Save<Bike>);
+			Client.Event(RpcEvents.BikeTransfer).On(OwnershipController.TransferObject<Bike>);
+			Client.Event(RpcEvents.BikeClaim).On(OwnershipController.ClaimObject<Bike>);
+			Client.Event(RpcEvents.BikeUnclaim).On(OwnershipController.UnclaimObject<Bike>);
 
 			API.SetGameType("Roleplay");
 			API.SetMapName("Los Santos");

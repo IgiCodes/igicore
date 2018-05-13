@@ -9,7 +9,7 @@ using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Controllers
 {
-    public static class OwnershipActions
+    public static class OwnershipController
 	{
 		public static void TransferObject<T>([FromSource] Player player, string json) where T : class, IObject
 		{

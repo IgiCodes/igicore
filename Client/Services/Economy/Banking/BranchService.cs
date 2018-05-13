@@ -1,19 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Events;
 using IgiCore.Client.Extensions;
-using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Helpers;
 using IgiCore.Core.Models.Economy.Banking;
 
-namespace IgiCore.Client.Services.Economy
+namespace IgiCore.Client.Services.Economy.Banking
 {
     public class BranchService : ClientService
     {

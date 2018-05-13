@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using CitizenFX.Core.Native;
 using IgiCore.Client.Events;
+using IgiCore.Client.Extensions;
 using IgiCore.Client.Interface;
 using IgiCore.Client.Interface.Hud;
 using IgiCore.Client.Interface.Menu;
@@ -13,14 +15,18 @@ using IgiCore.Client.Models;
 using IgiCore.Client.Rpc;
 using IgiCore.Client.Services;
 using IgiCore.Client.Services.AI;
-using IgiCore.Client.Services.Economy;
+using IgiCore.Client.Services.Economy.Banking;
+using IgiCore.Client.Services.Economy.Business.Driving;
 using IgiCore.Client.Services.Player;
 using IgiCore.Client.Services.Vehicle;
 using IgiCore.Client.Services.World;
 using IgiCore.Core;
+using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Connection;
+using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Rpc;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using Debug = CitizenFX.Core.Debug;
 using Screen = CitizenFX.Core.UI.Screen;
 
@@ -77,6 +83,7 @@ namespace IgiCore.Client
 
 			this.Services = new ServiceRegistry
 			{
+				new VehicleService(), // Vehicle tracking service
 				new VehicleRollService(), // Disable rolling cars back over
 				new PlayerDeathService(), // Knock down players rather than death
 				new PlayerIdleService(), // Kick idle players
@@ -86,7 +93,8 @@ namespace IgiCore.Client
 				new DateTimeService(), // Set the date and time
 				new BlackoutService(), // Allow city blackouts
 				new AtmService(), // Add ATMs
-                new BranchService()
+                //new BranchService(), // Add Bank Tellers
+				new DowntownCabService()
 			};
 
 			this.Services.Initialize(); // Attach handlers
@@ -105,13 +113,6 @@ namespace IgiCore.Client
 			{
 				Screen.ShowNotification("Revived");
 			};
-
-			//HandleEvent<string>("igi:car:spawn", SpawnVehicle<Car>);
-			//HandleEvent<string>("igi:car:claim", ClaimVehicle<Car>);
-			//HandleEvent<string>("igi:car:unclaim", UnclaimVehicle<Car>);
-			//HandleEvent<string>("igi:bike:spawn", SpawnVehicle<Bike>);
-			//HandleEvent<string>("igi:bike:claim", ClaimVehicle<Bike>);
-			//HandleEvent<string>("igi:bike:unclaim", UnclaimVehicle<Bike>);
 
 			Startup();
 		}
@@ -151,9 +152,15 @@ namespace IgiCore.Client
 					this.OnCharactersList?.Invoke(this, new CharactersEventArgs(list));
 				});
 
-			Server
-				.Event(RpcEvents.CharacterLoad)
-				.On<Character>(CharacterLoad);
+			Server.Event(RpcEvents.CharacterLoad).On<Character>(CharacterLoad);
+
+			Server.Event(RpcEvents.CarSpawn).On<Car>(SpawnVehicle<Car>);
+			Server.Event(RpcEvents.CarClaim).On<Car>(ClaimVehicle<Car>);
+			Server.Event(RpcEvents.CarUnclaim).On<Car>(UnclaimVehicle<Car>);
+
+			Server.Event(RpcEvents.BikeSpawn).On<Bike>(SpawnVehicle<Bike>);
+			Server.Event(RpcEvents.BikeClaim).On<Bike>(ClaimVehicle<Bike>);
+			Server.Event(RpcEvents.BikeUnclaim).On<Bike>(UnclaimVehicle<Bike>);
 
 			Log("Waiting for character selection...");
 		}
@@ -195,9 +202,6 @@ namespace IgiCore.Client
 			//SetCanAttackFriendly(Game.Player.Character.Handle, true, false);
 
 			//this.Managers.First<HudManager>().Visible = true;
-
-
-
 
 
 
@@ -252,67 +256,74 @@ namespace IgiCore.Client
 
 		public void DettachTickHandler(Func<Task> task) => this.Tick -= task;
 
-		//public void ClaimVehicle<T>(string vehJson) where T : Vehicle
-		//{
-		//	T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
+		public void ClaimVehicle<T>(T vehicle) where T : Core.Models.Objects.Vehicles.Vehicle
+		{
+			//T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
 
-		//	Log($"Claiming vehicle with netId: {vehicle.NetId}");
+			Log($"Claiming vehicle with netId: {vehicle.NetId}");
 
-		//	var vehHandle = NetToVeh(vehicle.NetId ?? 0);
-		//	if (vehHandle == 0) return;
+			var vehHandle = API.NetToVeh(vehicle.NetId ?? 0);
+			if (vehHandle == 0) return;
 
-		//	Log($"Handle found for net id: {vehHandle}");
+			Log($"Handle found for net id: {vehHandle}");
 
-		//	CitizenFX.Core.Vehicle citizenVehicle = new CitizenFX.Core.Vehicle(vehHandle);
-		//	VehToNet(citizenVehicle.Handle);
-		//	NetworkRegisterEntityAsNetworked(citizenVehicle.Handle);
-		//	var netId = NetworkGetNetworkIdFromEntity(citizenVehicle.Handle);
+			CitizenFX.Core.Vehicle citizenVehicle = new CitizenFX.Core.Vehicle(vehHandle);
+			API.VehToNet(citizenVehicle.Handle);
+			API.NetworkRegisterEntityAsNetworked(citizenVehicle.Handle);
+			var netId = API.NetworkGetNetworkIdFromEntity(citizenVehicle.Handle);
 
-		//	Log($"Sending {vehicle.Id}");
+			Log($"Sending {vehicle.Id}");
 
-		//	TriggerServerEvent("igi:car:claim", vehicle.Id.ToString());
+			Server.Event(RpcEvents.CarClaim)
+				.Attach(vehicle.Id)
+				.Trigger();
+			//TriggerServerEvent("igi:car:claim", vehicle.Id.ToString());
 
-		//	this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
+			this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
 
-		//	Log($"Tracked vehicle count in claim: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
-		//}
+			Log($"Tracked vehicle count in claim: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+		}
 
-		//public void UnclaimVehicle<T>(string vehJson) where T : Vehicle
-		//{
-		//	T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
+		public void UnclaimVehicle<T>(T vehicle) where T : Core.Models.Objects.Vehicles.Vehicle
+		{
+			//T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
 
-		//	Log($"Unclaiming car: {vehicle.Id} with NetId: {vehicle.NetId}");
-		//	Log($"Currently tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+			Log($"Unclaiming car: {vehicle.Id} with NetId: {vehicle.NetId}");
+			Log($"Currently tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
 
-		//	this.Services.First<VehicleService>().Tracked.Remove(new Tuple<Type, int>(typeof(T), vehicle.NetId ?? 0));
+			this.Services.First<VehicleService>().Tracked.Remove(new Tuple<Type, int>(typeof(T), vehicle.NetId ?? 0));
 
-		//	Log($"Now tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
-		//}
+			Log($"Now tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
+		}
 
-		//public async void SpawnVehicle<T>(string vehJson) where T : Vehicle
-		//{
-		//	T vehToSpawn = JsonConvert.DeserializeObject<T>(vehJson);
-		//	Log($"Spawning {vehToSpawn.Id}");
+		public static async void SpawnVehicle<T>(T vehToSpawn) where T : Core.Models.Objects.Vehicles.Vehicle
+		{
+			//T vehToSpawn = JsonConvert.DeserializeObject<T>(vehJson);
+			Log($"Spawning {vehToSpawn.Id}");
 
-		//	CitizenFX.Core.Vehicle spawnedVehicle = await vehToSpawn.ToCitizenVehicle();
-		//	VehToNet(spawnedVehicle.Handle);
-		//	NetworkRegisterEntityAsNetworked(spawnedVehicle.Handle);
-		//	var netId = NetworkGetNetworkIdFromEntity(spawnedVehicle.Handle);
-		//	//SetNetworkIdExistsOnAllMachines(netId, true);
+			CitizenFX.Core.Vehicle spawnedVehicle = await vehToSpawn.ToCitizenVehicle();
+			API.VehToNet(spawnedVehicle.Handle);
+			API.NetworkRegisterEntityAsNetworked(spawnedVehicle.Handle);
+			var netId = API.NetworkGetNetworkIdFromEntity(spawnedVehicle.Handle);
+			//SetNetworkIdExistsOnAllMachines(netId, true);
 
-		//	Log($"Spawned {spawnedVehicle.Handle} with netId {netId}");
+			Log($"Spawned {spawnedVehicle.Handle} with netId {netId}");
 
-		//	Vehicle vehicle = spawnedVehicle;
-		//	vehicle.Id = vehToSpawn.Id;
-		//	vehicle.TrackingUserId = this.User.Id;
-		//	vehicle.Handle = spawnedVehicle.Handle;
-		//	vehicle.NetId = netId;
+			Core.Models.Objects.Vehicles.Vehicle vehicle = spawnedVehicle;
+			vehicle.Id = vehToSpawn.Id;
+			vehicle.TrackingUserId = Client.Instance.User.Id;
+			vehicle.Handle = spawnedVehicle.Handle;
+			vehicle.NetId = netId;
 
-		//	Log($"Sending {vehicle.Id} with event \"igi:{typeof(T).VehicleType().Name}:save\"");
+			Log($"Sending {vehicle.Id} with event \"igi:{typeof(T).VehicleType().Name}:save\"");
 
-		//	TriggerServerEvent($"igi:{typeof(T).VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
 
-		//	this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
-		//}
+			Server.Event($"igi:{typeof(T).VehicleType().Name}:save")
+				.Attach(vehicle)
+				.Trigger();
+			//TriggerServerEvent($"igi:{typeof(T).VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
+
+			Client.Instance.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
+		}
 	}
 }

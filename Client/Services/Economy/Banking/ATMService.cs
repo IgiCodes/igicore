@@ -8,12 +8,11 @@ using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Events;
 using IgiCore.Client.Extensions;
-using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Rpc;
 
-namespace IgiCore.Client.Services.Economy
+namespace IgiCore.Client.Services.Economy.Banking
 {
     public class AtmService : ClientService
     {

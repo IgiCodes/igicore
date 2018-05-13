@@ -9,7 +9,7 @@ using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Controllers
 {
-	public static class BankingActions
+	public static class BankingController
 	{
 		public static void AtmWithdraw([FromSource] Player player, string json)
 		{

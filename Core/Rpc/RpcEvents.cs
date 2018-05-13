@@ -23,6 +23,7 @@
 		public const string BankBranchTransfer = "igi:bank:branch:transfer";
 		public const string BankOnlineTransfer = "igi:bank:online:transfer";
 
+		public const string CarCreate = "igi:car:create";
 		public const string CarSpawn = "igi:car:spawn";
 		public const string CarSave = "igi:car:save";
 		public const string CarTransfer = "igi:car:transfer";

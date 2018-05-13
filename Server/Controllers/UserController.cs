@@ -7,7 +7,7 @@ using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Controllers
 {
-    public static class UserActions
+    public static class UserController
 	{
 		public static async void AcceptRules([FromSource] Player player, string json)
 		{
