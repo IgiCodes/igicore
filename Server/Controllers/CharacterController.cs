@@ -89,6 +89,7 @@ namespace IgiCore.Server.Controllers
 			character.Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() };
 			//character.Inventory = new Inventory { Id = GuidGenerator.GenerateTimeBasedGuid() };
 
+			// TODO: Convert to event handler instead of method call.
 			foreach (ServerService service in Server.Instance.Services) character = await service.OnCharacterCreate(character);
 
 			user.Characters.Add(character);
@@ -97,8 +98,8 @@ namespace IgiCore.Server.Controllers
 			await Server.Db.SaveChangesAsync();
 			
 			player
-				.Event(RpcEvents.GetCharacters)
-				.Attach(user.Characters.NotDeleted().OrderBy(c => c.Created))
+				.Event(RpcEvents.CharacterCreate)
+				.Attach(character)
 				.Trigger();
 		}
 
@@ -120,8 +121,8 @@ namespace IgiCore.Server.Controllers
 			await Server.Db.SaveChangesAsync();
 
 			player
-				.Event(RpcEvents.GetCharacters)
-				.Attach(user.Characters.NotDeleted().OrderBy(c => c.Created))
+				.Event(RpcEvents.CharacterDelete)
+				.Attach(response.Result)
 				.Trigger();
 		}
 

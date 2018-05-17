@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.UI;
 using IgiCore.Client.Controllers;
+using IgiCore.Client.Controllers.Objects.Vehicles;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Models.Objects.Vehicles;
@@ -175,7 +176,7 @@ namespace IgiCore.Client.Services.Economy.Business.Driving
 				}
 			};
 
-			Car spawnedCar = await VehicleController.Create(car);
+			Car spawnedCar = await Client.Instance.Controllers.First<VehicleController>().Create(car);
 
 			this.Cars.Add(spawnedCar);
 		}

@@ -69,7 +69,10 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\VehicleController.cs" />
+    <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\Player\CharacterController.cs" />
+    <Compile Include="Controllers\Player\UserController.cs" />
+    <Compile Include="Controllers\Objects\Vehicles\VehicleController.cs" />
     <Compile Include="Events\CharacterEventArgs.cs" />
     <Compile Include="Events\CharactersEventArgs.cs" />
     <Compile Include="Events\UserEventArgs.cs" />
@@ -94,7 +97,6 @@
     <Compile Include="Client.cs" />
     <Compile Include="Models\World\Npc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Registry.cs" />
     <Compile Include="Rpc\RpcHandler.cs" />
     <Compile Include="Rpc\RpcRequest.cs" />
     <Compile Include="Rpc\RpcSerializer.cs" />
@@ -106,6 +108,7 @@
     <Compile Include="Services\Economy\Business\Driving\DowntownCabService.cs" />
     <Compile Include="Services\IClientService.cs" />
     <Compile Include="Services\ClientService.cs" />
+    <Compile Include="Services\Player\AutosaveService.cs" />
     <Compile Include="Services\Player\PlayerIndicatorService.cs" />
     <Compile Include="Services\Player\PlayerIdleService.cs" />
     <Compile Include="Services\Player\PlayerDeathService.cs" />

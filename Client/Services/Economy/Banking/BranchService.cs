@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.UI;
+using IgiCore.Client.Controllers;
+using IgiCore.Client.Controllers.Player;
 using IgiCore.Client.Events;
 using IgiCore.Client.Extensions;
 using IgiCore.Core.Extensions;
@@ -22,8 +24,8 @@ namespace IgiCore.Client.Services.Economy.Banking
 
         public BranchService()
         {
-            Client.Instance.OnClientReady += OnClientReady;
-            Client.Instance.OnCharacterLoaded += OnCharacterLoaded;
+	        Client.Instance.Controllers.First<ClientController>().OnClientReady += OnClientReady;
+            Client.Instance.Controllers.First<CharacterController>().OnCharacterLoaded += OnCharacterLoaded;
         }
 
         private async void OnClientReady(object s, ServerInformationEventArgs a) { this.Branches = a.Information.Branches.ToList(); }
@@ -74,7 +76,7 @@ namespace IgiCore.Client.Services.Economy.Banking
             KeyValuePair<BankBranch, Ped> teller = this.Tellers
                 .Select(t => new {teller = t, distance = t.Value?.Position.DistanceToSquared(Game.Player.Character.Position) ?? float.MaxValue})
                 .Where(t => t.distance < 5.0F) // Nearby
-                //.Where(a => Vector3.Dot(a.Item2.ForwardVector, Vector3.Normalize(a.Item2.Position - Game.Player.Character.Position)).IsBetween(0f, 1.0f)) // In front of
+                //.Where(a => Vector3.Dot(a.Item2.ForwardVector, Vector3.Normalize(a.Item2.Position - Game.Player.ActiveCharacter.Position)).IsBetween(0f, 1.0f)) // In front of
                 .OrderBy(t => t.distance)
                 .Select(t => t.teller)
                 .FirstOrDefault();

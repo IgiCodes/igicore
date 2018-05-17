@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using IgiCore.Client.Controllers.Player;
 using IgiCore.Client.Rpc;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
@@ -71,7 +72,7 @@ namespace IgiCore.Client.Services.Vehicle
 				//Debug.WriteLine($"Saving Vehicle: {trackedVehicle.Item2} - {citVeh.Position}");
 
 				Core.Models.Objects.Vehicles.Vehicle vehicle = (Core.Models.Objects.Vehicles.Vehicle)citVeh;
-				vehicle.TrackingUserId = Client.Instance.User.Id;
+				vehicle.TrackingUserId = Client.Instance.Controllers.First<UserController>().User.Id;
 				vehicle.NetId = netId;
 				vehicle.Hash = citVeh.Model.Hash;
 

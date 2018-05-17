@@ -1,18 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using IgiCore.Client.Events;
-using IgiCore.Client.Extensions;
+using IgiCore.Client.Controllers;
+using IgiCore.Client.Controllers.Objects.Vehicles;
+using IgiCore.Client.Controllers.Player;
 using IgiCore.Client.Interface;
 using IgiCore.Client.Interface.Hud;
 using IgiCore.Client.Interface.Menu;
 using IgiCore.Client.Managers;
 using IgiCore.Client.Managers.World;
-using IgiCore.Client.Models;
-using IgiCore.Client.Rpc;
 using IgiCore.Client.Services;
 using IgiCore.Client.Services.AI;
 using IgiCore.Client.Services.Economy.Banking;
@@ -20,13 +17,8 @@ using IgiCore.Client.Services.Economy.Business.Driving;
 using IgiCore.Client.Services.Player;
 using IgiCore.Client.Services.Vehicle;
 using IgiCore.Client.Services.World;
-using IgiCore.Core;
-using IgiCore.Core.Extensions;
-using IgiCore.Core.Models.Connection;
-using IgiCore.Core.Models.Objects.Vehicles;
-using IgiCore.Core.Rpc;
+using IgiCore.Core.Controllers;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 using Debug = CitizenFX.Core.Debug;
 using Screen = CitizenFX.Core.UI.Screen;
 
@@ -43,24 +35,11 @@ namespace IgiCore.Client
 		/// </value>
 		public static Client Instance { get; protected set; }
 
-		public event EventHandler<ServerInformationEventArgs> OnClientReady;
-		public event EventHandler<UserEventArgs> OnUserLoaded;
-		public event EventHandler<CharactersEventArgs> OnCharactersList;
-		public event EventHandler<CharacterEventArgs> OnCharacterLoaded;
-
+		public ControllerRegistry Controllers { get; protected set; }
 		public ManagerRegistry Managers { get; protected set; }
-
-		public ServiceRegistry Services { get; protected set; }
+		public ServiceRegistry Services { get; protected set; }		
 
 		public EventHandlerDictionary Handlers => this.EventHandlers;
-
-		/// <summary>
-		/// Gets or sets the currently loaded user.
-		/// </summary>
-		/// <value>
-		/// The loaded user.
-		/// </value>
-		public User User { get; protected set; }
 
 		/// <summary>
 		/// Primary client entrypoint.
@@ -73,6 +52,14 @@ namespace IgiCore.Client
 
 			// Singleton
 			Instance = this;
+
+			this.Controllers = new ControllerRegistry
+			{
+				new ClientController(),
+				new UserController(),
+				new CharacterController(),
+				new VehicleController(),
+			};
 
 			this.Managers = new ManagerRegistry
 			{
@@ -87,13 +74,14 @@ namespace IgiCore.Client
 				new VehicleRollService(), // Disable rolling cars back over
 				new PlayerDeathService(), // Knock down players rather than death
 				new PlayerIdleService(), // Kick idle players
+				new AutosaveService(),
 				new PedFilterService(), // Block blacklisted peds
 				new AiPoliceService(), // Disable AI police
 				new PlayerIndicatorService(), // Show nearby players
 				new DateTimeService(), // Set the date and time
 				new BlackoutService(), // Allow city blackouts
 				new AtmService(), // Add ATMs
-                //new BranchService(), // Add Bank Tellers
+                new BranchService(), // Add Bank Tellers
 				new DowntownCabService()
 			};
 
@@ -105,148 +93,12 @@ namespace IgiCore.Client
 			this.Services.First<PlayerDeathService>().OnDowned += (s, e) =>
 			{
 				UI.ShowNotification("Downed");
-
 				if (this.LocalPlayer.Character.Weapons.Current.Group != WeaponGroup.Unarmed) this.LocalPlayer.Character.Weapons.Remove(this.LocalPlayer.Character.Weapons.Current);
 			};
 
-			this.Services.First<PlayerDeathService>().OnRevived += (s, e) =>
-			{
-				Screen.ShowNotification("Revived");
-			};
+			this.Services.First<PlayerDeathService>().OnRevived += (s, e) => Screen.ShowNotification("Revived");
 
-			Startup();
-		}
-
-		/// <summary>
-		/// Loads initial data from the server, raises events and attaches handlers.
-		/// </summary>
-		public async Task Startup()
-		{
-			Log("Startup");
-
-			// Load server details
-			this.OnClientReady?.Invoke(this, new ServerInformationEventArgs(await Server
-				.Event(RpcEvents.GetServerInformation)
-				.Request<ServerInformation>()
-			));
-
-			// Load user
-			this.User = await Server
-				.Event(RpcEvents.GetUser)
-				.Request<User>();
-
-			this.OnUserLoaded?.Invoke(this, new UserEventArgs(this.User));
-
-			// Load user's characters
-			this.OnCharactersList?.Invoke(this, new CharactersEventArgs(await Server
-				.Event(RpcEvents.GetCharacters)
-				.Request<List<Character>>()
-			));
-
-			Server
-				.Event(RpcEvents.GetCharacters)
-				.On<List<Character>>(list =>
-				{
-					Log($"GOT {list.Count} CHARS");
-
-					this.OnCharactersList?.Invoke(this, new CharactersEventArgs(list));
-				});
-
-			Server.Event(RpcEvents.CharacterLoad).On<Character>(CharacterLoad);
-
-			Server.Event(RpcEvents.CarSpawn).On<Car>(SpawnVehicle<Car>);
-			Server.Event(RpcEvents.CarClaim).On<Car>(ClaimVehicle<Car>);
-			Server.Event(RpcEvents.CarUnclaim).On<Car>(UnclaimVehicle<Car>);
-
-			Server.Event(RpcEvents.BikeSpawn).On<Bike>(SpawnVehicle<Bike>);
-			Server.Event(RpcEvents.BikeClaim).On<Bike>(ClaimVehicle<Bike>);
-			Server.Event(RpcEvents.BikeUnclaim).On<Bike>(UnclaimVehicle<Bike>);
-
-			Log("Waiting for character selection...");
-		}
-
-		/// <summary>
-		/// Event: igi:character:load
-		/// Raises <see cref="OnCharacterLoaded"/> with the loaded and initialized character.
-		/// </summary>
-		/// <param name="character">The loaded character.</param>
-		protected async void CharacterLoad(Character character)
-		{
-			Log("igi:character:load");
-
-			// Unload old character
-			this.User.Character?.Dispose();
-
-			// Store the character
-			this.User.Character = character ?? throw new ArgumentNullException(nameof(character));
-
-			// Setup character
-			this.User.Character.Initialize();
-
-			// Render new character
-			this.User.Character.Render();
-
-			this.OnCharacterLoaded?.Invoke(this, new CharacterEventArgs(this.User.Character));
-
-
-
-			//// Spawn character
-			//await Game.Player.Spawn(this.User.Character.Position);
-
-			//DisableAutomaticRespawn(true);
-			//Game.Player.Character.DropsWeaponsOnDeath = false;
-			//Game.Player.Character.Health = Game.Player.Character.MaxHealth;
-
-			//// Enable PvP
-			//NetworkSetFriendlyFireOption(true);
-			//SetCanAttackFriendly(Game.Player.Character.Handle, true, false);
-
-			//this.Managers.First<HudManager>().Visible = true;
-
-
-
-			//var bone = Game.Player.Character.Bones[Bone.PH_R_Hand];
-
-			//var board = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), Game.Player.Character.Position, Game.Player.Character.Rotation, false, false);
-			//board.AttachTo(bone);
-
-			//var text = await World.CreateProp(new Model(GetHashKey("prop_police_id_board")), board.Position, board.Rotation, false, false);
-			//text.AttachTo(board);
-
-			//Game.Player.Character.Task.PlayAnimation("mp_character_creation@lineup@male_a", "loop_raised", 1, -1, AnimationFlags.Loop);
-
-			//var scaleformHandle = new Scaleform("mugshot_board_01");
-			//scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "002134234", this.User.Character.FullName, DateTime.Now.ToString("d"), 0);
-
-
-			//var renderTargetName = "ID_Text";
-			//int renderTargetHash = -955488312;
-			////RegisterNamedRendertarget(renderTargetName, true);
-			////LinkNamedRendertarget((uint) new Model(GetHashKey("prop_police_id_board")).Hash);
-			////var renderTargetID = GetNamedRendertargetRenderId(renderTargetName);
-			////var renderTargetID = CreateNamedRenderTargetForModel(renderTargetName, text);
-
-
-			//if (!IsNamedRendertargetRegistered(renderTargetName)) RegisterNamedRendertarget(renderTargetName, true);
-			//if (!Function.Call<bool>((Hash)0x113750538FA31298, renderTargetHash)) Function.Call((Hash)0xF6C09E276AEB3F2D, renderTargetHash);// IsNamedRendertargetLinked LinkNamedRendertarget(-955488312);
-
-			//var renderTargetID = IsNamedRendertargetRegistered(renderTargetName) ? GetNamedRendertargetRenderId(renderTargetName) : 0;
-
-
-
-			//AttachTickHandler(async () =>
-			//{
-			//	SetTextRenderId(renderTargetID);
-
-			//	scaleformHandle.CallFunction("SET_BOARD", "Los Santos Police Department", "543-01-1349", DateTime.Now.ToString("d"), this.User.Character.FullName, 0);
-
-			//	//DrawScaleformMovie(scale.Handle, 0.405f, 0.37f, 0.81f, 0.74f, 255, 255, 255, 255, 1);
-			//	//scale.Render3D(text.Position - new Vector3(0.022f, 0, 0), text.Rotation - new Vector3(0.022f, 0, 0), new Vector3(0.35f, 0.15f, 0));
-
-			//	SetTextRenderId(GetDefaultScriptRendertargetRenderId());
-			//});
-
-			////Screen.ShowNotification($"{this.User.Character.FullName} loaded at {DateTime.Now:h:mm:ss tt}");
+			this.Controllers.First<ClientController>().Startup();
 		}
 
 		[Conditional("DEBUG")]
@@ -256,74 +108,5 @@ namespace IgiCore.Client
 
 		public void DettachTickHandler(Func<Task> task) => this.Tick -= task;
 
-		public void ClaimVehicle<T>(T vehicle) where T : Core.Models.Objects.Vehicles.Vehicle
-		{
-			//T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
-
-			Log($"Claiming vehicle with netId: {vehicle.NetId}");
-
-			var vehHandle = API.NetToVeh(vehicle.NetId ?? 0);
-			if (vehHandle == 0) return;
-
-			Log($"Handle found for net id: {vehHandle}");
-
-			CitizenFX.Core.Vehicle citizenVehicle = new CitizenFX.Core.Vehicle(vehHandle);
-			API.VehToNet(citizenVehicle.Handle);
-			API.NetworkRegisterEntityAsNetworked(citizenVehicle.Handle);
-			var netId = API.NetworkGetNetworkIdFromEntity(citizenVehicle.Handle);
-
-			Log($"Sending {vehicle.Id}");
-
-			Server.Event(RpcEvents.CarClaim)
-				.Attach(vehicle.Id)
-				.Trigger();
-			//TriggerServerEvent("igi:car:claim", vehicle.Id.ToString());
-
-			this.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
-
-			Log($"Tracked vehicle count in claim: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
-		}
-
-		public void UnclaimVehicle<T>(T vehicle) where T : Core.Models.Objects.Vehicles.Vehicle
-		{
-			//T vehicle = JsonConvert.DeserializeObject<T>(vehJson);
-
-			Log($"Unclaiming car: {vehicle.Id} with NetId: {vehicle.NetId}");
-			Log($"Currently tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
-
-			this.Services.First<VehicleService>().Tracked.Remove(new Tuple<Type, int>(typeof(T), vehicle.NetId ?? 0));
-
-			Log($"Now tracking: {string.Join(", ", this.Services.First<VehicleService>().Tracked)}");
-		}
-
-		public static async void SpawnVehicle<T>(T vehToSpawn) where T : Core.Models.Objects.Vehicles.Vehicle
-		{
-			//T vehToSpawn = JsonConvert.DeserializeObject<T>(vehJson);
-			Log($"Spawning {vehToSpawn.Id}");
-
-			CitizenFX.Core.Vehicle spawnedVehicle = await vehToSpawn.ToCitizenVehicle();
-			API.VehToNet(spawnedVehicle.Handle);
-			API.NetworkRegisterEntityAsNetworked(spawnedVehicle.Handle);
-			var netId = API.NetworkGetNetworkIdFromEntity(spawnedVehicle.Handle);
-			//SetNetworkIdExistsOnAllMachines(netId, true);
-
-			Log($"Spawned {spawnedVehicle.Handle} with netId {netId}");
-
-			Core.Models.Objects.Vehicles.Vehicle vehicle = spawnedVehicle;
-			vehicle.Id = vehToSpawn.Id;
-			vehicle.TrackingUserId = Client.Instance.User.Id;
-			vehicle.Handle = spawnedVehicle.Handle;
-			vehicle.NetId = netId;
-
-			Log($"Sending {vehicle.Id} with event \"igi:{typeof(T).VehicleType().Name}:save\"");
-
-
-			Server.Event($"igi:{typeof(T).VehicleType().Name}:save")
-				.Attach(vehicle)
-				.Trigger();
-			//TriggerServerEvent($"igi:{typeof(T).VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
-
-			Client.Instance.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
-		}
 	}
 }
