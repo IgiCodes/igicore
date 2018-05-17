@@ -30,16 +30,21 @@ namespace IgiCore.Core.Rpc
 			this.RpcTrigger.Fire(this.Message);
 		}
 
+		public async Task Request()
+		{
+			await MakeRequest();
+		}
+
 		public async Task<T> Request<T>()
 		{
-			var results = await Request();
+			var results = await MakeRequest();
 
 			return this.RpcSerializer.Deserialize<T>(results.Payloads[0]);
 		}
 
 		public async Task<Tuple<T1, T2>> Request<T1, T2>()
 		{
-			var results = await Request();
+			var results = await MakeRequest();
 
 			return new Tuple<T1, T2>(
 				this.RpcSerializer.Deserialize<T1>(results.Payloads[0]),
@@ -49,7 +54,7 @@ namespace IgiCore.Core.Rpc
 
 		public async Task<Tuple<T1, T2, T3>> Request<T1, T2, T3>()
 		{
-			var results = await Request();
+			var results = await MakeRequest();
 
 			return new Tuple<T1, T2, T3>(
 				this.RpcSerializer.Deserialize<T1>(results.Payloads[0]),
@@ -60,7 +65,7 @@ namespace IgiCore.Core.Rpc
 
 		public async Task<Tuple<T1, T2, T3, T4>> Request<T1, T2, T3, T4>()
 		{
-			var results = await Request();
+			var results = await MakeRequest();
 
 			return new Tuple<T1, T2, T3, T4>(
 				this.RpcSerializer.Deserialize<T1>(results.Payloads[0]),
@@ -72,7 +77,7 @@ namespace IgiCore.Core.Rpc
 
 		public async Task<Tuple<T1, T2, T3, T4, T5>> Request<T1, T2, T3, T4, T5>()
 		{
-			var results = await Request();
+			var results = await MakeRequest();
 
 			return new Tuple<T1, T2, T3, T4, T5>(
 				this.RpcSerializer.Deserialize<T1>(results.Payloads[0]),
@@ -83,7 +88,7 @@ namespace IgiCore.Core.Rpc
 			);
 		}
 
-		protected async Task<RpcMessage> Request()
+		protected async Task<RpcMessage> MakeRequest()
 		{
 			var tcs = new TaskCompletionSource<RpcMessage>();
 			var handler = new Action<string>(json =>
