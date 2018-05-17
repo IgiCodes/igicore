@@ -188,4 +188,7 @@
     <Folder Include="Models\Economy\Business\Driving\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="CopyLinkedContentFiles" BeforeTargets="Build">
+    <Copy SourceFiles="..\lib\CitizenFX.Server.dll" DestinationFiles="..\CitizenFX.Core.dll" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+  </Target>
 </Project>
