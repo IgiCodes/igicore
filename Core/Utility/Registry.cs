@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace IgiCore.Client
+namespace IgiCore.Core.Utility
 {
 	public abstract class Registry<TR> : Collection<TR>
 	{

@@ -1,7 +1,10 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using IgiCore.Client.Controllers;
+using IgiCore.Client.Controllers.Player;
 using IgiCore.Client.Events;
 using IgiCore.Client.Extensions;
 using IgiCore.Client.Interface.Hud;
@@ -27,10 +30,10 @@ namespace IgiCore.Client.Interface.Screens
 		public CharacterSelectScreen()
 		{
 			// Events
-			Client.Instance.OnClientReady += (sender, args) => Nui.Send("client", args.Information);
-			Client.Instance.OnUserLoaded += (sender, args) => Nui.Send("user", args.User);
-			Client.Instance.OnCharactersList += (sender, args) => Nui.Send("characters", args.Characters);
-			Client.Instance.OnCharactersList += OnCharactersList;
+			Client.Instance.Controllers.First<ClientController>().OnClientReady += (sender, args) => Nui.Send("client", args.Information);
+			Client.Instance.Controllers.First<UserController>().OnUserLoaded += (sender, args) => Nui.Send("user", args.User);
+			Client.Instance.Controllers.First<CharacterController>().OnCharactersList += (sender, args) => Nui.Send("characters", args.Characters);
+			Client.Instance.Controllers.First<CharacterController>().OnCharactersList += OnCharactersList;
 
 			// NUI events
 			Nui.RegisterCallback("rules-agreed", OnNuiRulesAgreed);
@@ -54,10 +57,9 @@ namespace IgiCore.Client.Interface.Screens
 			
 			callback("ok");
 		}
-		protected void OnNuiCharacterCreate(dynamic character, CallbackDelegate callback)
+		protected async void OnNuiCharacterCreate(dynamic character, CallbackDelegate callback)
 		{
-			Server
-				.Event(RpcEvents.CharacterCreate)
+			Character newCharacter = await Server.Event(RpcEvents.CharacterCreate)
 				.Attach(new Character
 				{
 					Forename = character.forename,
@@ -66,7 +68,11 @@ namespace IgiCore.Client.Interface.Screens
 					Gender = (short)character.gender,
 					DateOfBirth = DateTime.Parse(character.dob)
 				})
-				.Trigger();
+				.Request<Character>();
+
+			Client.Instance.Controllers.First<CharacterController>().Characters.Add(newCharacter);
+			Nui.Send("characters", Client.Instance.Controllers.First<CharacterController>().Characters);
+			await Show();
 
 			callback("ok");
 		}
@@ -81,12 +87,16 @@ namespace IgiCore.Client.Interface.Screens
 			callback("ok");
 		}
 
-		protected void OnNuiCharacterDelete(dynamic id, CallbackDelegate callback)
+		protected async void OnNuiCharacterDelete(dynamic id, CallbackDelegate callback)
 		{
-			Server
-				.Event(RpcEvents.CharacterDelete)
-				.Attach(id)
-				.Trigger();
+			Guid deletedId = await Server.Event(RpcEvents.CharacterDelete)
+				.Attach(new Guid(id.ToString()))
+				.Request<Guid>();
+
+			Character character = Client.Instance.Controllers.First<CharacterController>().Characters.First(c => c.Id == deletedId);
+			Client.Instance.Controllers.First<CharacterController>().Characters.Remove(character);
+			Nui.Send("characters", Client.Instance.Controllers.First<CharacterController>().Characters);
+			await Show();
 
 			callback("ok");
 		}

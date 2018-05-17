@@ -7,7 +7,7 @@ namespace IgiCore.Server.Rpc
 	{
 		public void Fire(RpcMessage message)
 		{
-			Server.Log($"Fire: \"{message.Event}\" with {message.Payloads.Count} payload(s):");
+			//Server.Log($"Fire: \"{message.Event}\" with {message.Payloads.Count} payload(s):");
 
 			if (message.Target != null)
 			{

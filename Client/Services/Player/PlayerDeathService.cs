@@ -88,15 +88,15 @@ namespace IgiCore.Client.Services.Player
 
 				//SetFadeInAfterDeathArrest(true);
 				//SetFadeOutAfterDeath(false);
-				//NetworkRequestControlOfEntity(Game.Player.Character.Handle);
+				//NetworkRequestControlOfEntity(Game.Player.ActiveCharacter.Handle);
 
-				//Game.Player.Character.Task.ClearAllImmediately();
+				//Game.Player.ActiveCharacter.Task.ClearAllImmediately();
 
 				//NetworkResurrectLocalPlayer(Game.PlayerPed.Position.X, Game.PlayerPed.Position.Y, Game.PlayerPed.Position.Z, 0, false, false);
 				//ResurrectPed(Game.Player.Handle);
 				Game.Player.Character.Resurrect();
 
-				//Game.Player.Character.Task.ClearAllImmediately();
+				//Game.Player.ActiveCharacter.Task.ClearAllImmediately();
 
 				this.OnDowned?.Invoke(this, EventArgs.Empty);
 			}
@@ -120,8 +120,8 @@ namespace IgiCore.Client.Services.Player
 
 			Game.Player.Character.Health = 1; // TODO?
 
-			//Game.Player.Character.ResetVisibleDamage();
-			//Game.Player.Character.ClearBloodDamage();
+			//Game.Player.ActiveCharacter.ResetVisibleDamage();
+			//Game.Player.ActiveCharacter.ClearBloodDamage();
 
 			this.IsDowned = false;
 			this.DownedAt = null;

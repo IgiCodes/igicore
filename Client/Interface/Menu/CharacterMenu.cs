@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Linq;
 using CitizenFX.Core.UI;
+using IgiCore.Client.Controllers.Player;
 using NativeUI;
 
 namespace IgiCore.Client.Interface.Menu
@@ -29,9 +30,9 @@ namespace IgiCore.Client.Interface.Menu
 
 		public UIMenuListItem WalkingStyleMenu { get; }
 
-		public CharacterMenu() : base("Character", "~b~CHARACTER MENU", new PointF(0, 0), "commonmenu", "interaction_bgd")
+		public CharacterMenu() : base("ActiveCharacter", "~b~CHARACTER MENU", new PointF(0, 0), "commonmenu", "interaction_bgd")
 		{
-			this.WalkingStyleMenu = new UIMenuListItem("Walking Style", this.WalkingStyles.Select(v => v.Key).Cast<dynamic>().ToList(), this.WalkingStyles.FindIndex(s => s.Value == Client.Instance.User?.Character?.WalkingStyle), "Set your character's walking style");
+			this.WalkingStyleMenu = new UIMenuListItem("Walking Style", this.WalkingStyles.Select(v => v.Key).Cast<dynamic>().ToList(), this.WalkingStyles.FindIndex(s => s.Value == Client.Instance.Controllers.First<CharacterController>().ActiveCharacter?.WalkingStyle), "Set your character's walking style");
 			AddItem(this.WalkingStyleMenu);
 
 			this.OnListChange += CharacterMenu_OnListChange;
@@ -43,7 +44,7 @@ namespace IgiCore.Client.Interface.Menu
 			{
 				var style = this.WalkingStyles[newIndex];
 
-				//await Client.Instance.User.Character.SetWalkingStyle(style.Value);
+				//await Client.Instance.User.ActiveCharacter.SetWalkingStyle(style.Value);
 
 				Screen.ShowNotification("~b~Walking style~w~ set to ~r~" + style.Key);
 			}

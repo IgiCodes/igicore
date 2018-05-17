@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using IgiCore.Client.Controllers;
 using IgiCore.Client.Events;
 using IgiCore.Client.Extensions;
-using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Rpc;
 
-namespace IgiCore.Client.Services.Economy
+namespace IgiCore.Client.Services.Economy.Banking
 {
     public class AtmService : ClientService
     {
@@ -22,7 +22,7 @@ namespace IgiCore.Client.Services.Economy
 
         public AtmService()
         {
-            Client.Instance.OnClientReady += OnClientReady;
+	        Client.Instance.Controllers.First<ClientController>().OnClientReady += OnClientReady;
         }
 
         private async void OnClientReady(object s, ServerInformationEventArgs a) { this.Atms = a.Information.Atms.ToList(); }
@@ -95,11 +95,11 @@ namespace IgiCore.Client.Services.Economy
 
 
             // TODO: Better?
-            //Game.Player.Character.Task.PlayAnimation("amb@prop_human_atm@male@enter", "enter");
-            //Game.Player.Character.Task.PlayAnimation("amb@prop_human_atm@male@base", "base");
-            //Game.Player.Character.Task.PlayAnimation("amb@prop_human_atm@male@idle_a", "idle_a");
-            //Game.Player.Character.Task.PlayAnimation("amb@prop_human_atm@male@idle_a", "idle_b");
-            //Game.Player.Character.Task.PlayAnimation("amb@prop_human_atm@male@exit", "exit");
+            //Game.Player.ActiveCharacter.Task.PlayAnimation("amb@prop_human_atm@male@enter", "enter");
+            //Game.Player.ActiveCharacter.Task.PlayAnimation("amb@prop_human_atm@male@base", "base");
+            //Game.Player.ActiveCharacter.Task.PlayAnimation("amb@prop_human_atm@male@idle_a", "idle_a");
+            //Game.Player.ActiveCharacter.Task.PlayAnimation("amb@prop_human_atm@male@idle_a", "idle_b");
+            //Game.Player.ActiveCharacter.Task.PlayAnimation("amb@prop_human_atm@male@exit", "exit");
         }
     }
 }

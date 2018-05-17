@@ -47,6 +47,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Controllers\ControllerRegistry.cs" />
     <Compile Include="Exceptions\GroupException.cs" />
     <Compile Include="Exceptions\ModelException.cs" />
     <Compile Include="Extensions\FloatExtentions.cs" />
@@ -177,9 +179,13 @@
     <Compile Include="Services\Service.cs" />
     <Compile Include="Services\ServiceRegistry.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utility\Registry.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\Economy\Business\Driving\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

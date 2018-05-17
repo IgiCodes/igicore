@@ -4,7 +4,7 @@ using IgiCore.Server.Models.Player;
 
 namespace IgiCore.Server.Controllers
 {
-    public static class PlayerActions
+    public static class PlayerController
 	{
 		public static async void Connecting([FromSource] Player player, string playerName, CallbackDelegate kickReason)
 		{

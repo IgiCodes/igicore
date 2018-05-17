@@ -44,7 +44,7 @@ namespace IgiCore.Client.Extensions
 			}
 			else
 			{
-				citizenVehicle.Mods.CustomPrimaryColor = vehicle.PrimaryColor.CustomColor.Value;
+				if (vehicle.PrimaryColor.CustomColor != null) citizenVehicle.Mods.CustomPrimaryColor = vehicle.PrimaryColor.CustomColor.Value;
 			}
 
 			if (vehicle.SecondaryColor.StockColor.HasValue)
@@ -53,7 +53,7 @@ namespace IgiCore.Client.Extensions
 			}
 			else
 			{
-				citizenVehicle.Mods.CustomPrimaryColor = vehicle.SecondaryColor.CustomColor.Value;
+				if (vehicle.SecondaryColor.CustomColor != null) citizenVehicle.Mods.CustomPrimaryColor = vehicle.SecondaryColor.CustomColor.Value;
 			}
 
 			citizenVehicle.Mods.WindowTint = (VehicleWindowTint)(int)vehicle.WindowTint;

@@ -114,7 +114,7 @@ namespace IgiCore.Server.Commands
 			await Server.Db.SaveChangesAsync();
 
 			player
-				.Event(RpcEvents.CarSpawn)
+				.Event(RpcEvents.CarCreate)
 				.Attach(car)
 				.Trigger();
 		}

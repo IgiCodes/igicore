@@ -10,10 +10,10 @@
 
 		<div class="card-body">
 			<button type="button" class="btn btn-success btn-lg px-5 btn-load" @click="$emit('select', character.Id)">Play</button>
-			<button type="button" class="btn btn-danger float-right mt-1 btn-delete" data-toggle="modal" data-target=".delete-modal"><font-awesome-icon icon="trash" fixed-width /></button>
+			<button :data-target="'.delete-modal.'+character.Id" type="button" class="btn btn-danger float-right mt-1 btn-delete" data-toggle="modal"><font-awesome-icon icon="trash" fixed-width /></button>
 		</div>
 
-		<div ref="deleteModal" class="modal fade delete-modal" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
+		<div ref="deleteModal" :class="['modal', 'fade', 'delete-modal', character.Id]" data-backdrop="static" tabindex="-1" role="dialog" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">

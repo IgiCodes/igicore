@@ -16,7 +16,7 @@ using IgiCore.Server.Services;
 
 namespace IgiCore.Server.Controllers
 {
-    public static class CharacterActions
+    public static class CharacterController
 	{
 		public static async void List([FromSource] Player player)
 		{
@@ -81,13 +81,15 @@ namespace IgiCore.Server.Controllers
 			character.Health = 10000;
 			character.Armor = 0;
 			character.Ssn = "123-45-6789";
-			//character.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f };
-			character.Position = new Vector3 { X = 153.7846f, Y = -1032.899f, Z = 29.33798f };
+			//character.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f }; // Airport terminal
+			//character.Position = new Vector3 { X = 153.7846f, Y = -1032.899f, Z = 29.33798f }; // Legion Square Fleeca
+			character.Position = new Vector3 { X = 892.55f, Y = -182.25f, Z = 73.72f }; // Downtown Cab Co.
 			character.LastPlayed = null;
 			character.Created = DateTime.UtcNow;
 			character.Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() };
 			//character.Inventory = new Inventory { Id = GuidGenerator.GenerateTimeBasedGuid() };
 
+			// TODO: Convert to event handler instead of method call.
 			foreach (ServerService service in Server.Instance.Services) character = await service.OnCharacterCreate(character);
 
 			user.Characters.Add(character);
@@ -96,8 +98,8 @@ namespace IgiCore.Server.Controllers
 			await Server.Db.SaveChangesAsync();
 			
 			player
-				.Event(RpcEvents.GetCharacters)
-				.Attach(user.Characters.NotDeleted().OrderBy(c => c.Created))
+				.Event(RpcEvents.CharacterCreate)
+				.Attach(character)
 				.Trigger();
 		}
 
@@ -119,8 +121,8 @@ namespace IgiCore.Server.Controllers
 			await Server.Db.SaveChangesAsync();
 
 			player
-				.Event(RpcEvents.GetCharacters)
-				.Attach(user.Characters.NotDeleted().OrderBy(c => c.Created))
+				.Event(RpcEvents.CharacterDelete)
+				.Attach(response.Result)
 				.Trigger();
 		}
 

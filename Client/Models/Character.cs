@@ -117,7 +117,7 @@ namespace IgiCore.Client.Models
 			this.Style = ConvertStyle(Game.Player.Character.Style, this.Style.Id);
 		}
 
-		public override string ToString() => $"Character [{this.Id}]: {this.FullName}, {this.Position}";
+		public override string ToString() => $"ActiveCharacter [{this.Id}]: {this.FullName}, {this.Position}";
 
 		public void Dispose()
 		{

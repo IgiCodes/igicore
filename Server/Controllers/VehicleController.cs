@@ -1,15 +1,33 @@
 using System;
+using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using CitizenFX.Core;
+using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Rpc;
+using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Controllers
 {
-    public static class VehicleActions
+    public static class VehicleController
     {
-        public static async void Save<T>([FromSource] Player player, string json) where T : class, IVehicle // Has no ID
+	    public static async void Create<T>([FromSource] Player player, string json) where T : class, IVehicle
+	    {
+		    var response = RpcResponse<T>.Parse(json);
+		    T vehicle = response.Result;
+
+			Server.Db.Set<T>().Add(vehicle);
+			await Server.Db.SaveChangesAsync();
+
+			player
+				.Event($"igi:{vehicle.VehicleType().Name}:create")
+				.Attach(vehicle)
+				.Trigger();
+		}
+
+
+		public static async void Save<T>([FromSource] Player player, string json) where T : class, IVehicle // Has no ID
 		{
 			var response = RpcResponse<T>.Parse(json);
 
