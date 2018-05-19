@@ -1,7 +1,7 @@
 # igicore
 [![License](https://img.shields.io/github/license/Igirisujin/igicore.svg)](LICENSE)
 
-Complete base framework for GTAV FiveM roleplay servers built entirely in managed C#.
+Complete base framework for GTAV [FiveM](https://fivem.net/) roleplay servers built entirely in managed C#.
 This project aims to replace existing FiveM server resources with a single managed framework to build upon.
 
 This project is primarily developed live on [my Twitch stream](https://www.twitch.tv/igicodes) with the help and input of viewers. Planned features and progress is tracked on [Trello](https://trello.com/b/cGGQ5tmV/igicore).
@@ -34,9 +34,9 @@ This resource currently replaces *all* stock server resources; make sure you rem
 
 5. Edit your ``server.cfg`` file to include the following line below your existing configuration:
   ```
-  exec resources\igicore\igicore.cfg
+  start igicore
   ```
 
-6. Edit ``igicore.cfg`` with your database connection information as needed.
+6. Edit ``igicore.yml`` with your database connection information and server details as needed.
 
 Note: You may need to manually preconfigure your MySQL server to default the character set to Unicode. For MariaDB add ``--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci`` to the server arguments.

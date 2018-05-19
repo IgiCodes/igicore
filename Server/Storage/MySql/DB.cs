@@ -5,6 +5,7 @@ using IgiCore.Core.Models.Groups;
 using IgiCore.Core.Models.Inventories.Characters;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Models.Player;
+using IgiCore.Server.Managers;
 using IgiCore.Server.Migrations;
 using IgiCore.Server.Models.Economy.Banking;
 using IgiCore.Server.Models.Player;
@@ -39,11 +40,11 @@ namespace IgiCore.Server.Storage.MySql
         public DbSet<BankAccountCard> BankAccountCards { get; set; }
         public DbSet<BankAccountMember> BankAccountMembers { get; set; }
 
-        public DB() : base(Config.MySqlConnString)
-        {
-            Database.SetInitializer(new MigrateDatabaseToLatestVersion<DB, Configuration>());
-
-            //this.Database.Log = m => Server.Log(m);
-        }
-    }
+		public DB() : base(ConfigurationManager.Configuration.Database.ToString())
+		{
+			Database.SetInitializer(new MigrateDatabaseToLatestVersion<DB, Configuration>());
+			
+			//this.Database.Log = m => Server.Log(m);
+		}
+	}
 }

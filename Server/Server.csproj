@@ -85,6 +85,9 @@
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="YamlDotNet, Version=4.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.4.3.1\lib\net45\YamlDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\BikeCommand.cs" />
@@ -94,7 +97,6 @@
     <Compile Include="Commands\PropCommand.cs" />
     <Compile Include="Commands\CarCommand.cs" />
     <Compile Include="Commands\GpsCommand.cs" />
-    <Compile Include="Config.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Extentions\CitizenExtentions.cs" />
     <Compile Include="Extentions\CharacterExtentions.cs" />
@@ -109,11 +111,14 @@
     <Compile Include="Extentions\Groups\MemberExtentions.cs" />
     <Compile Include="Extentions\Groups\RoleExtentions.cs" />
     <Compile Include="Extentions\ModelExtentions.cs" />
+    <Compile Include="Managers\ConfigurationManager.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Economy\Banking\Bank.cs" />
     <Compile Include="Models\Economy\Banking\BankAccount.cs" />
     <Compile Include="Models\Economy\Banking\BankAccountMember.cs" />
     <Compile Include="Models\Player\Session.cs" />
+    <Compile Include="Models\Settings\Configuration.cs" />
+    <Compile Include="Models\Settings\DatabaseConnection.cs" />
     <Compile Include="Rpc\Client.cs" />
     <Compile Include="Rpc\RpcExtensions.cs" />
     <Compile Include="Rpc\RpcHandler.cs" />
