@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CitizenFX.Core;
-using IgiCore.Client.Handlers;
+using IgiCore.Client.Controllers;
+using IgiCore.Client.Controllers.Player;
 using IgiCore.Client.Managers;
 using NativeUI;
 
@@ -16,9 +17,9 @@ namespace IgiCore.Client.Interface.Menu
 		{
 			TickHandler.Attach<MenuManager>(this.Render);
 
-			Client.Instance.OnCharacterLoaded += (sender, args) =>
+			Client.Instance.Controllers.First<CharacterController>().OnCharacterLoaded += (sender, args) =>
 			{
-				this.CharacterMenu.WalkingStyleMenu.Index = this.CharacterMenu.WalkingStyles.FindIndex(s => s.Value == Client.Instance.User?.Character?.WalkingStyle);
+				this.CharacterMenu.WalkingStyleMenu.Index = this.CharacterMenu.WalkingStyles.FindIndex(s => s.Value == Client.Instance.Controllers.First<CharacterController>().ActiveCharacter?.WalkingStyle);
 			};
 
 			this.Pool.Add(this.CharacterMenu);

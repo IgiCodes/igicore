@@ -26,10 +26,10 @@ after_build:
   - npm ci
   - npm run build
   - cd ..
-  - 7z a igicore.zip *.dll README.md LICENSE igicore.cfg Interface\dist Interface\loading-screen
+  - 7z a igicore.zip *.dll igicore.yml README.md LICENSE Interface\dist Interface\loading-screen
 
 test: off
 
 artifacts:
-- path: igicore.zip
-  name: IgiCore
+  - path: igicore.zip
+    name: IgiCore

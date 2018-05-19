@@ -35,13 +35,15 @@ namespace IgiCore.Server.Services
 		{
 			Player player = Server.Instance.Players[playerId];
 
-			var args = message.Split(' ').ToList();
+		    if (!message.StartsWith("/")) return;
+
+            var args = message.Split(' ').ToList();
 			var name = args.First().ToLowerInvariant();
 			args = args.Skip(1).ToList();
 
-			var command = this.Commands.FirstOrDefault(c => c.Name.ToLowerInvariant() == name);
+		    var command = this.Commands.FirstOrDefault(c => $"/{c.Name.ToLowerInvariant()}" == name);
 
-			if (command == null)
+            if (command == null)
 			{
 				Server.Log($"Unknown command /{name}");
 				return;

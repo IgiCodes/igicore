@@ -1,6 +1,7 @@
 ﻿using System;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Economy.Banking;
+using IgiCore.Core.Models.Player;
 using IgiCore.Server.Models.Player;
 
 namespace IgiCore.Server.Models.Economy.Banking

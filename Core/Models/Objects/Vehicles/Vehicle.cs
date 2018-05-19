@@ -99,5 +99,6 @@ namespace IgiCore.Core.Models.Objects.Vehicles
                 PetrolTankHealth = vehicle.PetrolTankHealth
             };
         }
+
     }
 }

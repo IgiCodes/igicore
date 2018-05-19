@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using IgiCore.Core.Models.Player;
 using IgiCore.Core.Services;
 using IgiCore.Server.Models.Player;
 

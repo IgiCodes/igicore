@@ -3,8 +3,9 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using IgiCore.Client.Controllers;
+using IgiCore.Client.Controllers.Player;
 using IgiCore.Client.Events;
-using IgiCore.Client.Handlers;
 using IgiCore.Client.Interface.Hud.Elements;
 using IgiCore.Client.Interface.Screens;
 using IgiCore.Client.Managers;
@@ -55,8 +56,8 @@ namespace IgiCore.Client.Interface.Hud
 		{
 			TickHandler.Attach<HudManager>(Render);
 
-			Client.Instance.OnClientReady += OnClientReady;
-			Client.Instance.OnCharacterLoaded += OnCharacterLoaded;
+			Client.Instance.Controllers.First<ClientController>().OnClientReady += OnClientReady;
+			Client.Instance.Controllers.First<CharacterController>().OnCharacterLoaded += OnCharacterLoaded;
 
 			//this.Elements.Add(new Location(this));
 			//this.Elements.Add(new Speedometer(this));

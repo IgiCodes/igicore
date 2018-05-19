@@ -21,8 +21,8 @@ namespace IgiCore.Client.Extensions
         //    ped.Task.PerformSequence(sequence);
         //    DateTime endTime = DateTime.Now.AddMilliseconds(timeout);
         //    Client.Log($"Task End Time: {endTime}");
-        //    while (Game.Player.Character.TaskSequenceProgress < 0 || DateTime.Now <= endTime) await BaseScript.Delay(100); // Wait for the sequence to start
-        //    while (Game.Player.Character.TaskSequenceProgress > 0 || DateTime.Now <= endTime) await BaseScript.Delay(100); // Wait for the sequence to end
+        //    while (Game.Player.ActiveCharacter.TaskSequenceProgress < 0 || DateTime.Now <= endTime) await BaseScript.Delay(100); // Wait for the sequence to start
+        //    while (Game.Player.ActiveCharacter.TaskSequenceProgress > 0 || DateTime.Now <= endTime) await BaseScript.Delay(100); // Wait for the sequence to end
         //    if (DateTime.Now > endTime)
         //    {
         //        Client.Log("Force ending task!");

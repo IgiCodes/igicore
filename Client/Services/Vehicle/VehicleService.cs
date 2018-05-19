@@ -4,8 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
+using IgiCore.Client.Controllers.Player;
+using IgiCore.Client.Rpc;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
+using IgiCore.Core.Rpc;
 using Newtonsoft.Json;
 
 namespace IgiCore.Client.Services.Vehicle
@@ -38,54 +41,57 @@ namespace IgiCore.Client.Services.Vehicle
 
 					citVeh.Delete();
 					this.Tracked.Remove(trackedVehicle);
-					BaseScript.TriggerServerEvent("igi:car:unclaim", trackedVehicle.Item2);
+					Server.Event(RpcEvents.CarUnclaim)
+						.Attach(trackedVehicle.Item2)
+						.Trigger();
 				}
 				else
 				{
 					int netId = API.NetworkGetNetworkIdFromEntity(citVeh.Handle);
-					//Debug.WriteLine($"Vehicle: {vehicleHandle} NetId: {netId} - {citVeh.Position}");
 
-					Car car = citVeh;
+					Car car = (Car)citVeh;
 					car.NetId = netId;
 
-					// Transfer the vehicle to the closest client
-					//Client.Log($"Removing Vehicle from tracked: {car.Handle}");
-					//this.Tracked.Remove(car.Handle ?? 0);
-
 					Client.Log($"Transfering vehicle to player: {closestPlayer.ServerId}  -  {car.Handle}");
-					BaseScript.TriggerServerEvent("igi:car:transfer", JsonConvert.SerializeObject(car), closestPlayer.ServerId);
+					Server.Event(RpcEvents.CarTransfer)
+						.Attach(car)
+						.Attach(closestPlayer.ServerId)
+						.Trigger();
 				}
 			}
 		}
 
 		private void Save()
 		{
-			Client.Log("Save called.");
-			Client.Log(string.Join(", ", this.Tracked));
-
 			foreach (Tuple<Type, int> trackedVehicle in this.Tracked)
 			{
 				int vehicleHandle = API.NetToVeh(trackedVehicle.Item2);
 				var citVeh = new CitizenFX.Core.Vehicle(vehicleHandle);
 				int netId = API.NetworkGetNetworkIdFromEntity(citVeh.Handle);
 
-				Debug.WriteLine($"Saving Vehicle: {trackedVehicle.Item2} - {citVeh.Position}");
+				//Debug.WriteLine($"Saving Vehicle: {trackedVehicle.Item2} - {citVeh.Position}");
 
-				Core.Models.Objects.Vehicles.Vehicle vehicle = citVeh;
-				vehicle.TrackingUserId = Client.Instance.User.Id;
+				Core.Models.Objects.Vehicles.Vehicle vehicle = (Core.Models.Objects.Vehicles.Vehicle)citVeh;
+				vehicle.TrackingUserId = Client.Instance.Controllers.First<UserController>().User.Id;
 				vehicle.NetId = netId;
 				vehicle.Hash = citVeh.Model.Hash;
 
 				switch (trackedVehicle.Item1.VehicleType().Name)
 				{
 					case "Car":
-						Car car = (Car)vehicle;
+						//Car car = (Car)vehicle;
 						// Add car specific props...
-						BaseScript.TriggerServerEvent($"igi:{trackedVehicle.Item1.VehicleType().Name}:save", JsonConvert.SerializeObject(car));
+						//BaseScript.TriggerServerEvent($"igi:{trackedVehicle.Item1.VehicleType().Name}:save", JsonConvert.SerializeObject(car));
+						Server.Event($"igi:{trackedVehicle.Item1.VehicleType().Name}:save")
+							.Attach(vehicle)
+							.Trigger();
 						break;
 
 					default:
-						BaseScript.TriggerServerEvent($"igi:{trackedVehicle.Item1.VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, trackedVehicle.Item1, new JsonSerializerSettings()));
+						//BaseScript.TriggerServerEvent($"igi:{trackedVehicle.Item1.VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, trackedVehicle.Item1, new JsonSerializerSettings()));
+						Server.Event($"igi:{trackedVehicle.Item1.VehicleType().Name}:save")
+							.Attach(vehicle)
+							.Trigger();
 						break;
 				}
 			}

@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using IgiCore.Client.Handlers;
+using IgiCore.Client.Controllers;
 using IgiCore.Client.Interface.Hud;
 using JetBrains.Annotations;
 

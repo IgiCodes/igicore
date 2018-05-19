@@ -85,6 +85,9 @@
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="YamlDotNet, Version=4.3.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\YamlDotNet.4.3.1\lib\net45\YamlDotNet.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\BikeCommand.cs" />
@@ -94,25 +97,28 @@
     <Compile Include="Commands\PropCommand.cs" />
     <Compile Include="Commands\CarCommand.cs" />
     <Compile Include="Commands\GpsCommand.cs" />
-    <Compile Include="Config.cs" />
+    <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Extentions\CitizenExtentions.cs" />
     <Compile Include="Extentions\CharacterExtentions.cs" />
-    <Compile Include="Handlers\BankingActions.cs" />
-    <Compile Include="Handlers\ClientActions.cs" />
-    <Compile Include="Handlers\PlayerActions.cs" />
-    <Compile Include="Handlers\UserActions.cs" />
-    <Compile Include="Handlers\CharacterActions.cs" />
-    <Compile Include="Handlers\OwnershipActions.cs" />
+    <Compile Include="Controllers\BankingController.cs" />
+    <Compile Include="Controllers\ClientController.cs" />
+    <Compile Include="Controllers\PlayerController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\CharacterController.cs" />
+    <Compile Include="Controllers\OwnershipController.cs" />
+    <Compile Include="Extentions\Economy\SalaryExtentions.cs" />
+    <Compile Include="Extentions\Groups\GroupExtentions.cs" />
+    <Compile Include="Extentions\Groups\MemberExtentions.cs" />
+    <Compile Include="Extentions\Groups\RoleExtentions.cs" />
+    <Compile Include="Extentions\ModelExtentions.cs" />
+    <Compile Include="Managers\ConfigurationManager.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Economy\Banking\Bank.cs" />
     <Compile Include="Models\Economy\Banking\BankAccount.cs" />
-    <Compile Include="Models\Economy\Banking\BankAccountCard.cs" />
     <Compile Include="Models\Economy\Banking\BankAccountMember.cs" />
-    <Compile Include="Models\Player\Character.cs" />
-    <Compile Include="Models\Groups\Group.cs" />
-    <Compile Include="Models\Groups\GroupMember.cs" />
-    <Compile Include="Models\Groups\GroupRole.cs" />
     <Compile Include="Models\Player\Session.cs" />
+    <Compile Include="Models\Settings\Configuration.cs" />
+    <Compile Include="Models\Settings\DatabaseConnection.cs" />
     <Compile Include="Rpc\Client.cs" />
     <Compile Include="Rpc\RpcExtensions.cs" />
     <Compile Include="Rpc\RpcHandler.cs" />
@@ -122,8 +128,9 @@
     <Compile Include="Rpc\ServerEvents.cs" />
     <Compile Include="Services\CommandService.cs" />
     <Compile Include="Services\Economy\BankService.cs" />
+    <Compile Include="Services\Economy\SalaryService.cs" />
     <Compile Include="Services\IServerService.cs" />
-    <Compile Include="Handlers\VehicleActions.cs" />
+    <Compile Include="Controllers\VehicleController.cs" />
     <Compile Include="Services\ServerService.cs" />
     <Compile Include="Models\Player\User.cs" />
     <Compile Include="Services\VehicleService.cs" />

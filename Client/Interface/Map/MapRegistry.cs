@@ -1,4 +1,6 @@
-﻿namespace IgiCore.Client.Interface.Map
+﻿using IgiCore.Core.Utility;
+
+namespace IgiCore.Client.Interface.Map
 {
 	public class MapRegistry : Registry<MapLoader>
 	{
