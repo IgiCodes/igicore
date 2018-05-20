@@ -5,7 +5,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.UI;
+using IgiCore.Client.Rpc;
 using IgiCore.Client.Utility;
+using IgiCore.Core.Rpc;
 using static CitizenFX.Core.Native.API;
 
 namespace IgiCore.Client.Services.Player
@@ -25,6 +27,7 @@ namespace IgiCore.Client.Services.Player
 		public PlayerDeathService()
 		{
 			SetFadeOutAfterDeath(false);
+			Server.Event(RpcEvents.CharacterRevive).On(this.Revive);
 		}
 
 		public override async Task Tick()

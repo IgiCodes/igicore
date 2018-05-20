@@ -39,8 +39,18 @@ namespace IgiCore.Server.Controllers
             T dbCar = Server.Db.Set<T>().First(c => c.Id == vehicle.Id);
             if (vehicle.TrackingUserId != dbCar.TrackingUserId && dbCar.TrackingUserId != Guid.Empty) return;
 
-            Server.Db.Set<T>().AddOrUpdate(vehicle);
-            await Server.Db.SaveChangesAsync();
+			Server.Db.Set<T>().AddOrUpdate(vehicle);
+
+			T dbVehicle = Server.Db.Set<T>().FirstOrDefault(v => v.Id == vehicle.Id) ?? vehicle;
+
+			dbVehicle.Extras = vehicle.Extras;
+			dbVehicle.Mods = vehicle.Mods;
+			dbVehicle.Doors = vehicle.Doors;
+			dbVehicle.Seats = vehicle.Seats;
+			dbVehicle.Wheels = vehicle.Wheels;
+			dbVehicle.Windows = vehicle.Windows;
+			
+			await Server.Db.SaveChangesAsync();
         }
     }
 }

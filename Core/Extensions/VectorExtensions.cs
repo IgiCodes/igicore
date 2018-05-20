@@ -26,5 +26,6 @@ namespace IgiCore.Core.Extensions
                 MathHelpers.Lerp(pos1.Z, pos2.Z, normalisedInterval)
             );
 
-    }
+	    public static Vector3 GetPositionInFrontOfPed(this Vector3 position, float heading, float distance) => position.TranslateDir(heading + 90, distance);
+	}
 }

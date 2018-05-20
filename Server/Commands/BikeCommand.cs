@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core;
 using IgiCore.Core.Extensions;
+using IgiCore.Core.Models;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Rpc;
 using IgiCore.Server.Rpc;
@@ -15,11 +17,26 @@ namespace IgiCore.Server.Commands
 
 		public override async Task RunCommand(Player player, List<string> args)
 		{
+			Tuple<Vector3, float> charPos = await player.Event(RpcEvents.GetCharacterPosition).Request<Vector3, float>();
+
 			Bike bike = new Bike
 			{
 				Id = GuidGenerator.GenerateTimeBasedGuid(),
 				Hash = (uint)VehicleHash.Double,
-				Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f }
+				Position = charPos.Item1.GetPositionInFrontOfPed(charPos.Item2, 10f),
+				PrimaryColor = new VehicleColor
+				{
+					StockColor = VehicleStockColor.HotPink,
+					CustomColor = new Color(),
+					IsCustom = false
+				},
+				SecondaryColor = new VehicleColor
+				{
+					StockColor = VehicleStockColor.MattePurple,
+					CustomColor = new Color(),
+					IsCustom = false
+				},
+				PearescentColor = VehicleStockColor.HotPink
 			};
 
 			Server.Db.Bikes.Add(bike);

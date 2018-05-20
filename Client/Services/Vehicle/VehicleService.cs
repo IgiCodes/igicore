@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.Client.Controllers.Player;
+using IgiCore.Client.Extensions;
 using IgiCore.Client.Rpc;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
@@ -17,21 +18,21 @@ namespace IgiCore.Client.Services.Vehicle
 	{
 		private const int VehicleLoadDistance = 500;
 
-		public List<Tuple<Type, int>> Tracked { get; set; } = new List<Tuple<Type, int>>();
+		public List<TrackedVehicle> Tracked { get; set; } = new List<TrackedVehicle>();
 
 		public override async Task Tick()
 		{
-			Update();
-			Save();
+			await Update();
+			await Save();
 
 			await BaseScript.Delay(1000);
 		}
 
-		private void Update()
+		private async Task Update()
 		{
-			foreach (Tuple<Type, int> trackedVehicle in this.Tracked.ToList())
+			foreach (TrackedVehicle trackedVehicle in this.Tracked.ToList())
 			{
-				int vehicleHandle = API.NetToVeh(trackedVehicle.Item2);
+				int vehicleHandle = API.NetToVeh(trackedVehicle.NetId);
 				var citVeh = new CitizenFX.Core.Vehicle(vehicleHandle);
 				var closestPlayer = new CitizenFX.Core.Player(API.GetNearestPlayerToEntity(citVeh.Handle));
 
@@ -41,8 +42,8 @@ namespace IgiCore.Client.Services.Vehicle
 
 					citVeh.Delete();
 					this.Tracked.Remove(trackedVehicle);
-					Server.Event(RpcEvents.CarUnclaim)
-						.Attach(trackedVehicle.Item2)
+					Server.Event($"igi:{trackedVehicle.Type.VehicleType().Name}:unclaim")
+						.Attach(trackedVehicle.NetId)
 						.Trigger();
 				}
 				else
@@ -53,7 +54,7 @@ namespace IgiCore.Client.Services.Vehicle
 					car.NetId = netId;
 
 					Client.Log($"Transfering vehicle to player: {closestPlayer.ServerId}  -  {car.Handle}");
-					Server.Event(RpcEvents.CarTransfer)
+					Server.Event($"igi:{trackedVehicle.Type.VehicleType().Name}:transfer")
 						.Attach(car)
 						.Attach(closestPlayer.ServerId)
 						.Trigger();
@@ -61,40 +62,43 @@ namespace IgiCore.Client.Services.Vehicle
 			}
 		}
 
-		private void Save()
+		private async Task Save()
 		{
-			foreach (Tuple<Type, int> trackedVehicle in this.Tracked)
+			foreach (TrackedVehicle trackedVehicle in this.Tracked)
 			{
-				int vehicleHandle = API.NetToVeh(trackedVehicle.Item2);
+				int vehicleHandle = API.NetToVeh(trackedVehicle.NetId);
 				var citVeh = new CitizenFX.Core.Vehicle(vehicleHandle);
 				int netId = API.NetworkGetNetworkIdFromEntity(citVeh.Handle);
 
-				//Debug.WriteLine($"Saving Vehicle: {trackedVehicle.Item2} - {citVeh.Position}");
-
-				Core.Models.Objects.Vehicles.Vehicle vehicle = (Core.Models.Objects.Vehicles.Vehicle)citVeh;
+				Core.Models.Objects.Vehicles.Vehicle vehicle = await citVeh.ToVehicle(trackedVehicle.Id);
 				vehicle.TrackingUserId = Client.Instance.Controllers.First<UserController>().User.Id;
 				vehicle.NetId = netId;
 				vehicle.Hash = citVeh.Model.Hash;
 
-				switch (trackedVehicle.Item1.VehicleType().Name)
+				switch (trackedVehicle.Type.VehicleType().Name)
 				{
 					case "Car":
 						//Car car = (Car)vehicle;
 						// Add car specific props...
-						//BaseScript.TriggerServerEvent($"igi:{trackedVehicle.Item1.VehicleType().Name}:save", JsonConvert.SerializeObject(car));
-						Server.Event($"igi:{trackedVehicle.Item1.VehicleType().Name}:save")
+						Server.Event($"igi:{trackedVehicle.Type.VehicleType().Name}:save")
 							.Attach(vehicle)
 							.Trigger();
 						break;
 
 					default:
-						//BaseScript.TriggerServerEvent($"igi:{trackedVehicle.Item1.VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, trackedVehicle.Item1, new JsonSerializerSettings()));
-						Server.Event($"igi:{trackedVehicle.Item1.VehicleType().Name}:save")
+						Server.Event($"igi:{trackedVehicle.Type.VehicleType().Name}:save")
 							.Attach(vehicle)
 							.Trigger();
 						break;
 				}
 			}
+		}
+
+		public class TrackedVehicle
+		{
+			public Guid Id { get; set; }
+			public int NetId { get; set; }
+			public Type Type { get; set; }
 		}
 	}
 }

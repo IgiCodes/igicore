@@ -13,6 +13,8 @@
 		public const string CharacterLoad = "igi:character:load";
 		public const string CharacterDelete = "igi:character:delete";
 		public const string CharacterSave = "igi:character:save";
+		public const string CharacterRevive = "igi:character:revive";
+		public const string GetCharacterPosition = "igi:character:getpos";
 
 		public const string CharacterComponentSet = "igi:character:component:set";
 		public const string CharacterPropSet = "igi:character:prop:set";
@@ -22,6 +24,8 @@
 		public const string BankBranchDeposit = "igi:bank:branch:withdraw";
 		public const string BankBranchTransfer = "igi:bank:branch:transfer";
 		public const string BankOnlineTransfer = "igi:bank:online:transfer";
+
+		public const string EntityDelete = "igi:entity:delete";
 
 		public const string CarCreate = "igi:car:create";
 		public const string CarSpawn = "igi:car:spawn";

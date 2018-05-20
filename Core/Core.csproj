@@ -52,9 +52,11 @@
     <Compile Include="Exceptions\GroupException.cs" />
     <Compile Include="Exceptions\ModelException.cs" />
     <Compile Include="Extensions\FloatExtentions.cs" />
+    <Compile Include="Extensions\PedExtentions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\VectorExtensions.cs" />
     <Compile Include="Helpers\MathHelpers.cs" />
+    <Compile Include="Models\Color.cs" />
     <Compile Include="Models\Economy\Banking\BankAccountCard.cs" />
     <Compile Include="Models\Economy\Banking\BankAtm.cs" />
     <Compile Include="Models\Economy\Banking\BankBranch.cs" />
@@ -63,6 +65,7 @@
     <Compile Include="Models\Groups\GroupMember.cs" />
     <Compile Include="Models\Groups\GroupRole.cs" />
     <Compile Include="Models\Model.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleNeonLight.cs" />
     <Compile Include="Models\Player\Character.cs" />
     <Compile Include="Models\Player\ISession.cs" />
     <Compile Include="Models\Position.cs" />

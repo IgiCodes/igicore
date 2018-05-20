@@ -78,7 +78,7 @@ namespace IgiCore.Server
 			Client.Event(RpcEvents.CarClaim).On(OwnershipController.ClaimObject<Car>);
 			Client.Event(RpcEvents.CarUnclaim).On(OwnershipController.UnclaimObject<Car>);
 
-			Client.Event(RpcEvents.BikeSave).On(OwnershipController.Save<Bike>);
+			Client.Event(RpcEvents.BikeSave).On(VehicleController.Save<Bike>);
 			Client.Event(RpcEvents.BikeTransfer).On(OwnershipController.TransferObject<Bike>);
 			Client.Event(RpcEvents.BikeClaim).On(OwnershipController.ClaimObject<Bike>);
 			Client.Event(RpcEvents.BikeUnclaim).On(OwnershipController.UnclaimObject<Bike>);

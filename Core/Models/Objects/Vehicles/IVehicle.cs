@@ -14,8 +14,9 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         float PetrolTankHealth { get; set; }
         float TowingCraneRaisedAmount { get; set; }
         bool HasAlarm { get; set; }
-        bool IsAlaramed { get; set; }
-        bool HasLock { get; set; }
+        bool IsAlarmed { get; set; }
+	    bool IsAlarmSounding { get; set; }
+		bool HasLock { get; set; }
         bool IsDriveable { get; set; }
         bool IsEngineRunning { get; set; }
         bool HasSeatbelts { get; set; }
@@ -36,12 +37,13 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         bool CanTiresBurst { get; set; }
         VehicleColor PrimaryColor { get; set; }
         VehicleColor SecondaryColor { get; set; }
-        VehicleColor PearescentColor { get; set; }
-        VehicleColor DashboardColor { get; set; }
-        VehicleColor RimColor { get; set; }
-        VehicleColor NeonColor { get; set; }
-        VehicleColor TireSmokeColor { get; set; }
-        VehicleColor TrimColor { get; set; }
+        VehicleStockColor PearescentColor { get; set; }
+	    VehicleStockColor DashboardColor { get; set; }
+	    VehicleStockColor RimColor { get; set; }
+        Color NeonColor { get; set; }
+	    VehicleNeonPositions NeonPositions { get; set; }
+		Color TireSmokeColor { get; set; }
+	    VehicleStockColor TrimColor { get; set; }
         VehicleWindowTint WindowTint { get; set; }
         VehicleLockStatus LockStatus { get; set; }
         RadioStation RadioStation { get; set; }

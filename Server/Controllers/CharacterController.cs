@@ -81,9 +81,9 @@ namespace IgiCore.Server.Controllers
 			character.Health = 10000;
 			character.Armor = 0;
 			character.Ssn = "123-45-6789";
-			//character.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f }; // Airport terminal
+			character.Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f }; // Airport terminal
 			//character.Position = new Vector3 { X = 153.7846f, Y = -1032.899f, Z = 29.33798f }; // Legion Square Fleeca
-			character.Position = new Vector3 { X = 892.55f, Y = -182.25f, Z = 73.72f }; // Downtown Cab Co.
+			//character.Position = new Vector3 { X = 892.55f, Y = -182.25f, Z = 73.72f }; // Downtown Cab Co.
 			character.LastPlayed = null;
 			character.Created = DateTime.UtcNow;
 			character.Style = new Style { Id = GuidGenerator.GenerateTimeBasedGuid() };

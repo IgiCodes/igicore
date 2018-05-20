@@ -97,6 +97,7 @@
     <Compile Include="Commands\PropCommand.cs" />
     <Compile Include="Commands\CarCommand.cs" />
     <Compile Include="Commands\GpsCommand.cs" />
+    <Compile Include="Commands\ReviveCommand.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Extentions\CitizenExtentions.cs" />
     <Compile Include="Extentions\CharacterExtentions.cs" />
