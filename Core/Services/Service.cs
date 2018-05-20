@@ -1,7 +1,9 @@
-﻿namespace IgiCore.Core.Services
+﻿using System.Threading.Tasks;
+
+namespace IgiCore.Core.Services
 {
     public abstract class Service : IService
     {
-        public abstract void Initialize();
+        public abstract Task Initialize();
     }
 }

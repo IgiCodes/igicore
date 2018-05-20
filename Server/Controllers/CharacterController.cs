@@ -6,13 +6,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
-using IgiCore.Core.Models.Appearance;
-using IgiCore.Core.Models.Player;
 using IgiCore.Core.Rpc;
+using IgiCore.Models.Appearance;
+using IgiCore.Models.Player;
 using IgiCore.Server.Extentions;
-using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 using IgiCore.Server.Services;
+using User = IgiCore.Server.Models.Player.User;
 
 namespace IgiCore.Server.Controllers
 {

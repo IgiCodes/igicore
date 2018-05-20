@@ -1,0 +1,99 @@
+# Display options
+ServerName: igicore
+GameType: Roleplay
+MapName: Los Santos
+
+
+# MySQL database connection
+Database:
+  Host: harvest
+  Port: 3306
+  Database: fivem
+  User: root
+  Password: password
+  Charset: utf8mb4
+
+
+# Client options
+Client:
+  Input:
+
+
+  HUD:
+    Minimap:
+      ShowInVehicle: true
+      ShowOnFoot: false
+
+    Reticle:
+      ShowWhileUnarmed: false
+      ShowWhileArmed: false
+      ShowWhileAiming: true
+
+
+  Map:
+    Load:
+    - BahamaMamasWest
+    - CargoShip
+    - GrapeseedFarm
+    - TrevorsTrailer
+    - Yacht
+
+    Blips:
+      # LSC Burton
+    - Name: Mechanic
+      Icon: Repair
+      Location:
+        X: -337
+        Y: -135
+        Z: 39
+
+
+  Interface:
+    Screens:
+    - CharacterSelect:
+      Time: 12:00:00
+      Weather: ExtraSunny
+      Camera:
+        Center:
+          X: 0
+          Y: 0
+          Z: 0
+        Height: 500
+        Radius: 1500
+        StartAngle: 0
+        RotateSpeed: 0.01
+
+
+# Default bank data
+Banks:
+- Name: Fleeca
+
+  Branches:
+  - Name: Legion Square
+    Heading: 336
+    Location:
+      X: 149.7
+      Y: -1042.2
+      Z: 28.33
+
+  ATMs:
+  - Name: FLCA LSS 0001
+    Hash: 506770882
+    Location:
+      X: 147.4731
+      Y: -1036.218
+      Z: 28.36778
+
+  - Name: FLCA LSS 0002
+    Hash: 506770882
+    Location:
+      X: 145.8392
+      Y: -1035.625
+      Z: 28.36778
+
+  - Name: Standup ATM 0001
+    Hash: -870868698
+    Location:
+      X: 228.0324
+      Y: 337.8501
+      Z: 104.5013

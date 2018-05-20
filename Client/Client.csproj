@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IgiCore.Client</RootNamespace>
-    <AssemblyName>Client.net</AssemblyName>
+    <AssemblyName>IgiCore.Client.net</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -52,6 +52,7 @@
   <ItemGroup>
     <Reference Include="CitizenFX.Client">
       <HintPath>..\lib\CitizenFX.Client.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
@@ -60,88 +61,39 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="NativeUI">
       <HintPath>..\lib\NativeUI.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Controllers\ClientController.cs" />
-    <Compile Include="Controllers\Player\CharacterController.cs" />
-    <Compile Include="Controllers\Player\UserController.cs" />
-    <Compile Include="Controllers\Objects\Vehicles\VehicleController.cs" />
-    <Compile Include="Events\CharacterEventArgs.cs" />
-    <Compile Include="Events\CharactersEventArgs.cs" />
-    <Compile Include="Events\UserEventArgs.cs" />
-    <Compile Include="Events\ServerInformationEventArgs.cs" />
-    <Compile Include="Extensions\PedExtensions.cs" />
-    <Compile Include="Extensions\PlayerExtensions.cs" />
-    <Compile Include="Extensions\VehicleExtensions.cs" />
-    <Compile Include="Controllers\TickHandler.cs" />
-    <Compile Include="Input\Input.cs" />
-    <Compile Include="Input\InputModifier.cs" />
-    <Compile Include="Interface\Hud\Elements\Element.cs" />
-    <Compile Include="Interface\Hud\Elements\Speedometer.cs" />
-    <Compile Include="Interface\Hud\Elements\Location.cs" />
-    <Compile Include="Interface\Nui.cs" />
-    <Compile Include="Interface\Screens\InventoryScreen.cs" />
-    <Compile Include="Managers\Manager.cs" />
-    <Compile Include="Managers\IManager.cs" />
-    <Compile Include="Managers\ManagerRegistry.cs" />
-    <Compile Include="Managers\World\NpcManager.cs" />
-    <Compile Include="Models\Character.cs" />
-    <Compile Include="Models\User.cs" />
     <Compile Include="Client.cs" />
-    <Compile Include="Models\World\Npc.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Rpc\RpcHandler.cs" />
-    <Compile Include="Rpc\RpcRequest.cs" />
-    <Compile Include="Rpc\RpcSerializer.cs" />
-    <Compile Include="Rpc\RpcTrigger.cs" />
-    <Compile Include="Rpc\Server.cs" />
-    <Compile Include="Services\AI\PedFilterService.cs" />
-    <Compile Include="Services\Economy\Banking\BranchService.cs" />
-    <Compile Include="Services\Economy\Banking\ATMService.cs" />
-    <Compile Include="Services\Economy\Business\Driving\DowntownCabService.cs" />
-    <Compile Include="Services\IClientService.cs" />
-    <Compile Include="Services\ClientService.cs" />
-    <Compile Include="Services\Player\AutosaveService.cs" />
-    <Compile Include="Services\Player\PlayerIndicatorService.cs" />
-    <Compile Include="Services\Player\PlayerIdleService.cs" />
-    <Compile Include="Services\Player\PlayerDeathService.cs" />
-    <Compile Include="Services\ServiceRegistry.cs" />
-    <Compile Include="Services\Vehicle\VehicleRollService.cs" />
-    <Compile Include="Services\Vehicle\VehicleService.cs" />
-    <Compile Include="Services\World\AiPoliceService.cs" />
-    <Compile Include="Services\World\BlackoutService.cs" />
-    <Compile Include="Services\World\DateTimeService.cs" />
-    <Compile Include="Services\World\WeatherService.cs" />
-    <Compile Include="Interface\Hud\HudManager.cs" />
-    <Compile Include="Interface\Map\BlipConfig.cs" />
-    <Compile Include="Managers\World\MapManager.cs" />
-    <Compile Include="Interface\Map\Loaders\CargoShip.cs" />
-    <Compile Include="Interface\Map\Loaders\Yacht.cs" />
-    <Compile Include="Interface\Map\Loaders\GrapeseedFarm.cs" />
-    <Compile Include="Interface\Map\Loaders\TrevorsTrailer.cs" />
-    <Compile Include="Interface\Map\Loaders\BahamaMamasWest.cs" />
-    <Compile Include="Interface\Map\MapRegistry.cs" />
-    <Compile Include="Interface\Map\MapLoader.cs" />
-    <Compile Include="Interface\Menu\CharacterMenu.cs" />
-    <Compile Include="Interface\Menu\MenuManager.cs" />
-    <Compile Include="Interface\Screens\CharacterSelectScreen.cs" />
-    <Compile Include="Interface\Screens\Screen.cs" />
-    <Compile Include="Interface\UI.cs" />
-    <Compile Include="Utility\ObjectList.cs" />
-    <Compile Include="Utility\VehicleList.cs" />
-    <Compile Include="Utility\PedList.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{ef2c3a9f-8cbb-42e3-b872-3a83c4a3782e}</Project>
       <Name>Core</Name>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
+      <Name>Models</Name>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\SDK\Client\Client.csproj">
+      <Project>{f6aa79c1-4e08-4a75-a0b4-ffd2b33d89d7}</Project>
+      <Name>Client</Name>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\SDK\Core\Core.csproj">
+      <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
+      <Name>SDK</Name>
+      <Private>True</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

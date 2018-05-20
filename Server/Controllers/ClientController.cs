@@ -2,8 +2,7 @@ using System;
 using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using IgiCore.Core.Models.Connection;
-using IgiCore.Core.Rpc;
+using IgiCore.SDK.Core.Rpc;
 using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Controllers
@@ -14,15 +13,15 @@ namespace IgiCore.Server.Controllers
 		{
 			player
 				.Event(RpcEvents.GetServerInformation)
-				.Attach(new ServerInformation
-				{
-					ResourceName = API.GetCurrentResourceName(),
-					ServerName = Config.ServerName,
-					DateTime = DateTime.UtcNow,
-					Weather = "EXTRASUNNY", // TODO
-					Atms = Server.Db.BankAtms.ToList(),
-					Branches = Server.Db.BankBranches.ToList()
-				})
+				//.Attach(new ServerInformation
+				//{
+				//	ResourceName = API.GetCurrentResourceName(),
+				//	ServerName = Config.ServerName,
+				//	DateTime = DateTime.UtcNow,
+				//	Weather = "EXTRASUNNY", // TODO
+				//	//Atms = Server.Db.BankAtms.ToList(),
+				//	//Branches = Server.Db.BankBranches.ToList()
+				//})
 				.Trigger();
 		}
 

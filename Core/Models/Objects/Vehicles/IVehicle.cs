@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using IgiCore.Models.Audio;
 
 namespace IgiCore.Core.Models.Objects.Vehicles
 {

@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using IgiCore.Core.Models.Player;
+using IgiCore.Models.Player;
 using IgiCore.Server.Controllers;
-using IgiCore.Server.Models.Player;
 using Citizen = CitizenFX.Core.Player;
+using User = IgiCore.Server.Models.Player.User;
 
 namespace IgiCore.Server.Extentions
 {

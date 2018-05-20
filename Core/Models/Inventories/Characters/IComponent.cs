@@ -1,5 +1,5 @@
 ﻿using System;
-using IgiCore.Core.Models.Appearance;
+using IgiCore.Models.Appearance;
 
 namespace IgiCore.Core.Models.Inventories.Characters
 {

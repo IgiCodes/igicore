@@ -3,13 +3,19 @@ description 'IgiCore Framework'
 version '0.0.1'
 
 server_scripts {
-	'Core.net.dll',
-	'Server.net.dll',
+	'IgiCore.Server.net.dll',
 }
 
 client_scripts {
-	'Core.net.dll',
-	'Client.net.dll',
+	'IgiCore.Core.net.dll',
+	'IgiCore.Models.net.dll',
+	'IgiCore.SDK.Core.net.dll',
+	'IgiCore.SDK.Client.net.dll',
+
+	'Plugins/Banking/Banking.Core.net.dll',
+	'Plugins/Banking/Banking.Client.net.dll',
+
+	'IgiCore.Client.net.dll',
 }
 
 files {

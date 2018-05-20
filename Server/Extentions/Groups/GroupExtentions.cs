@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using IgiCore.Core.Exceptions;
-using IgiCore.Core.Models.Groups;
-using IgiCore.Core.Models.Player;
+using IgiCore.Models.Groups;
+using IgiCore.Models.Player;
+using IgiCore.SDK.Core.Exceptions;
 
 namespace IgiCore.Server.Extentions.Groups
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 using IgiCore.Core.Extensions;
-using IgiCore.Core.Models.Player;
+using IgiCore.Models.Player;
 
 namespace IgiCore.Core.Models.Objects.Vehicles
 {
@@ -8,7 +8,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
     {
         public Guid Id { get; set; }
         public VehicleSeatIndex Index { get; set; }
-        public ICharacter Character { get; set; }
+        public Character Character { get; set; }
 
         public VehicleSeat() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
     }

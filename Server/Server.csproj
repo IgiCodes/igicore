@@ -8,7 +8,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>IgiCore.Server</RootNamespace>
-    <AssemblyName>Server.net</AssemblyName>
+    <AssemblyName>IgiCore.Server.net</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
@@ -54,18 +54,19 @@
   <ItemGroup>
     <Reference Include="CitizenFX.Server">
       <HintPath>..\lib\CitizenFX.Server.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="I18N">
       <HintPath>..\lib\I18N.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="I18N.West">
       <HintPath>..\lib\I18N.West.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
@@ -73,47 +74,41 @@
     </Reference>
     <Reference Include="MySql.Data, Version=6.10.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.10.7\lib\net452\MySql.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MySql.Data.Entity.EF6, Version=6.10.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.Entity.6.10.7\lib\net452\MySql.Data.Entity.EF6.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\lib\Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SimpleInjector, Version=4.3.0.0, Culture=neutral, PublicKeyToken=984cb50dea722e99, processorArchitecture=MSIL">
+      <HintPath>..\packages\SimpleInjector.4.3.0\lib\net45\SimpleInjector.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\BikeCommand.cs" />
-    <Compile Include="Commands\Command.cs" />
-    <Compile Include="Commands\ComponentCommand.cs" />
-    <Compile Include="Commands\GroupCommand.cs" />
-    <Compile Include="Commands\PropCommand.cs" />
-    <Compile Include="Commands\CarCommand.cs" />
-    <Compile Include="Commands\GpsCommand.cs" />
     <Compile Include="Config.cs" />
-    <Compile Include="Controllers\GroupController.cs" />
-    <Compile Include="Extentions\CitizenExtentions.cs" />
+    <Compile Include="Controllers\Controller.cs" />
+    <Compile Include="Controllers\ResourceController.cs" />
+    <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Extentions\CharacterExtentions.cs" />
-    <Compile Include="Controllers\BankingController.cs" />
     <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\PlayerController.cs" />
     <Compile Include="Controllers\UserController.cs" />
-    <Compile Include="Controllers\CharacterController.cs" />
-    <Compile Include="Controllers\OwnershipController.cs" />
-    <Compile Include="Extentions\Economy\SalaryExtentions.cs" />
     <Compile Include="Extentions\Groups\GroupExtentions.cs" />
     <Compile Include="Extentions\Groups\MemberExtentions.cs" />
     <Compile Include="Extentions\Groups\RoleExtentions.cs" />
     <Compile Include="Extentions\ModelExtentions.cs" />
     <Compile Include="Migrations\Configuration.cs" />
-    <Compile Include="Models\Economy\Banking\Bank.cs" />
-    <Compile Include="Models\Economy\Banking\BankAccount.cs" />
-    <Compile Include="Models\Economy\Banking\BankAccountMember.cs" />
-    <Compile Include="Models\Player\Session.cs" />
+    <Compile Include="Controllers\SessionController.cs" />
+    <Compile Include="Repository.cs" />
     <Compile Include="Rpc\Client.cs" />
     <Compile Include="Rpc\RpcExtensions.cs" />
     <Compile Include="Rpc\RpcHandler.cs" />
@@ -121,29 +116,45 @@
     <Compile Include="Rpc\RpcSerializer.cs" />
     <Compile Include="Rpc\RpcTrigger.cs" />
     <Compile Include="Rpc\ServerEvents.cs" />
-    <Compile Include="Services\CommandService.cs" />
-    <Compile Include="Services\Economy\BankService.cs" />
+    <Compile Include="ClientEventsManager.cs" />
+    <Compile Include="ServerEventsManager.cs" />
     <Compile Include="Services\Economy\SalaryService.cs" />
     <Compile Include="Services\IServerService.cs" />
-    <Compile Include="Controllers\VehicleController.cs" />
     <Compile Include="Services\ServerService.cs" />
-    <Compile Include="Models\Player\User.cs" />
-    <Compile Include="Services\VehicleService.cs" />
     <Compile Include="Managers\SessionManager.cs" />
+    <Compile Include="Storage\Contexts\Context.cs" />
     <Compile Include="Storage\MySql\DB.cs" />
     <Compile Include="Server.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <Compile Include="Storage\StorageRegistry.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{ef2c3a9f-8cbb-42e3-b872-3a83c4a3782e}</Project>
       <Name>Core</Name>
+      <Private>False</Private>
     </ProjectReference>
+    <ProjectReference Include="..\Models\Models.csproj">
+      <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
+      <Name>Models</Name>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\SDK\Core\Core.csproj">
+      <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
+      <Name>SDK</Name>
+      <Private>True</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\SDK\Server\Server.csproj">
+      <Project>{5a53d22b-87f1-4b16-b54b-d0a8aeac8e5d}</Project>
+      <Name>Server</Name>
+      <Private>True</Private>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Extentions\Economy\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

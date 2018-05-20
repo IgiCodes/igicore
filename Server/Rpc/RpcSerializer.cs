@@ -1,4 +1,4 @@
-﻿using IgiCore.Core.Rpc;
+﻿using IgiCore.SDK.Core.Rpc;
 using Newtonsoft.Json;
 
 namespace IgiCore.Server.Rpc

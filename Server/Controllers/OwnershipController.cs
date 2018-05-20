@@ -2,8 +2,7 @@ using System;
 using System.Data.Entity.Migrations;
 using System.Linq;
 using CitizenFX.Core;
-using IgiCore.Core.Models.Objects;
-using IgiCore.Core.Rpc;
+using IgiCore.SDK.Core.Rpc;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
 
@@ -11,7 +10,7 @@ namespace IgiCore.Server.Controllers
 {
     public static class OwnershipController
 	{
-		public static void TransferObject<T>([FromSource] Player player, string json) where T : class, IObject
+		public static void TransferObject<T>([FromSource] Player player, string json) where T : class
 		{
 			var response = RpcResponse<T>.Parse(json);
 
@@ -24,7 +23,7 @@ namespace IgiCore.Server.Controllers
 				.Trigger();
 		}
 
-		public static async void ClaimObject<T>([FromSource] Player player, string json) where T : class, IObject
+		public static async void ClaimObject<T>([FromSource] Player player, string json) where T : class
 		{
 			var response = RpcResponse<Guid>.Parse(json);
 
@@ -50,7 +49,7 @@ namespace IgiCore.Server.Controllers
 				.Trigger();
 		}
 
-		public static async void UnclaimObject<T>([FromSource] Player player, string json) where T : class, IObject
+		public static async void UnclaimObject<T>([FromSource] Player player, string json) where T : class
 		{
 			var response = RpcResponse<int>.Parse(json);
 

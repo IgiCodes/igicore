@@ -1,7 +1,7 @@
 .vs/
 packages/
-*/obj/
-*/bin/
+obj/
+bin/
 /*.pdb
 /*.xml
 /*.dll

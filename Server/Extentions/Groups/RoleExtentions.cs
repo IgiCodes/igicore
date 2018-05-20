@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using IgiCore.Core.Models.Groups;
+using IgiCore.Models.Groups;
 
 namespace IgiCore.Server.Extentions.Groups
 {

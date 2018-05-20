@@ -8,6 +8,6 @@ namespace IgiCore.Server
         public static string ServerName => API.GetConvar("sv_servername", "dev");
         public static int MaxCLients => API.GetConvarInt("sv_maxclients", 31);
         public static string LicenseKey => API.GetConvar("sv_licensekey", string.Empty);
-        public static string MySqlConnString => API.GetConvar("mysql_connection", string.Empty);
+        public static string MySqlConnString => API.GetConvar("mysql_connection", "server=harvest;port=3306;database=fivem;user id=root;password=password;charset=utf8");
     }
 }

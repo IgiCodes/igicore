@@ -1,16 +1,16 @@
 ﻿using System;
 using CitizenFX.Core;
-using IgiCore.Core.Rpc;
+using IgiCore.SDK.Core.Rpc;
 
 namespace IgiCore.Server.Rpc
 {
-	public class RpcRequest : Core.Rpc.RpcRequest
+	public class RpcRequest : SDK.Core.Rpc.RpcRequest
 	{
 		public RpcRequest(string @event, IRpcHandler handler, IRpcTrigger trigger, IRpcSerializer serializer) : base(@event, handler, trigger, serializer) { }
 
 		public RpcRequest Target(Player player)
 		{
-			this.Message.Target = player;
+			//this.Message.Target = player;
 
 			return this;
 		}

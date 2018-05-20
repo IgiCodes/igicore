@@ -1,12 +1,13 @@
 ﻿using System.Threading.Tasks;
-using IgiCore.Core.Models.Player;
 using IgiCore.Core.Services;
-using IgiCore.Server.Models.Player;
+using IgiCore.Models.Player;
 
 namespace IgiCore.Server.Services
 {
-    public abstract class ServerService : Service, IServerService
-    {
-        public virtual async Task<Character> OnCharacterCreate(Character character) => character;
-    }
+	public abstract class ServerService : Service, IServerService
+	{
+		public override async Task Initialize() => await Task.FromResult(0);
+
+		public virtual async Task<Character> OnCharacterCreate(Character character) => character;
+	}
 }

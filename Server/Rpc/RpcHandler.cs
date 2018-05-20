@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using IgiCore.Core.Rpc;
+using IgiCore.SDK.Core.Rpc;
 
 namespace IgiCore.Server.Rpc
 {

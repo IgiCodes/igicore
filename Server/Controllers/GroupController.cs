@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using IgiCore.Core.Models.Groups;
-using IgiCore.Core.Models.Player;
+using IgiCore.Models.Groups;
+using IgiCore.Models.Player;
 using IgiCore.Server.Extentions;
 using IgiCore.Server.Models.Player;
 

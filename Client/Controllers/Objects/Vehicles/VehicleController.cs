@@ -5,7 +5,6 @@ using IgiCore.Client.Controllers.Player;
 using IgiCore.Client.Extensions;
 using IgiCore.Client.Rpc;
 using IgiCore.Client.Services.Vehicle;
-using IgiCore.Core.Controllers;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Rpc;

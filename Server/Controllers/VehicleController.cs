@@ -5,7 +5,7 @@ using System.Linq;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
-using IgiCore.Core.Rpc;
+using IgiCore.SDK.Core.Rpc;
 using IgiCore.Server.Rpc;
 
 namespace IgiCore.Server.Controllers

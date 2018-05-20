@@ -1,8 +1,8 @@
 ﻿using System;
 using CitizenFX.Core;
-using IgiCore.Core.Models.Groups;
+using IgiCore.Models;
+using IgiCore.Models.Groups;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 
 namespace IgiCore.Core.Models.Economy
 {

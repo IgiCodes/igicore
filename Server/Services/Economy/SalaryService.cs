@@ -1,7 +1,9 @@
-﻿namespace IgiCore.Server.Services.Economy
+﻿using System.Threading.Tasks;
+
+namespace IgiCore.Server.Services.Economy
 {
 	public class SalaryService : ServerService
 	{
-		public override void Initialize() { }
+		public override async Task Initialize() => await Task.FromResult(0);
 	}
 }

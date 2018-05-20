@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using IgiCore.Core.Models.Economy;
-using IgiCore.Core.Models.Groups;
+using IgiCore.Models.Groups;
 
 namespace IgiCore.Server.Extentions.Economy
 {

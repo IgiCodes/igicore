@@ -1,30 +1,15 @@
 using System;
-using System.Diagnostics;
-using System.Threading.Tasks;
+using System.Linq;
+using System.Reflection;
 using CitizenFX.Core;
-using IgiCore.Client.Controllers;
-using IgiCore.Client.Controllers.Objects.Vehicles;
-using IgiCore.Client.Controllers.Player;
-using IgiCore.Client.Interface;
-using IgiCore.Client.Interface.Hud;
-using IgiCore.Client.Interface.Menu;
-using IgiCore.Client.Managers;
-using IgiCore.Client.Managers.World;
-using IgiCore.Client.Services;
-using IgiCore.Client.Services.AI;
-using IgiCore.Client.Services.Economy.Banking;
-using IgiCore.Client.Services.Economy.Business.Driving;
-using IgiCore.Client.Services.Player;
-using IgiCore.Client.Services.Vehicle;
-using IgiCore.Client.Services.World;
-using IgiCore.Core.Controllers;
+using IgiCore.SDK.Client;
+using IgiCore.SDK.Client.Rpc;
+using IgiCore.SDK.Core.Diagnostics;
 using JetBrains.Annotations;
-using Debug = CitizenFX.Core.Debug;
-using Screen = CitizenFX.Core.UI.Screen;
 
 namespace IgiCore.Client
 {
-	[PublicAPI]
+	[UsedImplicitly]
 	public class Client : BaseScript
 	{
 		/// <summary>
@@ -33,12 +18,8 @@ namespace IgiCore.Client
 		/// <value>
 		/// The singleton <see cref="Client"/> instance.
 		/// </value>
-		public static Client Instance { get; protected set; }
-
-		public ControllerRegistry Controllers { get; protected set; }
-		public ManagerRegistry Managers { get; protected set; }
-		public ServiceRegistry Services { get; protected set; }		
-
+		public static Client Instance { get; private set; }
+		
 		public EventHandlerDictionary Handlers => this.EventHandlers;
 
 		/// <summary>
@@ -48,65 +29,45 @@ namespace IgiCore.Client
 		public Client()
 		{
 			// -- INIT
-			Log("Init");
+			Debug.WriteLine("[CLIENT] Init");
 
 			// Singleton
 			Instance = this;
 
-			this.Controllers = new ControllerRegistry
+			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
-				new ClientController(),
-				new UserController(),
-				new CharacterController(),
-				new VehicleController(),
-			};
+				if (assembly.FullName.StartsWith("EntityFramework")) continue; // HACK: EF doesn't load properly
+				if (assembly.GetCustomAttribute<ClientPluginAttribute>() == null) continue;
 
-			this.Managers = new ManagerRegistry
-			{
-				new HudManager(), // Resets and hides all HUD elements
-				new MapManager(), // Loads IPLs and blips
-				new MenuManager() // Set initial menu options
-			};
+				Debug.WriteLine(assembly.GetName().Name);
 
-			this.Services = new ServiceRegistry
-			{
-				new VehicleService(), // Vehicle tracking service
-				new VehicleRollService(), // Disable rolling cars back over
-				new PlayerDeathService(), // Knock down players rather than death
-				new PlayerIdleService(), // Kick idle players
-				new AutosaveService(),
-				new PedFilterService(), // Block blacklisted peds
-				new AiPoliceService(), // Disable AI police
-				new PlayerIndicatorService(), // Show nearby players
-				new DateTimeService(), // Set the date and time
-				new BlackoutService(), // Allow city blackouts
-				new AtmService(), // Add ATMs
-                new BranchService(), // Add Bank Tellers
-				new DowntownCabService()
-			};
+				foreach (var type in assembly.GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Service))))
+				{
+					Debug.WriteLine("    " + type.FullName);
 
-			this.Services.Initialize(); // Attach handlers
+					var controller = (Service)Activator.CreateInstance(type, new Logger(), new EventsManager()); // TODO: Args - DI?
 
-			// -- SERVICE EVENTS
+					this.Tick += controller.Tick;
+				}
+			}
+		}
+	}
 
-			// Player Death Service
-			this.Services.First<PlayerDeathService>().OnDowned += (s, e) =>
-			{
-				UI.ShowNotification("Downed");
-				if (this.LocalPlayer.Character.Weapons.Current.Group != WeaponGroup.Unarmed) this.LocalPlayer.Character.Weapons.Remove(this.LocalPlayer.Character.Weapons.Current);
-			};
+	class EventsManager : IEventsManager
+	{
 
-			this.Services.First<PlayerDeathService>().OnRevived += (s, e) => Screen.ShowNotification("Revived");
+	}
 
-			this.Controllers.First<ClientController>().Startup();
+	class Logger : ILogger
+	{
+		public void Log(string message)
+		{
+			Debug.WriteLine($"{message}");
 		}
 
-		[Conditional("DEBUG")]
-		public static void Log(string message) => Debug.Write($"{DateTime.Now:s} [CLIENT]: {message}");
-
-		public void AttachTickHandler(Func<Task> task) => this.Tick += task;
-
-		public void DettachTickHandler(Func<Task> task) => this.Tick -= task;
-
+		public void Error(Exception exception)
+		{
+			Debug.WriteLine($"ERROR: {exception.Message}");
+		}
 	}
 }

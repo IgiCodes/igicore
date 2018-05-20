@@ -1,29 +1,36 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CitizenFX.Core;
+using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.Server.Commands;
+using IgiCore.Server.Storage.MySql;
 
 namespace IgiCore.Server.Services
 {
 	public class CommandService : ServerService
 	{
+		private readonly ILogger logger;
+
 		protected readonly List<Command> Commands = new List<Command>();
 
-		public CommandService()
+		public CommandService(ILogger logger)
 		{
+			this.logger = logger;
+
 			Rpc.Client
 				.Event("chatMessage")
 				.On(OnChatMessage);
 		}
 
-		public override void Initialize()
+		public override async Task Initialize()
 		{
 			Register(new GpsCommand());
 			Register(new ComponentCommand());
 			Register(new PropCommand());
 			Register(new CarCommand());
 			Register(new BikeCommand());
-			Register(new GroupCommand());
+			//Register(new GroupCommand());
 		}
 
 		public void Register(Command command)
@@ -45,11 +52,11 @@ namespace IgiCore.Server.Services
 
             if (command == null)
 			{
-				Server.Log($"Unknown command /{name}");
+				this.logger.Log($"Unknown command /{name}");
 				return;
 			}
 
-			Server.Log($"/{name} command called");
+			this.logger.Log($"/{name} command called");
 
 			await command.RunCommand(player, args);
 		}

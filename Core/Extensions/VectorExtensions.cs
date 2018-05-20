@@ -1,6 +1,6 @@
 ﻿using System;
 using CitizenFX.Core;
-using IgiCore.Core.Helpers;
+using IgiCore.SDK.Core.Helpers;
 
 namespace IgiCore.Core.Extensions
 {

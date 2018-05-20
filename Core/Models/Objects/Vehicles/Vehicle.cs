@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using CitizenFX.Core;
 using IgiCore.Core.Extensions;
+using IgiCore.Models.Audio;
 using Newtonsoft.Json;
 
 namespace IgiCore.Core.Models.Objects.Vehicles
@@ -71,7 +72,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public VehicleColor TrimColor { get; set; } = new VehicleColor();
         public VehicleWindowTint WindowTint { get; set; } = VehicleWindowTint.None;
         public VehicleLockStatus LockStatus { get; set; } = VehicleLockStatus.None;
-        public RadioStation RadioStation { get; set; } = RadioStation.RadioOff;
+        public IgiCore.Models.Audio.RadioStation RadioStation { get; set; } = IgiCore.Models.Audio.RadioStation.RadioOff;
         public VehicleClass Class { get; set; }
         public virtual List<VehicleExtra> Extras { get; set; } = new List<VehicleExtra>();
         public virtual List<VehicleWindow> Windows { get; set; } = new List<VehicleWindow>();

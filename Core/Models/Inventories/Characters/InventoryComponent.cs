@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using IgiCore.Core.Extensions;
-using IgiCore.Core.Models.Appearance;
+using IgiCore.Models.Appearance;
 
 namespace IgiCore.Core.Models.Inventories.Characters
 {

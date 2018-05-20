@@ -1,13 +1,10 @@
-﻿using System.Data.Entity;
-using IgiCore.Core.Models.Appearance;
-using IgiCore.Core.Models.Economy.Banking;
-using IgiCore.Core.Models.Groups;
-using IgiCore.Core.Models.Inventories.Characters;
-using IgiCore.Core.Models.Objects.Vehicles;
-using IgiCore.Core.Models.Player;
+﻿using System;
+using System.Data.Entity;
+using IgiCore.Models.Appearance;
+using IgiCore.Models.Groups;
+using IgiCore.Models.Player;
+using IgiCore.SDK.Server.Storage;
 using IgiCore.Server.Migrations;
-using IgiCore.Server.Models.Economy.Banking;
-using IgiCore.Server.Models.Player;
 using MySql.Data.Entity;
 
 namespace IgiCore.Server.Storage.MySql
@@ -26,18 +23,11 @@ namespace IgiCore.Server.Storage.MySql
 
         public DbSet<Style> Styles { get; set; }
 
-        public DbSet<Vehicle> Vehicles { get; set; }
-        public DbSet<Car> Cars { get; set; }
-        public DbSet<Bike> Bikes { get; set; }
+        //public DbSet<Vehicle> Vehicles { get; set; }
+        //public DbSet<Car> Cars { get; set; }
+        //public DbSet<Bike> Bikes { get; set; }
 
-        public DbSet<Inventory> Inventories { get; set; }
-
-        public DbSet<Bank> Banks { get; set; }
-        public DbSet<BankBranch> BankBranches { get; set; }
-        public DbSet<BankAtm> BankAtms { get; set; }
-        public DbSet<BankAccount> BankAccounts { get; set; }
-        public DbSet<BankAccountCard> BankAccountCards { get; set; }
-        public DbSet<BankAccountMember> BankAccountMembers { get; set; }
+        //public DbSet<Inventory> Inventories { get; set; }
 
         public DB() : base(Config.MySqlConnString)
         {
@@ -45,5 +35,27 @@ namespace IgiCore.Server.Storage.MySql
 
             //this.Database.Log = m => Server.Log(m);
         }
-    }
+
+		//protected override void OnModelCreating(DbModelBuilder modelBuilder)
+		//{
+		//	modelBuilder.Entity<Car>();
+
+		//	var entityMethod = typeof(DbModelBuilder).GetMethod("Entity");
+
+		//	foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+		//	{
+		//		var entityTypes = assembly
+		//			.GetTypes()
+		//			.Where(t =>
+		//				t.GetCustomAttributes(typeof(PersistentAttribute), inherit: true)
+		//					.Any());
+
+		//		foreach (var type in entityTypes)
+		//		{
+		//			entityMethod.MakeGenericMethod(type)
+		//				.Invoke(modelBuilder, new object[] { });
+		//		}
+		//	}
+		//}
+	}
 }
