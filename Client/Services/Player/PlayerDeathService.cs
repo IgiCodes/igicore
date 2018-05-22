@@ -110,7 +110,7 @@ namespace IgiCore.Client.Services.Player
 			Game.Player.Character.Ragdoll();
 			Game.Player.Character.IsInvincible = true;
 			Game.Player.CanControlRagdoll = true;
-			Game.Player.Character.Health = 1;
+			//Game.Player.Character.Health = 1; == Causing godmode.
 			Game.Player.WantedLevel = 0;
 		}
 
@@ -118,10 +118,10 @@ namespace IgiCore.Client.Services.Player
 		{
 			Game.Player.Character.Resurrect();
 
-			Game.Player.Character.Health = 1; // TODO?
+			Game.Player.Character.Health = 100; // TODO?
 
-			//Game.Player.ActiveCharacter.ResetVisibleDamage();
-			//Game.Player.ActiveCharacter.ClearBloodDamage();
+			Game.Player.ActiveCharacter.ResetVisibleDamage();
+			Game.Player.ActiveCharacter.ClearBloodDamage();
 
 			this.IsDowned = false;
 			this.DownedAt = null;
