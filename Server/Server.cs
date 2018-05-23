@@ -1,38 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Security;
-using System.Threading.Tasks;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
-using IgiCore.Core;
 using IgiCore.Core.Services;
-using IgiCore.SDK;
-using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Core.Rpc;
 using IgiCore.SDK.Server;
 using IgiCore.SDK.Server.Configuration;
-using IgiCore.SDK.Server.Rpc;
-using IgiCore.SDK.Server.Storage;
 using IgiCore.Server.Controllers;
 using IgiCore.Server.Diagnostics;
 using IgiCore.Server.Managers;
-using IgiCore.Server.Migrations;
+using IgiCore.Server.Plugins;
 using IgiCore.Server.Rpc;
-using IgiCore.Server.Services;
-using IgiCore.Server.Services.Economy;
-using IgiCore.Server.Storage.Contexts;
 using IgiCore.Server.Storage.MySql;
 using JetBrains.Annotations;
+using MySql.Data.EntityFramework;
+using Newtonsoft.Json;
+using SemVer;
 using SimpleInjector;
-using SimpleInjector.Lifestyles;
-using Debug = CitizenFX.Core.Debug;
-using MySql.Data.Entity;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
+using Client = IgiCore.Server.Rpc.Client;
+using Version = SemVer.Version;
 
 namespace IgiCore.Server
 {
@@ -61,7 +54,11 @@ namespace IgiCore.Server
 		{
 			// Singleton
 			Instance = this;
+			
+			//MySqlTrace.Switch.Level = SourceLevels.All;
+			//MySqlTrace.Listeners.Add(new ConsoleTraceListener());
 
+			//DbConfiguration.Loaded += (_, d) => d.AddDefaultResolver(new MySqlDependencyResolver());
 			DbConfiguration.SetConfiguration(new MySqlEFConfiguration());
 
 			using (var entities = new DB())
@@ -75,90 +72,105 @@ namespace IgiCore.Server
 			}
 
 
-
-			container = new Container();
-			container.Options.DefaultScopedLifestyle = new AsyncScopedLifestyle();
-
-			// Register DI types
-			container.Register<ILogger, Logger>();
-			container.RegisterInstance(typeof(IServerEventsManager), new ServerEventsManager());
-			container.RegisterInstance(typeof(IClientEventsManager), new ClientEventsManager());
-			container.RegisterInstance(typeof(IConfiguration), new ServerConfiguration { DatabaseConnection = Config.MySqlConnString });
-
-			container.Verify();
-
-			var a = typeof(IgiCore.Models.Position);
-			var b = typeof(ILogger);
-
-			//var pluginPaths = Directory.EnumerateFiles(@"D:\Desktop\FiveM\server\server-data\resources\igicore\Plugins\Banking\bin\Debug", "Banking.dll", SearchOption.AllDirectories);
-			var pluginPaths = new[] { @"Banking.net" };
-
-			//var alreadyLoaded = AppDomain.CurrentDomain.GetAssemblies();
-			//foreach (var file in alreadyLoaded)
-			//{
-			//	Log(file.FullName);
-			//}
-
-			//AppDomain.CurrentDomain.AssemblyLoad += (sender, args) =>
-			//{
-			//	Log($"Loading: {args.LoadedAssembly.FullName}");
-			//	Log($"Loading: {args.LoadedAssembly.Modules.First().Name}");
-
-
-			//};
-			//AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
-			//{
-			//	Log($"Resolving: {args.Name}");
-			//	return Assembly.Load(args.Name);
-			//};
-
-			//var module = ModuleDefinition.ReadModule(@"resources\igicore\" + pluginPaths[0] + ".dll");
-			////Log(module.Name);
-
-			//foreach (var assemblyReference in module.AssemblyReferences)
-			//{
-			//	Log(assemblyReference.Name);
-			//}
-
-			//Log("-");
-
-			//foreach (var moduleReference in module.)
-			//{
-			//	Log(moduleReference.Name);
-			//}
-
-
-			
-
-
-
-			//return;
-
-			foreach (var file in pluginPaths)
+			var serverEventsManager = new ServerEventsManager();
+			var clientEventsManager = new ClientEventsManager();
+			var serverConfiguration = new ServerConfiguration
 			{
-				AppDomain.CurrentDomain.Load(File.ReadAllBytes(@"D:\Desktop\FiveM\server\server-data\resources\igicore\Plugins\Banking\Banking.Core.net.dll"));
-				AppDomain.CurrentDomain.Load(File.ReadAllBytes(@"D:\Desktop\FiveM\server\server-data\resources\igicore\Plugins\Banking\Banking.Server.net.dll"));
+				DatabaseConnection = "Host=harvest;Port=3306;Database=fivem;User Id=root;Password=password;CharSet=utf8mb4;SSL Mode=None"
+			};
 
-				var assembly = Assembly.LoadFrom(@"D:\Desktop\FiveM\server\server-data\resources\igicore\Plugins\Banking\Banking.Server.net.dll");
-				//var assembly = Assembly.Load(file);
-				var assemblyTypes = assembly.GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(ServerController))).ToArray();
-				//var module = ModuleDefinition.ReadModule(file);
 
-				Log(assemblyTypes.Length.ToString());
-				Log(assemblyTypes[0].FullName);
 
-				//Activator.CreateInstance(assemblyTypes[0], null, null, null, null);
+			Environment.CurrentDirectory = Path.GetDirectoryName(ConfigurationManager.ResolveCurrentPath("igicore.yml") ?? AppDomain.CurrentDomain.BaseDirectory);
+		
+			var pluginPath = Path.Combine(Environment.CurrentDirectory ?? ".", "Plugins");
 
-				foreach (var type in assemblyTypes)
+			if (!Directory.Exists(pluginPath)) throw new DirectoryNotFoundException($"Unable to find plugins directory at {pluginPath}");
+
+			Deserializer deserializer = new DeserializerBuilder()
+				.WithNamingConvention(new CamelCaseNamingConvention())
+				//.IgnoreUnmatchedProperties()
+				.Build();
+
+			var pluginDefinitions = new List<ServerPluginDefinition>();
+
+			foreach (var directory in Directory.EnumerateDirectories(pluginPath, "*", SearchOption.TopDirectoryOnly))
+			{
+				var definitionFile = Path.Combine(directory, "plugin.yml");
+				if (!File.Exists(definitionFile)) throw new FileNotFoundException($"Unable to find plugin definition at {definitionFile}");
+				
+				var definition = deserializer.Deserialize<PluginDefinition>(File.ReadAllText(definitionFile));
+				
+				var plugin = new ServerPluginDefinition
 				{
-					this.Controllers.Add((ServerController)Activator.CreateInstance(assemblyTypes[0], new Logger(), new ServerEventsManager(), new ClientEventsManager(), new ServerConfiguration { DatabaseConnection = Config.MySqlConnString }));
-					//this.Controllers.Add((ServerController)container.GetInstance(type));
+					Path = directory,
+					Definition = definition
+				};
+
+				pluginDefinitions.Add(plugin);
+			}
+			
+			foreach (var plugin in pluginDefinitions)
+			{
+				foreach (var dependency in plugin.Definition.Server.Dependencies)
+				{
+					var node = pluginDefinitions.FirstOrDefault(p => p.Definition.Name == dependency.Key);
+					if (node == null) throw new Exception($"Unable to find dependency {dependency} required by {plugin.Definition.Name}");
+
+					var version = new Version(node.Definition.Version);
+					var required = new Range(dependency.Value);
+
+					if (!required.IsSatisfied(version)) throw new VersionNotFoundException($"{plugin.Definition.Name}@{plugin.Definition.Version} requires {node.Definition.Name}@{dependency.Value} but {node.Definition.Name}@{node.Definition.Version} was found");
+
+					plugin.Definition.Server.DependencyNodes.Add(node);
 				}
 			}
 
-			Log(this.Controllers.Count.ToString());
+			//Log($"{JsonConvert.SerializeObject(pluginDefinitions, Formatting.Indented)}");
 
-			//return;
+			pluginDefinitions = Graph.TopologicalSort(pluginDefinitions);
+			
+			Log("Loading plugins:");
+
+			foreach (var plugin in pluginDefinitions)
+			{
+				Log($"Loading {plugin.Definition.Name} binaries:");
+
+				foreach (var includeName in plugin.Definition.Server.Include)
+				{
+					var includeFile = Path.Combine(plugin.Path, $"{includeName}.net.dll");
+
+					if (!File.Exists(includeFile)) throw new FileNotFoundException(includeFile);
+
+					Log($"  Include: {includeFile.Substring(Environment.CurrentDirectory.Length)}");
+					AppDomain.CurrentDomain.Load(File.ReadAllBytes(includeFile));
+				}
+
+				foreach (var mainName in plugin.Definition.Server.Main)
+				{
+					var mainFile = Path.Combine(plugin.Path, $"{mainName}.net.dll");
+
+					if (!File.Exists(mainFile)) throw new FileNotFoundException(mainFile);
+
+					Log($"  Main: {mainFile.Substring(Environment.CurrentDirectory.Length)}");
+
+					var assembly = Assembly.LoadFrom(mainFile);
+					var assemblyTypes = assembly.GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(ServerController)));
+
+					foreach (var type in assemblyTypes)
+					{
+						Log($"    Controller: {mainFile.Substring(Environment.CurrentDirectory.Length)}");
+
+						this.Controllers.Add((ServerController)Activator.CreateInstance(type, new Logger(), serverEventsManager, clientEventsManager, serverConfiguration));
+					}
+				}
+			}
+
+			Log($"Finished loading plugins, {this.Controllers.Count} controllers created");
+
+			return;
+
+
 
 			Db = new DB();
 
@@ -234,8 +246,8 @@ namespace IgiCore.Server
 			//Client.Event(RpcEvents.BikeClaim).On(OwnershipController.ClaimObject<Bike>);
 			//Client.Event(RpcEvents.BikeUnclaim).On(OwnershipController.UnclaimObject<Bike>);
 
-			API.SetGameType("Roleplay");
-			API.SetMapName("Los Santos");
+			//API.SetGameType("Roleplay");
+			//API.SetMapName("Los Santos");
 
 			//Db.Banks.AddOrUpdate(
 			//    new Bank
@@ -285,6 +297,6 @@ namespace IgiCore.Server
 		}
 
 		[Conditional("DEBUG")]
-		public static void Log(string message) => Debug.WriteLine($"{DateTime.Now:s} [SERVER]: {message}");
+		public static void Log(string message) => Console.WriteLine($"{DateTime.Now:s} {message}");
 	}
 }

@@ -39,4 +39,6 @@ This resource currently replaces *all* stock server resources; make sure you rem
 
 6. Edit ``igicore.cfg`` with your database connection information as needed.
 
-Note: You may need to manually preconfigure your MySQL server to default the character set to Unicode. For MariaDB add ``--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci`` to the server arguments.
+Note: For full Unicode support you will need to manually preconfigure your MySQL server's default character set. For MySQL/MariaDB add ``--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_520_ci`` to the server arguments before the database is created.
+
+Add-Migration -Name Init -ConnectionString "Host=harvest;Port=3306;Database=fivem;User Id=root;Password=password;CharSet=utf8mb4;SSL Mode=None" -ConnectionProviderName MySql.Data.MySqlClient

@@ -1,5 +1,5 @@
 ﻿using System.Data.Entity;
-using MySql.Data.Entity;
+using MySql.Data.EntityFramework;
 
 namespace IgiCore.Server.Storage.Contexts
 {

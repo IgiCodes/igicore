@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
+using MySql.Data.MySqlClient;
 
 namespace IgiCore.Models
 {
