@@ -22,10 +22,24 @@ namespace IgiCore.Client.Services.Vehicle
 
 		public override async Task Tick()
 		{
+			CitizenFX.Core.Vehicle vehicle = Game.PlayerPed.CurrentVehicle;
+
+			if (Input.Input.IsControlJustPressed(Control.PhoneUp) && Game.PlayerPed.IsInVehicle())
+			{
+				TaskSequence ts = new TaskSequence();
+				ts.AddTask.PlayAnimation("veh@std@ds@base", API.GetFollowVehicleCamViewMode() == 4 ? "pov_start_engine" : "start_engine");
+				ts.Close();
+				Game.PlayerPed.Task.PerformSequence(ts);
+				vehicle.ToggleEngine(!vehicle.IsEngineRunning, false, true);
+				//vehicle.IsEngineRunning = !vehicle.IsEngineRunning;
+			}
+
 			await Update();
 			await Save();
 
 			await BaseScript.Delay(1000);
+
+
 		}
 
 		private async Task Update()

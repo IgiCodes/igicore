@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core;
@@ -18,10 +19,17 @@ namespace IgiCore.Server.Commands
 		public override async Task RunCommand(Player player, List<string> args)
 		{
 			Tuple<Vector3, float> charPos = await player.Event(RpcEvents.GetCharacterPosition).Request<Vector3, float>();
+			VehicleHash carName = VehicleHash.Elegy;
+			var dict = Enum.GetValues(typeof(VehicleHash))
+				.Cast<VehicleHash>()
+				.ToDictionary(t => (uint)t, t => t.ToString().ToLower());
+			if (args.FirstOrDefault() != null) carName = dict.Where(d => d.Value == args[0].ToLower()).Select(d => d.Key).Cast<VehicleHash>().FirstOrDefault();
+			if (carName == 0) carName = VehicleHash.Elegy;
+			Server.Log(carName.ToString());
 			Car car = new Car
 			{
 				Id = GuidGenerator.GenerateTimeBasedGuid(),
-				Hash = (uint)VehicleHash.Elegy,
+				Hash = (uint)carName,
 				Position = charPos.Item1.GetPositionInFrontOfPed(charPos.Item2, 10f),
 				PrimaryColor = new VehicleColor
 				{

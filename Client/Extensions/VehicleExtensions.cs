@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using IgiCore.Core.Models;
+using CitizenFX.Core.Native;
 using IgiCore.Core.Models.Objects.Vehicles;
 using Model = CitizenFX.Core.Model;
 using RadioStation = CitizenFX.Core.RadioStation;
@@ -62,16 +61,16 @@ namespace IgiCore.Client.Extensions
 			citizenVehicle.Mods.DashboardColor = (VehicleColor)vehicle.DashboardColor;
 			citizenVehicle.Mods.NeonLightsColor = vehicle.NeonColor;
 
-			//citizenVehicle.Mods.SetNeonLightsOn(VehicleNeonLight.Back, vehicle.NeonPositions.HasFlag(VehicleNeonPositions.Back));
-			//citizenVehicle.Mods.SetNeonLightsOn(VehicleNeonLight.Front, vehicle.NeonPositions.HasFlag(VehicleNeonPositions.Front));
-			//citizenVehicle.Mods.SetNeonLightsOn(VehicleNeonLight.Left, vehicle.NeonPositions.HasFlag(VehicleNeonPositions.Left));
-			//citizenVehicle.Mods.SetNeonLightsOn(VehicleNeonLight.Right, vehicle.NeonPositions.HasFlag(VehicleNeonPositions.Right));
+			citizenVehicle.Mods.SetNeonLightsOn(VehicleNeonLight.Back, vehicle.NeonPositions.HasFlag(VehicleNeonPositions.Back));
+			citizenVehicle.Mods.SetNeonLightsOn(VehicleNeonLight.Front, vehicle.NeonPositions.HasFlag(VehicleNeonPositions.Front));
+			citizenVehicle.Mods.SetNeonLightsOn(VehicleNeonLight.Left, vehicle.NeonPositions.HasFlag(VehicleNeonPositions.Left));
+			citizenVehicle.Mods.SetNeonLightsOn(VehicleNeonLight.Right, vehicle.NeonPositions.HasFlag(VehicleNeonPositions.Right));
 
 			citizenVehicle.Mods.WindowTint = (VehicleWindowTint)(int)vehicle.WindowTint;
 			citizenVehicle.LockStatus = (VehicleLockStatus)(int)vehicle.LockStatus;
 			citizenVehicle.RadioStation = (RadioStation)(int)vehicle.RadioStation;
-			//citizenVehicle.ClassType = (CitizenFX.Core.VehicleClass)(int)vehicle.Class;
-			citizenVehicle.Heading = vehicle.Heading;
+
+			//TODO: Set vehicle Extras/Seats/Doors/Windows/Wheels/etc
 
 			return citizenVehicle;
 		}
@@ -80,17 +79,17 @@ namespace IgiCore.Client.Extensions
 		{
 			if (id == default(Guid)) id = Guid.NewGuid();
 
-			//List<VehicleExtra> vehicleExtras = new List<VehicleExtra>();
-			//for (int i = 0; i < 100; i++)
-			//{
-			//	if (vehicle.ExtraExists(i)) vehicleExtras.Add(new VehicleExtra { Index = i, IsOn = vehicle.IsExtraOn(i), Id = id });
-			//}
+			List<VehicleExtra> vehicleExtras = new List<VehicleExtra>();
+			for (int i = 0; i < 100; i++)
+			{
+				if (vehicle.ExtraExists(i)) vehicleExtras.Add(new VehicleExtra { Index = i, IsOn = vehicle.IsExtraOn(i), Id = id });
+			}
 
 			VehicleNeonPositions neonPositions = VehicleNeonPositions.None;
-			if (vehicle.Mods.HasNeonLight(VehicleNeonLight.Back)) neonPositions |= VehicleNeonPositions.Back;
-			if (vehicle.Mods.HasNeonLight(VehicleNeonLight.Front)) neonPositions |= VehicleNeonPositions.Front;
-			if (vehicle.Mods.HasNeonLight(VehicleNeonLight.Right)) neonPositions |= VehicleNeonPositions.Right;
-			if (vehicle.Mods.HasNeonLight(VehicleNeonLight.Left)) neonPositions |= VehicleNeonPositions.Left;
+			if (vehicle.Mods.IsNeonLightsOn(VehicleNeonLight.Back)) neonPositions |= VehicleNeonPositions.Back;
+			if (vehicle.Mods.IsNeonLightsOn(VehicleNeonLight.Front)) neonPositions |= VehicleNeonPositions.Front;
+			if (vehicle.Mods.IsNeonLightsOn(VehicleNeonLight.Right)) neonPositions |= VehicleNeonPositions.Right;
+			if (vehicle.Mods.IsNeonLightsOn(VehicleNeonLight.Left)) neonPositions |= VehicleNeonPositions.Left;
 
 			return new Core.Models.Objects.Vehicles.Vehicle
 			{
@@ -136,7 +135,7 @@ namespace IgiCore.Client.Extensions
 				IsFrontBumperBrokenOff = vehicle.IsFrontBumperBrokenOff,
 				IsTaxiLightOn = vehicle.IsTaxiLightOn,
 				IsSearchLightOn = vehicle.IsSearchLightOn,
-				IsInteriorLightOn = vehicle.IsInteriorLightOn,
+				//IsInteriorLightOn = vehicle.IsInteriorLightOn,  // < THIS WILL CRASH THE GAME BECAUSE FUCK YOU THAT'S WHY!
 				IsLightsOn = vehicle.AreLightsOn,
 				IsHighBeamsOn = vehicle.AreHighBeamsOn,
 				IsEngineRunning = vehicle.IsEngineRunning,
@@ -144,8 +143,10 @@ namespace IgiCore.Client.Extensions
 				IsAlarmed = vehicle.IsAlarmSet,
 				IsAlarmSounding = vehicle.IsAlarmSounding,
 				LicensePlate = vehicle.Mods.LicensePlate,
-				//Extras = vehicleExtras
+				Extras = vehicleExtras
 			};
 		}
+
+		public static void ToggleEngine(this Vehicle vehicle, bool value, bool instant, bool otherwise) => API.SetVehicleEngineOn(vehicle.Handle, value, instant, otherwise);
 	}
 }
