@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace IgiCore.Core.Extensions
+namespace IgiCore.SDK.Core.Exceptions
 {
 	public static class GuidGenerator
 	{

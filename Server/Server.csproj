@@ -125,10 +125,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{ef2c3a9f-8cbb-42e3-b872-3a83c4a3782e}</Project>
-      <Name>IgiCore.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
       <Name>IgiCore.Models</Name>

@@ -44,6 +44,7 @@
     <Compile Include="Client.cs" />
     <Compile Include="Diagnostics\ILogger.cs" />
     <Compile Include="Exceptions\GroupException.cs" />
+    <Compile Include="Exceptions\Guid.cs" />
     <Compile Include="Exceptions\ModelException.cs" />
     <Compile Include="Helpers\MathHelpers.cs" />
     <Compile Include="IControllerConfiguration.cs" />
