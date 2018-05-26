@@ -4,21 +4,23 @@ using System.Data.Entity;
 using System.Linq;
 using Banking.Core.Models;
 using IgiCore.Models.Player;
+using IgiCore.SDK.Core;
 using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Server;
-using IgiCore.SDK.Server.Configuration;
 using IgiCore.SDK.Server.Rpc;
 
 namespace Banking.Server
 {
-	public class BankingController : ServerController
+	public class BankingController : ConfigurableController<BankingConfiguration>
 	{
-		public BankingController(ILogger logger, IServerEventsManager serverEvents, IClientEventsManager clientEvents, IConfiguration configuration) : base(logger, serverEvents, clientEvents, configuration)
+		public BankingController(ILogger logger, IEventsManager events, BankingConfiguration configuration) : base(logger, events, configuration)
 		{
-			this.ServerEvents.On("character:create", new Action<Character>(OnCharacterCreate));
+			this.Logger.Log(this.Configuration.Test);
 
-			//clientEvents.On<Guid, Guid, double>("igi:bank:atm:withdraw", AtmWithdraw);
+			this.Events.Event("character:create").On<Character>(OnCharacterCreate);
+			this.Events.Event("igi:bank:atm:withdraw").On<Guid, Guid, double>(AtmWithdraw);
 
+			// Seed
 			using (var context = new BankingContext())
 			{
 				if (context.Banks.Any()) return;
@@ -33,7 +35,7 @@ namespace Banking.Server
 			}
 		}
 
-		public async void OnCharacterCreate(Character character)
+		public async void OnCharacterCreate(Client client, Character character)
 		{
 			using (var context = new BankingContext())
 			{
@@ -50,7 +52,7 @@ namespace Banking.Server
 					{
 						new BankAccountMember
 						{
-							//Member = character
+							Member = character
 						}
 					}
 				};
@@ -59,11 +61,11 @@ namespace Banking.Server
 
 				await context.SaveChangesAsync();
 
-				this.ServerEvents.Trigger("bank:account:created", character, account);
+				//this.Events.Trigger("bank:account:created", character, account);
 			}
 		}
 
-		public async void AtmWithdraw(ClientEvent client, Guid atmId, Guid memberId, double amount)
+		public async void AtmWithdraw(Client client, Guid atmId, Guid memberId, double amount)
 		{
 			try
 			{

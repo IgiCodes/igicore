@@ -65,11 +65,12 @@
   <ItemGroup>
     <Compile Include="Configuration\IConfiguration.cs" />
     <Compile Include="Configuration\ServerConfiguration.cs" />
+    <Compile Include="ConfigurableController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\ClientEvent.cs" />
     <Compile Include="Rpc\IClientEventsManager.cs" />
-    <Compile Include="Rpc\IServerEventsManager.cs" />
-    <Compile Include="ServerController.cs" />
+    <Compile Include="Rpc\IEventsManager.cs" />
+    <Compile Include="Controller.cs" />
     <Compile Include="ServerPluginAttribute.cs" />
     <Compile Include="Storage\Contexts\EFContext.cs" />
     <Compile Include="Storage\IStorageRegistry.cs" />
@@ -84,7 +85,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

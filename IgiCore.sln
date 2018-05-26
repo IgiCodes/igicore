@@ -31,6 +31,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Plugins\Banking\C
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Banking", "Banking", "{359C4D04-4FBD-4B24-A1E1-EED791A7279B}"
+	ProjectSection(SolutionItems) = preProject
+		Plugins\Banking\plugin.yml = Plugins\Banking\plugin.yml
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Plugins\Banking\Server\Server.csproj", "{6CFCA03A-50EF-42A3-A4BA-82BB2DB8DFD2}"
 EndProject

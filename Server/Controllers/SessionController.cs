@@ -1,65 +1,75 @@
 ﻿using System;
-using System.Data.Entity.Migrations;
-using System.Data.Entity.Validation;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using CitizenFX.Core;
-using IgiCore.Core.Extensions;
-using IgiCore.Models.Player;
+using CitizenFX.Core.Native;
+using IgiCore.SDK.Core.Diagnostics;
+using IgiCore.SDK.Server;
+using IgiCore.Server.Events;
 
 namespace IgiCore.Server.Controllers
 {
-	public class SessionController
+	public class SessionController : Controller
 	{
-		public static async Task<Session> Create(CitizenFX.Core.Player player, User user)
+		private readonly List<Action> callbacks = new List<Action>();
+		
+		public Player CurrentHost { get; private set; }
+
+		public SessionController(ILogger logger, EventsManager events) : base(logger, events)
 		{
-			var session = new Session
+			API.EnableEnhancedHostSupport(true);
+
+			//events.Event("hostingSession").On(OnHostingSession);
+			//events.Event("HostedSession").On(OnHostedSession);
+		}
+		
+		private async void OnHostingSession([FromSource] Player player)
+		{
+			if (this.CurrentHost != null)
 			{
-				Id = GuidGenerator.GenerateTimeBasedGuid(),
-				User = user,
-				IpAddress = player.EndPoint,
-				Connected = DateTime.UtcNow
-			};
+				player.TriggerEvent("sessionHostResult", "wait");
 
-			Server.Db.Sessions.Add(session);
+				this.callbacks.Add(() => player.TriggerEvent("sessionHostResult", "free"));
 
-			try { 
-				await Server.Db.SaveChangesAsync();
-			}
-			catch (DbEntityValidationException ex)
-			{
-				foreach (var eve in ex.EntityValidationErrors)
-				{
-					Debug.WriteLine("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
-
-					foreach (var ve in eve.ValidationErrors)
-					{
-						Debug.WriteLine("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
-					}
-				}
-
-				//throw;
+				return;
 			}
 
-			return session;
+			string hostId;
+
+			try
+			{
+				hostId = API.GetHostId();
+			}
+			catch (NullReferenceException)
+			{
+				hostId = null;
+			}
+
+			if (!string.IsNullOrEmpty(hostId) && API.GetPlayerLastMsg(API.GetHostId()) < 1000)
+			{
+				player.TriggerEvent("sessionHostResult", "conflict");
+
+				return;
+			}
+
+			this.callbacks.Clear();
+			this.CurrentHost = player;
+
+			this.Logger.Log($"Game host is now {this.CurrentHost.Handle} \"{this.CurrentHost.Name}\"");
+
+			player.TriggerEvent("sessionHostResult", "go");
+
+			await BaseScript.Delay(5000);
+
+			this.callbacks.ForEach(c => c());
+			this.CurrentHost = null;
 		}
 
-		public static async Task<Session> End(User user, string disconnectMessage)
+		private void OnHostedSession([FromSource] Player player)
 		{
-			var session = Server.Db.Sessions.Where(s => s.User.Id == user.Id && s.Disconnected == null && s.DisconnectReason == null).OrderBy(s => s.Connected).FirstOrDefault();
+			if (this.CurrentHost != null && this.CurrentHost != player) return;
 
-			if (session == null)
-			{
-				Server.Log("ERROR: No session to end");
-				return null;
-			}
-
-			session.Disconnected = DateTime.UtcNow;
-			session.DisconnectReason = disconnectMessage;
-			
-			await Server.Db.SaveChangesAsync();
-
-			return session;
+			this.callbacks.ForEach(c => c());
+			this.CurrentHost = null;
 		}
 	}
 }

@@ -1,0 +1,8 @@
+# Display options
+display:
+  name: igicore
+  game: Roleplay
+  map: Los Santos
+
+log:
+  level: Debug

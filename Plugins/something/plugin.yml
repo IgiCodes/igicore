@@ -1,0 +1,9 @@
+name: something
+version: 1.0.0
+type: library
+
+server:
+  include:
+  - Empty
+  dependencies:
+    extra-libs: ^1.0.0

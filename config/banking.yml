@@ -1,0 +1,34 @@
+test: example
+
+# Banks:
+# - Name: Fleeca
+
+  # Branches:
+  # - Name: Legion Square
+    # Heading: 336
+    # Location:
+      # X: 149.7
+      # Y: -1042.2
+      # Z: 28.33
+
+  # ATMs:
+  # - Name: FLCA LSS 0001
+    # Hash: 506770882
+    # Location:
+      # X: 147.4731
+      # Y: -1036.218
+      # Z: 28.36778
+
+  # - Name: FLCA LSS 0002
+    # Hash: 506770882
+    # Location:
+      # X: 145.8392
+      # Y: -1035.625
+      # Z: 28.36778
+
+  # - Name: Standup ATM 0001
+    # Hash: -870868698
+    # Location:
+      # X: 228.0324
+      # Y: 337.8501
+      # Z: 104.5013

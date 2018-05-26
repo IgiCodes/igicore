@@ -1,18 +1,28 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace IgiCore.Server.Plugins
 {
+	[UsedImplicitly]
 	public class PluginDefinition
 	{
 		public string Name { get; set; }
-		public string Version { get; set; }
-		//public string Description { get; set; }
-		//public string Author { get; set; }
-		//public string License { get; set; }
-		//public string Website { get; set; }
-		//public RepositoryDefinition Repository { get; set; } = new RepositoryDefinition();
+		public string Version { get; set; } = "1.0.0";
+		public PluginTypes Type { get; set; } = PluginTypes.Plugin;
+		public string Description { get; set; }
+		public string Author { get; set; }
+		public string License { get; set; }
+		public string Website { get; set; }
+		public RepositoryDefinition Repository { get; set; } = new RepositoryDefinition();
 		public ComponentDefinition Server { get; set; } = new ComponentDefinition();
 		public ComponentDefinition Client { get; set; } = new ComponentDefinition();
+	}
+
+	public enum PluginTypes
+	{
+		Plugin,
+		Library,
+		LoadingScreen
 	}
 
 	public class RepositoryDefinition

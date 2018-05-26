@@ -1,19 +1,20 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using IgiCore.SDK.Server.Configuration;
+using JetBrains.Annotations;
 using MySql.Data.EntityFramework;
 
 namespace IgiCore.SDK.Server.Storage.Contexts
 {
+	[PublicAPI]
 	[DbConfigurationType(typeof(MySqlEFConfiguration))]
-	public abstract class EFContext<T> : DbContext where T : DbContext
+	public abstract class EFContext : DbContext//<T> : DbContext where T : DbContext
 	{
 		protected EFContext() : base(ServerConfiguration.DatabaseConnection)
 		{
-			Database.SetInitializer(new MigrateDatabaseToLatestVersion<T, Configuration<T>>());
+			//Database.SetInitializer(new MigrateDatabaseToLatestVersion<T, Configuration<T>>());
 		}
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
@@ -25,12 +26,12 @@ namespace IgiCore.SDK.Server.Storage.Contexts
 		}
 	}
 
-	internal class Configuration<T> : DbMigrationsConfiguration<T> where T : DbContext
-	{
-		public Configuration()
-		{
-			this.AutomaticMigrationDataLossAllowed = true;
-			this.AutomaticMigrationsEnabled = true;
-		}
-	}
+	//internal class Configuration<T> : DbMigrationsConfiguration<T> where T : DbContext
+	//{
+	//	public Configuration()
+	//	{
+	//		this.AutomaticMigrationDataLossAllowed = true;
+	//		this.AutomaticMigrationsEnabled = true;
+	//	}
+	//}
 }

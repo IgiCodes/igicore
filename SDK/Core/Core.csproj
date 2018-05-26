@@ -41,12 +41,15 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Client.cs" />
     <Compile Include="Diagnostics\ILogger.cs" />
     <Compile Include="Exceptions\GroupException.cs" />
     <Compile Include="Exceptions\ModelException.cs" />
     <Compile Include="Helpers\MathHelpers.cs" />
+    <Compile Include="IControllerConfiguration.cs" />
     <Compile Include="PluginAttribute.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rpc\IConfigurableController.cs" />
     <Compile Include="Rpc\IRpcHandler.cs" />
     <Compile Include="Rpc\IRpcSerializer.cs" />
     <Compile Include="Rpc\IRpcTrigger.cs" />

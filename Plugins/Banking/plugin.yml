@@ -1,5 +1,6 @@
 name: banking
 version: 1.0.0
+type: plugin
 
 server:
   main:

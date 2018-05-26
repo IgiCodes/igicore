@@ -1,0 +1,7 @@
+# MySQL database connection
+host: harvest
+port: 3306
+database: fivem
+user: root
+password: password
+charset: utf8mb4

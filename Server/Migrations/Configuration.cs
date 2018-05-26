@@ -1,14 +1,13 @@
 using System.Data.Entity.Migrations;
-using IgiCore.Server.Storage.MySql;
+using IgiCore.Server.Storage;
 
 namespace IgiCore.Server.Migrations
 {
-	internal sealed class Configuration : DbMigrationsConfiguration<DB>
+	internal sealed class Configuration : DbMigrationsConfiguration<StorageContext>
 	{
 		public Configuration()
 		{
-			this.AutomaticMigrationDataLossAllowed = true;
-			this.AutomaticMigrationsEnabled = true; ;
+			this.AutomaticMigrationsEnabled = true;
 		}
     }
 }

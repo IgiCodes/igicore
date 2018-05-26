@@ -1,17 +1,11 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Data.Entity;
-using System.Linq;
+﻿using System.Data.Entity;
 using Banking.Core.Models;
 using Banking.Server.Migrations;
-using IgiCore.Models.Player;
 using IgiCore.SDK.Server.Storage.Contexts;
-using MySql.Data.EntityFramework;
 
 namespace Banking.Server
 {
-	[DbConfigurationType(typeof(MySqlEFConfiguration))]
-	public class BankingContext : DbContext//EFContext<BankingContext>
+	public class BankingContext : EFContext
 	{
 		public virtual DbSet<Bank> Banks { get; set; }
 		public virtual DbSet<BankBranch> BankBranches { get; set; }
@@ -20,19 +14,9 @@ namespace Banking.Server
 		public virtual DbSet<BankAccountCard> BankAccountCards { get; set; }
 		public virtual DbSet<BankAccountMember> BankAccountMembers { get; set; }
 
-		public BankingContext() : base("server=harvest;Port=3306;Database=fivem;User Id=root;Password=password;CharSet=utf8mb4;SSL Mode=None")
+		public BankingContext()
 		{
-			Database.SetInitializer(new MigrateDatabaseToLatestVersion<BankingContext, Migrations.Configuration>());
-			//Database.SetInitializer<BankingContext>(null);
+			Database.SetInitializer(new MigrateDatabaseToLatestVersion<BankingContext, Configuration>());
 		}
-
-		protected override void OnModelCreating(DbModelBuilder modelBuilder)
-		{
-			modelBuilder
-				.Properties()
-				.Where(x => x.PropertyType == typeof(string) && !x.GetCustomAttributes(false).OfType<ColumnAttribute>().Any(q => q.TypeName != null && q.TypeName.Equals("varchar", StringComparison.InvariantCultureIgnoreCase)))
-				.Configure(c => c.HasColumnType("varchar"));
-		}
-
 	}
 }

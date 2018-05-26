@@ -11,7 +11,7 @@ namespace ServerDebug
 	{
 		public static void Main(string[] args)
 		{
-			var s = new Server();
+			var s = new IgiCore.Server.Program();
 		}
 	}
 }
