@@ -3,7 +3,6 @@ description 'IgiCore Framework'
 version '0.0.1'
 
 server_scripts {
-	'IgiCore.Core.net.dll', -- HACK: Needed?
 	'IgiCore.Server.net.dll',
 }
 
@@ -15,7 +14,6 @@ client_scripts {
 }
 
 files {
-	'IgiCore.Core.net.dll',
 	'IgiCore.Models.net.dll',
 	'IgiCore.SDK.Core.net.dll',
 	'IgiCore.SDK.Client.net.dll',
