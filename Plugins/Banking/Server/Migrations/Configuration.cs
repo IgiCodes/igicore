@@ -1,4 +1,7 @@
+using System;
 using System.Data.Entity.Migrations;
+using System.Linq;
+using Banking.Core.Models;
 
 namespace Banking.Server.Migrations
 {
@@ -11,10 +14,15 @@ namespace Banking.Server.Migrations
 
         protected override void Seed(BankingContext context)
         {
-            //  This method will be called after migrating to the latest version.
+			if (context.Banks.Any()) return;
 
-            //  You can use the DbSet<T>.AddOrUpdate() helper extension method 
-            //  to avoid creating duplicate seed data.
-        }
+	        context.Banks.Add(new Bank
+	        {
+		        Id = Guid.NewGuid(),
+		        Name = "Example Bank"
+	        });
+
+	        context.SaveChanges();
+		}
     }
 }

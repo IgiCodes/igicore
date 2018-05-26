@@ -34,18 +34,9 @@
       <HintPath>..\..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-    </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>False</Private>
-    </Reference>
-    <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MySql.Data.8.0.11\lib\net452\MySql.Data.dll</HintPath>
-    </Reference>
-    <Reference Include="MySql.Data.EntityFramework, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MySql.Data.EntityFramework.8.0.11\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
@@ -63,23 +54,23 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Models\Models.csproj">
       <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
-      <Name>Models</Name>
+      <Name>IgiCore.Models</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Server\Server.csproj">
       <Project>{5a53d22b-87f1-4b16-b54b-d0a8aeac8e5d}</Project>
-      <Name>SDK.Server</Name>
+      <Name>IgiCore.SDK.Server</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Core\Core.csproj">
       <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
-      <Name>SDK</Name>
+      <Name>IgiCore.SDK.Core</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{7621784d-d512-42d4-93bf-fa1c856ebcbb}</Project>
-      <Name>Core</Name>
-      <Private>True</Private>
+      <Name>IgiCore.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

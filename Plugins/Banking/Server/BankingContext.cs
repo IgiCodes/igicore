@@ -7,12 +7,12 @@ namespace Banking.Server
 {
 	public class BankingContext : EFContext
 	{
-		public virtual DbSet<Bank> Banks { get; set; }
-		public virtual DbSet<BankBranch> BankBranches { get; set; }
-		public virtual DbSet<BankAtm> BankAtms { get; set; }
-		public virtual DbSet<BankAccount> BankAccounts { get; set; }
-		public virtual DbSet<BankAccountCard> BankAccountCards { get; set; }
-		public virtual DbSet<BankAccountMember> BankAccountMembers { get; set; }
+		public DbSet<Bank> Banks { get; set; }
+		public DbSet<BankBranch> BankBranches { get; set; }
+		public DbSet<BankAtm> BankAtms { get; set; }
+		public DbSet<BankAccount> BankAccounts { get; set; }
+		public DbSet<BankAccountCard> BankAccountCards { get; set; }
+		public DbSet<BankAccountMember> BankAccountMembers { get; set; }
 
 		public BankingContext()
 		{

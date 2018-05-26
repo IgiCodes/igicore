@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
 using Banking.Core.Models;
 using IgiCore.Models.Player;
 using IgiCore.SDK.Core;
@@ -15,24 +14,10 @@ namespace Banking.Server
 	{
 		public BankingController(ILogger logger, IEventsManager events, BankingConfiguration configuration) : base(logger, events, configuration)
 		{
-			this.Logger.Log(this.Configuration.Test);
-
 			this.Events.Event("character:create").On<Character>(OnCharacterCreate);
 			this.Events.Event("igi:bank:atm:withdraw").On<Guid, Guid, double>(AtmWithdraw);
 
-			// Seed
-			using (var context = new BankingContext())
-			{
-				if (context.Banks.Any()) return;
-
-				context.Banks.Add(new Bank
-				{
-					Id = Guid.NewGuid(),
-					Name = "Test"
-				});
-
-				context.SaveChanges();
-			}
+			this.Logger.Log(this.Configuration.Test);
 		}
 
 		public async void OnCharacterCreate(Client client, Character character)

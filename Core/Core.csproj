@@ -61,11 +61,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
-      <Name>Models</Name>
+      <Name>IgiCore.Models</Name>
     </ProjectReference>
     <ProjectReference Include="..\SDK\Core\Core.csproj">
       <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
-      <Name>Core</Name>
+      <Name>IgiCore.SDK.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

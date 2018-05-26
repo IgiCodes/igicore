@@ -81,22 +81,22 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{ef2c3a9f-8cbb-42e3-b872-3a83c4a3782e}</Project>
-      <Name>Core</Name>
+      <Name>IgiCore.Core</Name>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\Models\Models.csproj">
       <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
-      <Name>Models</Name>
+      <Name>IgiCore.Models</Name>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\SDK\Client\Client.csproj">
       <Project>{f6aa79c1-4e08-4a75-a0b4-ffd2b33d89d7}</Project>
-      <Name>Client</Name>
+      <Name>IgiCore.SDK.Client</Name>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\SDK\Core\Core.csproj">
       <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
-      <Name>SDK</Name>
+      <Name>IgiCore.SDK.Core</Name>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

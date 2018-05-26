@@ -1,9 +1,8 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
-using IgiCore.SDK;
 using IgiCore.SDK.Core;
 
-[assembly: Plugin]
+[assembly: Plugin] // TODO: Needed?
 
 [assembly: AssemblyTitle("IgiCore Banking Shared Plugin")]
 [assembly: AssemblyDescription("")]
