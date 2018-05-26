@@ -11,6 +11,6 @@ namespace IgiCore.Core.Extensions
 
 	    public static IEnumerable<Type> GetTypesInNamespace(this Assembly assembly, string nameSpace) => assembly.GetTypes().Where(t => t.Namespace == nameSpace);
 
-	    public static IEnumerable<Type> GetAllSubtypesInNamesapce(this Type type) => type.GetTypesInNamespace(type.Namespace).Where(t => !t.IsAbstract && t.IsPublic && t.IsSubclassOf(type));
+	    public static IEnumerable<Type> GetAllSubtypesInNamespace(this Type type) => type.GetTypesInNamespace(type.Namespace).Where(t => !t.IsAbstract && t.IsPublic && t.IsSubclassOf(type));
     }
 }

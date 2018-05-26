@@ -4,9 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CitizenFX.Core;
-using IgiCore.SDK.Core.Rpc;
 using IgiCore.SDK.Server;
-using IgiCore.SDK.Server.Configuration;
 using IgiCore.Server.Configuration;
 using IgiCore.Server.Controllers;
 using IgiCore.Server.Diagnostics;
@@ -29,9 +27,7 @@ namespace IgiCore.Server
 			
 			var eventsManager = new EventsManager(new Logger("Events"), this.EventHandlers);
 			
-			var databaseController = new DatabaseController(new Logger("Database"), eventsManager, Load<DatabaseConfiguration>("database"));
-			this.controllers.Add(databaseController);
-
+			this.controllers.Add(new DatabaseController(new Logger("Database"), eventsManager, Load<DatabaseConfiguration>("database")));
 			this.controllers.Add(new SessionController(new Logger("Session"), eventsManager));
 			this.controllers.Add(new ClientController(new Logger("Client"), eventsManager));
 			

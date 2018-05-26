@@ -19,11 +19,11 @@ namespace IgiCore.Core.Extensions
                 pos.Z
             );
 
-        public static Vector3 Lerp(Vector3 pos1, Vector3 pos2, float normalisedInterval) =>
+        public static Vector3 Lerp(Vector3 pos1, Vector3 pos2, float normalizedInterval) =>
             new Vector3(
-                MathHelpers.Lerp(pos1.X, pos2.X, normalisedInterval),
-                MathHelpers.Lerp(pos1.Y, pos2.Y, normalisedInterval),
-                MathHelpers.Lerp(pos1.Z, pos2.Z, normalisedInterval)
+                MathHelpers.Lerp(pos1.X, pos2.X, normalizedInterval),
+                MathHelpers.Lerp(pos1.Y, pos2.Y, normalizedInterval),
+                MathHelpers.Lerp(pos1.Z, pos2.Z, normalizedInterval)
             );
 
     }
