@@ -21,38 +21,22 @@ namespace IgiCore.Server
 	{
 		private readonly Logger logger = new Logger();
 		private readonly List<Controller> controllers = new List<Controller>();
-		
+
 		public Program()
 		{
 			// Set the AppDomain working directory to the current resource root
 			Environment.CurrentDirectory = FileManager.ResolveResourcePath();
-
+			
 			var eventsManager = new EventsManager(new Logger("Events"), this.EventHandlers);
+			
+			var databaseController = new DatabaseController(new Logger("Database"), eventsManager, Load<DatabaseConfiguration>("database"));
+			this.controllers.Add(databaseController);
 
-
-
-			Deserializer deserializer2 = new DeserializerBuilder()
-				.WithNamingConvention(new CamelCaseNamingConvention())
-				//.IgnoreUnmatchedProperties()
-				.Build();
-
-			var databaseController = new DatabaseController(new Logger("Database"), eventsManager, deserializer2.Deserialize<DatabaseConfiguration>(File.ReadAllText("config/database.yml")));
-			//LoadConfig(databaseController, "database");
-
-
-			ServerConfiguration.DatabaseConnection = databaseController.Configuration.ToString();
-			this.logger.Log(ServerConfiguration.DatabaseConnection);
-
-
-			//this.controllers.Add(databaseController);
-
-			//this.controllers.Add(new SessionController(new Logger("Session"), eventsManager));
-			//this.controllers.Add(new ClientController(new Logger("Client"), eventsManager));
-
-
+			this.controllers.Add(new SessionController(new Logger("Session"), eventsManager));
+			this.controllers.Add(new ClientController(new Logger("Client"), eventsManager));
+			
 			//Client.Event(RpcEvents.GetServerInformation).On(ClientController.Ready);
 			//Client.Event(RpcEvents.ClientDisconnect).On(ClientController.Disconnect);
-
 
 			// Parse the master plugin definition file
 			ServerPluginDefinition definition = PluginManager.LoadDefinition();
@@ -60,9 +44,7 @@ namespace IgiCore.Server
 			// Resolve dependencies
 			PluginDefinitionGraph dependencyGraph = definition.ResolveDependencies();
 			//Log($"{JsonConvert.SerializeObject(dependencyGraph, Formatting.Indented)}");
-
-			this.logger.Log($"----------------------------");
-
+			
 			// Load plugins into the AppDomain
 			foreach (ServerPluginDefinition plugin in dependencyGraph.Definitions)
 			{
@@ -80,13 +62,13 @@ namespace IgiCore.Server
 				{
 					var mainFile = Path.Combine(plugin.Location, $"{mainName}.net.dll");
 					if (!File.Exists(mainFile)) throw new FileNotFoundException(mainFile);
-					
+
 					// Find controllers
 					foreach (Type controllerType in Assembly.LoadFrom(mainFile).GetTypes().Where(t => !t.IsAbstract && (t.IsSubclassOf(typeof(Controller)) || t.IsSubclassOf(typeof(ConfigurableController<>)))))
 					{
 						var constructorArgs = new List<object>()
 						{
-							new Logger(),
+							new Logger($"Plugin] [{plugin.Definition.Name}"),
 							eventsManager
 						};
 
@@ -95,14 +77,9 @@ namespace IgiCore.Server
 							var configurationType = controllerType.BaseType.GetGenericArguments()[0];
 
 							var configFile = Path.Combine("config", $"{plugin.Definition.Name}.yml");
-							if (!File.Exists(configFile)) return;
+							if (!File.Exists(configFile)) throw new FileNotFoundException("Unable to find plugin configuration file", configFile);
 
-							Deserializer deserializer = new DeserializerBuilder()
-								.WithNamingConvention(new CamelCaseNamingConvention())
-								//.IgnoreUnmatchedProperties()
-								.Build();
-
-							object config = deserializer.Deserialize(File.ReadAllText(configFile), configurationType);
+							object config = Load(plugin.Definition.Name, configurationType);
 
 							constructorArgs.Add(config);
 						}
@@ -114,32 +91,22 @@ namespace IgiCore.Server
 				}
 			}
 
-			this.logger.Log($"----------------------------");
-
-
 			this.logger.Log($"Plugins loaded, {this.controllers.Count} controller(s) created");
 		}
 
-		private void LoadConfig(Controller controller, string name)
+		public static object Load(string name, Type type)
 		{
-			// Check if controller is configurable
-			var configurationInterface = controller.GetType().GetInterfaces().FirstOrDefault(i => i.IsGenericType && i.GetGenericTypeDefinition() == typeof(IConfigurableController<>));
-			if (configurationInterface == null) return;
-
-			// Get configuration type
-			var configurationType = configurationInterface.GetGenericArguments()[0];
-			
-			var configFile = Path.Combine("config", $"{name}.yml");
-			if (!File.Exists(configFile)) return;
-
 			Deserializer deserializer = new DeserializerBuilder()
 				.WithNamingConvention(new CamelCaseNamingConvention())
 				//.IgnoreUnmatchedProperties()
 				.Build();
 
-			dynamic config = deserializer.Deserialize(File.ReadAllText(configFile), configurationType);
+			return deserializer.Deserialize(File.ReadAllText(Path.Combine("config", $"{name}.yml")), type);
+		}
 
-			((dynamic)controller).Configuration = config;
+		public static T Load<T>(string name)
+		{
+			return (T)Load(name, typeof(T));
 		}
 	}
 }
