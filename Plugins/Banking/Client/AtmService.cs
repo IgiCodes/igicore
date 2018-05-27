@@ -7,10 +7,10 @@ using Banking.Core.Models;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
-using IgiCore.SDK.Client;
 using IgiCore.SDK.Client.Extensions;
 using IgiCore.SDK.Client.Input;
 using IgiCore.SDK.Client.Rpc;
+using IgiCore.SDK.Client.Services;
 using IgiCore.SDK.Core.Diagnostics;
 
 namespace Banking.Client

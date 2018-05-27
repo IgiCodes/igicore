@@ -1,9 +1,9 @@
 ﻿using System.Data.Entity;
-using IgiCore.SDK.Core;
 using IgiCore.SDK.Core.Diagnostics;
-using IgiCore.SDK.Server;
 using IgiCore.SDK.Server.Configuration;
+using IgiCore.SDK.Server.Controllers;
 using IgiCore.SDK.Server.Rpc;
+using IgiCore.Server.Configuration;
 using IgiCore.Server.Storage;
 using MySql.Data.EntityFramework;
 
@@ -11,16 +11,19 @@ namespace IgiCore.Server.Controllers
 {
 	public class DatabaseController : ConfigurableController<DatabaseConfiguration>
 	{
-		public DatabaseController(ILogger logger, IEventsManager events, DatabaseConfiguration configuration) : base(logger, events, configuration)
+		public DatabaseController(ILogger logger, IRpcHandler rpc, DatabaseConfiguration configuration) : base(logger, rpc, configuration)
 		{
 			// Set global database connection string
 			ServerConfiguration.DatabaseConnection = this.Configuration.ToString();
 
+			// Use MySQL EF adapter
+			DbConfiguration.SetConfiguration(new MySqlEFConfiguration());
+
+			// Enable SQL query logging
 			//MySqlTrace.Switch.Level = SourceLevels.All;
 			//MySqlTrace.Listeners.Add(new ConsoleTraceListener());
 
-			DbConfiguration.SetConfiguration(new MySqlEFConfiguration());
-
+			// Create database if needed
 			using (var entities = new StorageContext())
 			{
 				if (entities.Database.Exists()) return;
@@ -30,17 +33,5 @@ namespace IgiCore.Server.Controllers
 				entities.Database.CreateIfNotExists();
 			}
 		}
-	}
-
-	public class DatabaseConfiguration : IControllerConfiguration
-	{
-		public string Host { get; set; } = "localhost";
-		public int Port { get; set; } = 3306;
-		public string Database { get; set; } = "fivem";
-		public string User { get; set; } = "root";
-		public string Password { get; set; } = string.Empty;
-		public string Charset { get; set; } = "utf8mb4";
-
-		public override string ToString() => $"Host={this.Host};Port={this.Port};Database={this.Database};User Id={this.User};Password={this.Password};CharSet={this.Charset};SSL Mode=None";
 	}
 }

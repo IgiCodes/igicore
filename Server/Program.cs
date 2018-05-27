@@ -4,17 +4,19 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CitizenFX.Core;
-using IgiCore.SDK.Server;
+using IgiCore.SDK.Server.Controllers;
 using IgiCore.Server.Configuration;
 using IgiCore.Server.Controllers;
 using IgiCore.Server.Diagnostics;
-using IgiCore.Server.Events;
 using IgiCore.Server.Plugins;
+using IgiCore.Server.Rpc;
+using JetBrains.Annotations;
 using YamlDotNet.Serialization;
 using YamlDotNet.Serialization.NamingConventions;
 
 namespace IgiCore.Server
 {
+	[UsedImplicitly]
 	public class Program : BaseScript
 	{
 		private readonly Logger logger = new Logger();
@@ -24,13 +26,13 @@ namespace IgiCore.Server
 		{
 			// Set the AppDomain working directory to the current resource root
 			Environment.CurrentDirectory = FileManager.ResolveResourcePath();
-			
-			var eventsManager = new EventsManager(new Logger("Events"), this.EventHandlers);
-			
-			this.controllers.Add(new DatabaseController(new Logger("Database"), eventsManager, Load<DatabaseConfiguration>("database")));
-			this.controllers.Add(new SessionController(new Logger("Session"), eventsManager));
-			this.controllers.Add(new ClientController(new Logger("Client"), eventsManager));
-			
+
+			RpcManager.Configure(this.EventHandlers);
+
+			this.controllers.Add(new DatabaseController(new Logger("Database"), new RpcHandler(), Load<DatabaseConfiguration>("database")));
+			this.controllers.Add(new SessionController(new Logger("Session"), new RpcHandler()));
+			this.controllers.Add(new ClientController(new Logger("Client"), new RpcHandler()));
+
 			//Client.Event(RpcEvents.GetServerInformation).On(ClientController.Ready);
 			//Client.Event(RpcEvents.ClientDisconnect).On(ClientController.Disconnect);
 
@@ -39,8 +41,8 @@ namespace IgiCore.Server
 
 			// Resolve dependencies
 			PluginDefinitionGraph dependencyGraph = definition.ResolveDependencies();
-			//Log($"{JsonConvert.SerializeObject(dependencyGraph, Formatting.Indented)}");
-			
+			//this.logger.Debug($"{JsonConvert.SerializeObject(dependencyGraph, Formatting.Indented)}");
+
 			// Load plugins into the AppDomain
 			foreach (ServerPluginDefinition plugin in dependencyGraph.Definitions)
 			{
@@ -62,10 +64,10 @@ namespace IgiCore.Server
 					// Find controllers
 					foreach (Type controllerType in Assembly.LoadFrom(mainFile).GetTypes().Where(t => !t.IsAbstract && (t.IsSubclassOf(typeof(Controller)) || t.IsSubclassOf(typeof(ConfigurableController<>)))))
 					{
-						var constructorArgs = new List<object>()
+						var constructorArgs = new List<object>
 						{
 							new Logger($"Plugin] [{plugin.Definition.Name}"),
-							eventsManager
+							new RpcHandler()
 						};
 
 						if (controllerType.BaseType != null && controllerType.BaseType.IsGenericType && controllerType.BaseType.GetGenericTypeDefinition() == typeof(ConfigurableController<>))
@@ -87,7 +89,7 @@ namespace IgiCore.Server
 				}
 			}
 
-			this.logger.Log($"Plugins loaded, {this.controllers.Count} controller(s) created");
+			this.logger.Info($"Plugins loaded, {this.controllers.Count} controller(s) created");
 		}
 
 		public static object Load(string name, Type type)

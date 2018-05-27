@@ -42,9 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientPluginAttribute.cs" />
-    <Compile Include="Service.cs" />
+    <Compile Include="Services\Service.cs" />
     <Compile Include="Extensions\FloatExtentions.cs" />
-    <Compile Include="Extensions\Guid.cs" />
     <Compile Include="Extensions\PedExtensions.cs" />
     <Compile Include="Extensions\ReflectionExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />

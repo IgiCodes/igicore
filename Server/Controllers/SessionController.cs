@@ -3,25 +3,25 @@ using System.Collections.Generic;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.SDK.Core.Diagnostics;
-using IgiCore.SDK.Server;
-using IgiCore.Server.Events;
+using IgiCore.SDK.Server.Controllers;
+using IgiCore.SDK.Server.Rpc;
 
 namespace IgiCore.Server.Controllers
 {
 	public class SessionController : Controller
 	{
 		private readonly List<Action> callbacks = new List<Action>();
-		
+
 		public Player CurrentHost { get; private set; }
 
-		public SessionController(ILogger logger, EventsManager events) : base(logger, events)
+		public SessionController(ILogger logger, IRpcHandler rpc) : base(logger, rpc)
 		{
 			API.EnableEnhancedHostSupport(true);
 
-			//events.Event("hostingSession").On(OnHostingSession);
-			//events.Event("HostedSession").On(OnHostedSession);
+			this.Rpc.Event("hostingSession").OnRaw(new Action<Player>(OnHostingSession));
+			this.Rpc.Event("HostedSession").OnRaw(new Action<Player>(OnHostedSession));
 		}
-		
+
 		private async void OnHostingSession([FromSource] Player player)
 		{
 			if (this.CurrentHost != null)
@@ -54,7 +54,7 @@ namespace IgiCore.Server.Controllers
 			this.callbacks.Clear();
 			this.CurrentHost = player;
 
-			this.Logger.Log($"Game host is now {this.CurrentHost.Handle} \"{this.CurrentHost.Name}\"");
+			this.Logger.Info($"Game host is now {this.CurrentHost.Handle} \"{this.CurrentHost.Name}\"");
 
 			player.TriggerEvent("sessionHostResult", "go");
 

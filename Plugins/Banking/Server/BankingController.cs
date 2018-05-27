@@ -3,24 +3,23 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using Banking.Core.Models;
 using IgiCore.Models.Player;
-using IgiCore.SDK.Core;
 using IgiCore.SDK.Core.Diagnostics;
-using IgiCore.SDK.Server;
+using IgiCore.SDK.Server.Controllers;
 using IgiCore.SDK.Server.Rpc;
 
 namespace Banking.Server
 {
 	public class BankingController : ConfigurableController<BankingConfiguration>
 	{
-		public BankingController(ILogger logger, IEventsManager events, BankingConfiguration configuration) : base(logger, events, configuration)
+		public BankingController(ILogger logger, IRpcHandler rpc, BankingConfiguration configuration) : base(logger, rpc, configuration)
 		{
-			this.Events.Event("character:create").On<Character>(OnCharacterCreate);
-			this.Events.Event("igi:bank:atm:withdraw").On<Guid, Guid, double>(AtmWithdraw);
+			this.Rpc.Event("character:create").On<Character>(OnCharacterCreate);
+			this.Rpc.Event("igi:bank:atm:withdraw").On<Guid, Guid, double>(AtmWithdraw);
 
 			this.Logger.Log(this.Configuration.Test);
 		}
 
-		public async void OnCharacterCreate(Client client, Character character)
+		public async void OnCharacterCreate(IRpcEvent e, Character character)
 		{
 			using (var context = new BankingContext())
 			{
@@ -46,11 +45,11 @@ namespace Banking.Server
 
 				await context.SaveChangesAsync();
 
-				//this.Events.Trigger("bank:account:created", character, account);
+				e.Client.Event("bank:account:created").Trigger(character, account);
 			}
 		}
 
-		public async void AtmWithdraw(Client client, Guid atmId, Guid memberId, double amount)
+		public async void AtmWithdraw(IRpcEvent e, Guid atmId, Guid memberId, double amount)
 		{
 			try
 			{
@@ -64,19 +63,13 @@ namespace Banking.Server
 					await context.SaveChangesAsync();
 				}
 
-				//client
-				//	.Reply()
-				//	.Attach(true)
-				//	.Trigger();
+				e.Reply(true);
 			}
 			catch (Exception ex)
 			{
 				this.Logger.Error(ex);
 
-				//client
-				//	.Reply()
-				//	.Attach(false)
-				//	.Trigger();
+				e.Reply(false);
 			}
 		}
 	}

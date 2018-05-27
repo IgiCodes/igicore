@@ -2,18 +2,18 @@
 using IgiCore.SDK.Server.Rpc;
 using JetBrains.Annotations;
 
-namespace IgiCore.SDK.Server
+namespace IgiCore.SDK.Server.Controllers
 {
 	[PublicAPI]
 	public abstract class Controller
 	{
 		protected readonly ILogger Logger;
-		protected readonly IEventsManager Events;
+		protected readonly IRpcHandler Rpc;
 
-		protected Controller(ILogger logger, IEventsManager events)
+		protected Controller(ILogger logger, IRpcHandler rpc)
 		{
 			this.Logger = logger;
-			this.Events = events;
+			this.Rpc = rpc;
 		}
 	}
 }

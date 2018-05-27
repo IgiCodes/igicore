@@ -5,7 +5,7 @@ namespace IgiCore.Server.Rpc
 {
 	public class ClientHandler
 	{
-		private readonly EventHandlerDictionary events; // TODO: Custom type
+		private readonly EventHandlerDictionary events; // TODO: Custom type?
 
 		public ClientHandler(EventHandlerDictionary events)
 		{

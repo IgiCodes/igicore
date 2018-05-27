@@ -39,7 +39,7 @@ namespace Banking.Core.Models
 
 		[InverseProperty("Account")]
 		public virtual List<BankAccountCard> Cards { get; set; }
-		
+
 		public BankAccount()
 		{
 			// TODO: Generate account number

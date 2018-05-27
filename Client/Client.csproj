@@ -71,7 +71,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Client.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="EventsManager.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

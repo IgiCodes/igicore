@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using CitizenFX.Core;
 
 namespace IgiCore.Server.Rpc
 {
 	public class OutboundMessage
 	{
-		public Player Target { get; set; } = null;
+		public Client Target { get; set; }
 
 		public string Event { get; set; }
 

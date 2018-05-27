@@ -9,5 +9,5 @@ namespace IgiCore.Server.Migrations
 		{
 			this.AutomaticMigrationsEnabled = true;
 		}
-    }
+	}
 }

@@ -19,5 +19,5 @@ namespace IgiCore.Models.Appearance
 		[Required]
 		[Range(0, 100)] // TODO
 		public int Texture { get; set; }
-    }
+	}
 }

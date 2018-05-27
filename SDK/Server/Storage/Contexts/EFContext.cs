@@ -10,12 +10,9 @@ namespace IgiCore.SDK.Server.Storage.Contexts
 {
 	[PublicAPI]
 	[DbConfigurationType(typeof(MySqlEFConfiguration))]
-	public abstract class EFContext : DbContext//<T> : DbContext where T : DbContext
+	public abstract class EFContext : DbContext
 	{
-		protected EFContext() : base(ServerConfiguration.DatabaseConnection)
-		{
-			//Database.SetInitializer(new MigrateDatabaseToLatestVersion<T, Configuration<T>>());
-		}
+		protected EFContext() : base(ServerConfiguration.DatabaseConnection) { }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
@@ -25,13 +22,4 @@ namespace IgiCore.SDK.Server.Storage.Contexts
 				.Configure(c => c.HasColumnType("varchar"));
 		}
 	}
-
-	//internal class Configuration<T> : DbMigrationsConfiguration<T> where T : DbContext
-	//{
-	//	public Configuration()
-	//	{
-	//		this.AutomaticMigrationDataLossAllowed = true;
-	//		this.AutomaticMigrationsEnabled = true;
-	//	}
-	//}
 }

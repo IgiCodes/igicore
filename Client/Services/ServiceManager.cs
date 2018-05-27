@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using IgiCore.Client.Diagnostics;
-using IgiCore.SDK.Client;
+using IgiCore.SDK.Client.Services;
 using JetBrains.Annotations;
 
 namespace IgiCore.Client.Services
@@ -13,7 +12,6 @@ namespace IgiCore.Client.Services
 
 		public ServiceManager()
 		{
-			
 		}
 
 		public void Add<T>(T service) where T : Service, new()
@@ -33,8 +31,8 @@ namespace IgiCore.Client.Services
 			if (!type.IsPublic) throw new ArgumentException("Type must be public");
 			if (!type.IsSubclassOf(typeof(Service))) throw new ArgumentException("Type must inherit from Service");
 
-			var service = Activator.CreateInstance(type, new Logger(), Client.Instance.Events) as Service;
-			
+			var service = Activator.CreateInstance(type, new Logger(), Program.Instance.Events) as Service;
+
 			//this.Add<Service>(service);
 		}
 	}

@@ -10,6 +10,7 @@ namespace IgiCore.Server.Plugins
 	public class ServerPluginDefinition
 	{
 		public string Location { get; set; }
+
 		public PluginDefinition Definition { get; set; }
 
 		public PluginDefinitionGraph ResolveDependencies()

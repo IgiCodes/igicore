@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using CitizenFX.Core;
-using IgiCore.SDK.Core;
 using IgiCore.SDK.Server.Rpc;
 using IgiCore.Server.Diagnostics;
-using IgiCore.Server.Rpc;
 
-namespace IgiCore.Server.Events
+namespace IgiCore.Server.Rpc
 {
-	public class ClientEvent : IClientEvent
+	public class Rpc : IRpc
 	{
 		private readonly string @event;
 		private readonly Logger logger;
@@ -17,7 +14,7 @@ namespace IgiCore.Server.Events
 		private readonly ClientTrigger trigger;
 		private readonly Serializer serializer;
 
-		public ClientEvent(string @event, Logger logger, ClientHandler handler, ClientTrigger trigger, Serializer serializer)
+		public Rpc(string @event, Logger logger, ClientHandler handler, ClientTrigger trigger, Serializer serializer)
 		{
 			this.@event = @event;
 			this.logger = logger;
@@ -26,61 +23,30 @@ namespace IgiCore.Server.Events
 			this.serializer = serializer;
 		}
 
-		public void Trigger(Player target = null, params object[] payloads)
+		public void Trigger(params object[] payloads)
 		{
 			this.trigger.Fire(new OutboundMessage
 			{
-				Target = target,
 				Event = this.@event,
 				Payloads = payloads.Select(p => this.serializer.Serialize(p)).ToList()
 			});
 		}
 
-		private void Attach(Delegate callback, Func<InboundMessage, IEnumerable<object>> func)
-		{
-			this.handler.Attach(this.@event, new Action<string>(json =>
-			{
-				InboundMessage message = this.serializer.Deserialize<InboundMessage>(json);
-				message.Received = DateTime.UtcNow;
-
-				Client client = new Client
-				{
-					Handle = message.Source
-				};
-
-				var args = new List<object>
-				{
-					client
-				};
-
-				args.AddRange(func(message));
-
-				callback.DynamicInvoke(args.ToArray());
-			}));
-		}
-
-		public void On(Action<Player> callback)
+		public void OnRaw(Delegate callback)
 		{
 			LogCallback(callback);
 
 			this.handler.Attach(this.@event, callback);
 		}
 
-		public void On(Action<Player, string, CallbackDelegate> callback)
-		{
-			LogCallback(callback);
-
-			this.handler.Attach(this.@event, callback);
-		}
-
-		public void On(Action<Client> callback)
+		public void On(Action<IRpcEvent> callback)
 		{
 			LogCallback(callback);
 
 			Attach(callback, m => new object[0]);
 		}
 
-		public void On<T>(Action<Client, T> callback)
+		public void On<T>(Action<IRpcEvent, T> callback)
 		{
 			LogCallback(callback);
 
@@ -90,7 +56,7 @@ namespace IgiCore.Server.Events
 			});
 		}
 
-		public void On<T1, T2>(Action<Client, T1, T2> callback)
+		public void On<T1, T2>(Action<IRpcEvent, T1, T2> callback)
 		{
 			LogCallback(callback);
 
@@ -101,7 +67,7 @@ namespace IgiCore.Server.Events
 			});
 		}
 
-		public void On<T1, T2, T3>(Action<Client, T1, T2, T3> callback)
+		public void On<T1, T2, T3>(Action<IRpcEvent, T1, T2, T3> callback)
 		{
 			LogCallback(callback);
 
@@ -112,8 +78,8 @@ namespace IgiCore.Server.Events
 				this.serializer.Deserialize<T3>(m.Payloads[2])
 			});
 		}
-		
-		public void On<T1, T2, T3, T4>(Action<Client, T1, T2, T3, T4> callback)
+
+		public void On<T1, T2, T3, T4>(Action<IRpcEvent, T1, T2, T3, T4> callback)
 		{
 			LogCallback(callback);
 
@@ -126,7 +92,7 @@ namespace IgiCore.Server.Events
 			});
 		}
 
-		public void On<T1, T2, T3, T4, T5>(Action<Client, T1, T2, T3, T4, T5> callback)
+		public void On<T1, T2, T3, T4, T5>(Action<IRpcEvent, T1, T2, T3, T4, T5> callback)
 		{
 			LogCallback(callback);
 
@@ -138,6 +104,33 @@ namespace IgiCore.Server.Events
 				this.serializer.Deserialize<T4>(m.Payloads[3]),
 				this.serializer.Deserialize<T5>(m.Payloads[4])
 			});
+		}
+
+		private void Attach(Delegate callback, Func<InboundMessage, IEnumerable<object>> func)
+		{
+			this.handler.Attach(this.@event, new Action<string>(json =>
+			{
+				InboundMessage message = this.serializer.Deserialize<InboundMessage>(json);
+				message.Received = DateTime.UtcNow;
+
+				RpcEvent rpcEvent = new RpcEvent
+				{
+					Event = message.Event,
+					Client = new Client
+					{
+						Handle = message.Source
+					}
+				};
+
+				var args = new List<object>
+				{
+					rpcEvent
+				};
+
+				args.AddRange(func(message));
+
+				callback.DynamicInvoke(args.ToArray());
+			}));
 		}
 
 		private void LogCallback(Delegate callback)

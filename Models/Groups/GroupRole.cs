@@ -19,9 +19,9 @@ namespace IgiCore.Models.Groups
 
 		[Required]
 		[ForeignKey("Group")]
-        public Guid GroupId { get; set; }
+		public Guid GroupId { get; set; }
 
-        public virtual Group Group { get; set; }
+		public virtual Group Group { get; set; }
 
 		// TODO
 		public virtual List<GroupMember> Members { get; set; }

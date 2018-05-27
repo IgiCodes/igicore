@@ -101,9 +101,11 @@
   <ItemGroup>
     <Compile Include="Configuration\FileManager.cs" />
     <Compile Include="Controllers\ClientController.cs" />
-    <Compile Include="Controllers\SessionController.cs" />
+    <Compile Include="Configuration\DatabaseConfiguration.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
-    <Compile Include="Events\ClientEvent.cs" />
+    <Compile Include="Controllers\SessionController.cs" />
+    <Compile Include="Rpc\Client.cs" />
+    <Compile Include="Rpc\Rpc.cs" />
     <Compile Include="Plugins\PluginManager.cs" />
     <Compile Include="Diagnostics\Logger.cs" />
     <Compile Include="Migrations\201805211739162_Init.cs" />
@@ -114,7 +116,9 @@
     <Compile Include="Plugins\PluginDefinitionGraph.cs" />
     <Compile Include="Plugins\ServerPluginDefinition.cs" />
     <Compile Include="Plugins\PluginDefinition.cs" />
-    <Compile Include="Events\EventsManager.cs" />
+    <Compile Include="Rpc\RpcEvent.cs" />
+    <Compile Include="Rpc\RpcHandler.cs" />
+    <Compile Include="Rpc\RpcManager.cs" />
     <Compile Include="Rpc\ClientHandler.cs" />
     <Compile Include="Rpc\InboundMessage.cs" />
     <Compile Include="Rpc\OutboundMessage.cs" />

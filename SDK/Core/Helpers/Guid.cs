@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Cryptography;
 
-namespace IgiCore.SDK.Client.Extensions
+namespace IgiCore.SDK.Core.Helpers
 {
 	public static class GuidGenerator
 	{
@@ -31,7 +31,7 @@ namespace IgiCore.SDK.Client.Extensions
 				Array.Reverse(guidBytes, 0, 4);
 				Array.Reverse(guidBytes, 4, 2);
 			}
-			
+
 			return new Guid(guidBytes);
 		}
 	}

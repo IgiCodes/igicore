@@ -34,6 +34,7 @@ namespace IgiCore.SDK.Client.Input
 		{
 			return Enum.GetValues(typeof(Control)).Cast<Control>().Any(value => IsControlJustPressed(value));
 		}
+
 		public static bool IsControlJustPressed(Control control, bool keyboardOnly = true, InputModifier modifier = InputModifier.None)
 		{
 			return Game.IsControlJustPressed(0, control) && (!keyboardOnly || !WasLastInputFromController) && IsControlModifierPressed(modifier);

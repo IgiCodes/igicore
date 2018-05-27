@@ -3,7 +3,7 @@ using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Core.Diagnostics;
 using JetBrains.Annotations;
 
-namespace IgiCore.SDK.Client
+namespace IgiCore.SDK.Client.Services
 {
 	[UsedImplicitly]
 	public abstract class Service

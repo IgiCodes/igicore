@@ -6,23 +6,23 @@ using Banking.Core.Models;
 namespace Banking.Server.Migrations
 {
 	internal sealed class Configuration : DbMigrationsConfiguration<BankingContext>
-    {
-        public Configuration()
-        {
-            this.AutomaticMigrationsEnabled = true;
-        }
+	{
+		public Configuration()
+		{
+			this.AutomaticMigrationsEnabled = true;
+		}
 
-        protected override void Seed(BankingContext context)
-        {
+		protected override void Seed(BankingContext context)
+		{
 			if (context.Banks.Any()) return;
 
-	        context.Banks.Add(new Bank
-	        {
-		        Id = Guid.NewGuid(),
-		        Name = "Example Bank"
-	        });
+			context.Banks.Add(new Bank
+			{
+				Id = Guid.NewGuid(),
+				Name = "Example Bank"
+			});
 
-	        context.SaveChanges();
+			context.SaveChanges();
 		}
-    }
+	}
 }

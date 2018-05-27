@@ -2,27 +2,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using IgiCore.Client.Diagnostics;
 using IgiCore.Client.Services;
 using IgiCore.SDK.Client;
+using IgiCore.SDK.Client.Services;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 
 namespace IgiCore.Client
 {
 	[UsedImplicitly]
-	public class Client : BaseScript
+	public class Program : BaseScript
 	{
 		/// <summary>
 		/// Gets or sets the global singleton instance reference.
 		/// </summary>
 		/// <value>
-		/// The singleton <see cref="Client"/> instance.
+		/// The singleton <see cref="Program"/> instance.
 		/// </value>
-		public static Client Instance { get; private set; }
+		public static Program Instance { get; private set; }
 
 		public EventHandlerDictionary Handlers => this.EventHandlers;
 
@@ -34,9 +33,9 @@ namespace IgiCore.Client
 
 		/// <summary>
 		/// Primary client entrypoint.
-		/// Initializes a new instance of the <see cref="Client"/> class.
+		/// Initializes a new instance of the <see cref="Program"/> class.
 		/// </summary>
-		public Client()
+		public Program()
 		{
 			Logger.Log("Init");
 

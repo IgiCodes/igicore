@@ -4,6 +4,5 @@ namespace IgiCore.Client
 {
 	public class EventsManager : IEventsManager
 	{
-
 	}
 }

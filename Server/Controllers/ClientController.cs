@@ -3,34 +3,21 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using CitizenFX.Core.Native;
 using IgiCore.Models.Player;
-using IgiCore.SDK.Core;
 using IgiCore.SDK.Core.Diagnostics;
-using IgiCore.SDK.Core.Exceptions;
-using IgiCore.SDK.Server;
-using IgiCore.Server.Events;
+using IgiCore.SDK.Core.Helpers;
+using IgiCore.SDK.Server.Controllers;
+using IgiCore.SDK.Server.Rpc;
 using IgiCore.Server.Storage;
 
 namespace IgiCore.Server.Controllers
 {
 	public class ClientController : Controller
 	{
-		public ClientController(ILogger logger, EventsManager events) : base(logger, events)
+		public ClientController(ILogger logger, IRpcHandler rpc) : base(logger, rpc)
 		{
-			API.EnableEnhancedHostSupport(true);
-
-			//events.Event("playerConnecting").On(Connecting);
-			//events.Event("playerDropped").On(Dropped);
-
-			events.Event("test").On<bool>(Test);
-		}
-
-		public void Test(Client client, bool b)
-		{
-			this.Logger.Log($"Test: {b}");
-
-			//this.Events.Event("test").Trigger(null, b);
+			this.Rpc.Event("playerConnecting").OnRaw(new Action<Player, string, CallbackDelegate>(Connecting));
+			this.Rpc.Event("playerDropped").OnRaw(new Action<Player, string, CallbackDelegate>(Dropped));
 		}
 
 		public void Connecting([FromSource] Player player, string playerName, CallbackDelegate drop)

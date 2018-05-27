@@ -5,20 +5,20 @@ using JetBrains.Annotations;
 namespace IgiCore.Models
 {
 	[PublicAPI]
-    public abstract class IdentityModel
-    {
+	public abstract class IdentityModel
+	{
 		[Key]
 		[Required]
 		public Guid Id { get; set; }
 
 		[Required]
-        public DateTime Created { get; set; }
+		public DateTime Created { get; set; }
 
-	    public DateTime? Deleted { get; set; }
+		public DateTime? Deleted { get; set; }
 
-	    protected IdentityModel()
-	    {
-		    this.Created = DateTime.UtcNow;
-	    }
+		protected IdentityModel()
+		{
+			this.Created = DateTime.UtcNow;
+		}
 	}
 }

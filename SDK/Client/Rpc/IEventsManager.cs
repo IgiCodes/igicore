@@ -1,7 +1,4 @@
 ﻿namespace IgiCore.SDK.Client.Rpc
 {
-	public interface IEventsManager
-	{
-		
-	}
+	public interface IEventsManager { }
 }

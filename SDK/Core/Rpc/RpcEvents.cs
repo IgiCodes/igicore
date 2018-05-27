@@ -16,7 +16,7 @@
 
 		public const string CharacterComponentSet = "igi:character:component:set";
 		public const string CharacterPropSet = "igi:character:prop:set";
-		
+
 		public const string BankAtmWithdraw = "igi:bank:atm:withdraw";
 		public const string BankBranchWithdraw = "igi:bank:branch:withdraw";
 		public const string BankBranchDeposit = "igi:bank:branch:withdraw";
