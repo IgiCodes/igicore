@@ -14,14 +14,13 @@ client_scripts {
 }
 
 files {
+	'Newtonsoft.Json.dll',
+	'EntityFramework.dll',
+	'System.ComponentModel.DataAnnotations.dll',
+
 	'IgiCore.Models.net.dll',
 	'IgiCore.SDK.Core.net.dll',
 	'IgiCore.SDK.Client.net.dll',
-
-	'System.ComponentModel.DataAnnotations.dll',
-	'Newtonsoft.Json.dll',
-	'EntityFramework.dll',
-	'NativeUI.dll',
 
 	'Interface/loading-screen/index.html',
 	'Interface/loading-screen/main.js',

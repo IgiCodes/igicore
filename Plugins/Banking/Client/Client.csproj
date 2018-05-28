@@ -63,7 +63,7 @@
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{7621784d-d512-42d4-93bf-fa1c856ebcbb}</Project>
-      <Name>IgiCore.Core</Name>
+      <Name>Banking.Core</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

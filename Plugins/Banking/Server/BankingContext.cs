@@ -1,6 +1,5 @@
 ﻿using System.Data.Entity;
 using Banking.Core.Models;
-using Banking.Server.Migrations;
 using IgiCore.SDK.Server.Storage.Contexts;
 
 namespace Banking.Server
@@ -21,7 +20,7 @@ namespace Banking.Server
 
 		public BankingContext()
 		{
-			Database.SetInitializer(new MigrateDatabaseToLatestVersion<BankingContext, Configuration>());
+			Database.SetInitializer(new MigrateDatabaseToLatestVersion<BankingContext, Migrations.Configuration>());
 		}
 	}
 }

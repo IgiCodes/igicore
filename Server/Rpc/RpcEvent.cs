@@ -1,12 +1,34 @@
-﻿using IgiCore.SDK.Server.Rpc;
+﻿using System;
+using System.Linq;
+using IgiCore.Models.Player;
+using IgiCore.SDK.Server.Rpc;
+using IgiCore.Server.Storage;
 
 namespace IgiCore.Server.Rpc
 {
 	public class RpcEvent : IRpcEvent
 	{
-		public string Event { get; set; }
+		private readonly Lazy<User> user;
 
-		public IClient Client { get; set; }
+		public string Event { get; }
+
+		public IClient Client { get; }
+
+		public User User => this.user.Value;
+
+		public RpcEvent(string @event, IClient client)
+		{
+			this.Event = @event;
+			this.Client = client;
+
+			this.user = new Lazy<User>(() =>
+			{
+				using (var context = new StorageContext())
+				{
+					return context.Users.Single(u => u.SteamId == this.Client.SteamId);
+				}
+			});
+		}
 
 		public void Reply(params object[] payloads)
 		{

@@ -1,15 +1,25 @@
 ﻿using CitizenFX.Core;
-using IgiCore.Core.Rpc;
+using IgiCore.Client.Diagnostics;
+using IgiCore.SDK.Core.Rpc;
 
 namespace IgiCore.Client.Rpc
 {
-	public class RpcTrigger : IRpcTrigger
+	public class RpcTrigger
 	{
-		public void Fire(RpcMessage message)
-		{
-			//Client.Log($"Fire: \"{message.Event}\" with {message.Payloads.Count} payload(s):");
+		private readonly Logger logger;
+		private readonly Serializer serializer;
 
-			BaseScript.TriggerServerEvent(message.Event, message.Build());
+		public RpcTrigger(Logger logger, Serializer serializer)
+		{
+			this.logger = logger;
+			this.serializer = serializer;
+		}
+
+		public void Fire(OutboundMessage message)
+		{
+			this.logger.Debug($"Fire: \"{message.Event}\" with {message.Payloads.Count} payload(s): {string.Join(", ", message.Payloads)}");
+
+			BaseScript.TriggerServerEvent(message.Event, this.serializer.Serialize(message));
 		}
 	}
 }

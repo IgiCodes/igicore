@@ -2,6 +2,7 @@
 using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Server.Configuration;
 using IgiCore.SDK.Server.Controllers;
+using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;
 using IgiCore.Server.Configuration;
 using IgiCore.Server.Storage;
@@ -11,7 +12,7 @@ namespace IgiCore.Server.Controllers
 {
 	public class DatabaseController : ConfigurableController<DatabaseConfiguration>
 	{
-		public DatabaseController(ILogger logger, IRpcHandler rpc, DatabaseConfiguration configuration) : base(logger, rpc, configuration)
+		public DatabaseController(ILogger logger, IEventManager events, IRpcHandler rpc, DatabaseConfiguration configuration) : base(logger, events, rpc, configuration)
 		{
 			// Set global database connection string
 			ServerConfiguration.DatabaseConnection = this.Configuration.ToString();

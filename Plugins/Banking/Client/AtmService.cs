@@ -7,11 +7,13 @@ using Banking.Core.Models;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using IgiCore.SDK.Client.Events;
 using IgiCore.SDK.Client.Extensions;
 using IgiCore.SDK.Client.Input;
 using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Client.Services;
 using IgiCore.SDK.Core.Diagnostics;
+using IgiCore.SDK.Core.Rpc;
 
 namespace Banking.Client
 {
@@ -20,14 +22,14 @@ namespace Banking.Client
 		private bool inAnimating = false;
 		private readonly List<BankAtm> atms;
 
-		public AtmService(ILogger logger, IEventsManager events) : base(logger, events)
+		public AtmService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc) : base(logger, ticks, events, rpc)
 		{
 			// TODO: Get ATMs from server
 
 			this.atms = new List<BankAtm>();
 		}
 
-		public override async Task Tick()
+		public async Task Tick()
 		{
 			new Text("PLUGINS!", new PointF(50, Screen.Height - 50), 0.4f, Color.FromArgb(255, 255, 255), Font.ChaletLondon, Alignment.Left, false, true).Draw();
 
@@ -68,6 +70,10 @@ namespace Banking.Client
 			API.TaskStartScenarioInPlace(Game.PlayerPed.Handle, "PROP_HUMAN_ATM", 0, true);
 			this.inAnimating = true;
 
+			bool result = await this.Rpc
+				.Event(RpcEvents.BankAtmWithdraw)
+				.Request<bool>(atm.Item1.Id, Guid.Parse("e9286e6f-e74d-4510-855b-5318ef0f71af"), 100);
+
 			//bool result = await Rpc.Server
 			//	.Event(RpcEvents.BankAtmWithdraw)
 			//	.Attach(atm.Item1.Id)
@@ -75,7 +81,7 @@ namespace Banking.Client
 			//	.Attach(100)
 			//	.Request<bool>();
 
-			//this.Logger.Log($"ATM Withdraw response: {result}");
+			this.Logger.Debug($"ATM Withdraw response: {result}");
 		}
 	}
 }

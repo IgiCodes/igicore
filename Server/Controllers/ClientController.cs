@@ -7,47 +7,90 @@ using IgiCore.Models.Player;
 using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Core.Helpers;
 using IgiCore.SDK.Server.Controllers;
+using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;
+using IgiCore.Server.Rpc;
 using IgiCore.Server.Storage;
 
 namespace IgiCore.Server.Controllers
 {
 	public class ClientController : Controller
 	{
-		public ClientController(ILogger logger, IRpcHandler rpc) : base(logger, rpc)
+		public ClientController(ILogger logger, IEventManager events, IRpcHandler rpc) : base(logger, events, rpc)
 		{
 			this.Rpc.Event("playerConnecting").OnRaw(new Action<Player, string, CallbackDelegate>(Connecting));
 			this.Rpc.Event("playerDropped").OnRaw(new Action<Player, string, CallbackDelegate>(Dropped));
+			this.Rpc.Event("ready").On<string>(Ready);
 		}
 
-		public void Connecting([FromSource] Player player, string playerName, CallbackDelegate drop)
+		public async void Connecting([FromSource] Player player, string playerName, CallbackDelegate drop)
 		{
-			this.Logger.Log($"Connecting: {player.Name}");
+			var client = new Client(int.Parse(player.Handle));
+
+			await this.Events.RaiseAsync("clientConnecting", client);
+
+			using (var context = new StorageContext())
+			using (var transaction = context.Database.BeginTransaction())
+			{
+				try
+				{
+					var user = context.Users.SingleOrDefault(u => u.SteamId == client.SteamId); // TODO: Async crashes?!?
+
+					if (user == default(User))
+					{
+						// Create user
+						user = new User
+						{
+							Id = GuidGenerator.GenerateTimeBasedGuid(),
+							SteamId = client.SteamId,
+							Name = client.Name
+						};
+
+						context.Users.Add(user);
+					}
+					else
+					{
+						// Update name
+						user.Name = client.Name;
+					}
+					
+					// Create session
+					var session = new Session
+					{
+						Id = GuidGenerator.GenerateTimeBasedGuid(),
+						User = user,
+						IpAddress = client.EndPoint
+					};
+
+					context.Sessions.Add(session);
+
+					// Save changes
+					await context.SaveChangesAsync();
+					transaction.Commit();
+
+					this.Logger.Info($"[{session.Id}] Player \"{user.Name}\" connected from {session.IpAddress}");
+				}
+				catch (Exception ex)
+				{
+					transaction.Rollback();
+
+					this.Logger.Error(ex);
+				}
+			}
 		}
 
 		public void Dropped([FromSource] Player player, string disconnectMessage, CallbackDelegate drop)
 		{
-			this.Logger.Log($"Dropped: {player.Name}");
+			var client = new Client(int.Parse(player.Handle));
+
+			this.Logger.Info($"Dropped: {client.Name}");
 		}
 
-		public async Task<Session> Create(Player player, User user)
+		public void Ready(IRpcEvent e, string clientVersion)
 		{
-			var session = new Session
-			{
-				Id = GuidGenerator.GenerateTimeBasedGuid(),
-				User = user,
-				IpAddress = player.EndPoint,
-				Connected = DateTime.UtcNow
-			};
+			this.Logger.Info($"Ready: {e.User.Name} {clientVersion}");
 
-			using (var entities = new StorageContext())
-			{
-				entities.Sessions.Add(session);
-
-				await entities.SaveChangesAsync();
-			}
-
-			return session;
+			e.Reply(e.User);
 		}
 
 		public async Task<Session> End(User user, string disconnectMessage)

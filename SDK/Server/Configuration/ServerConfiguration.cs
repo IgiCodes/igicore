@@ -1,7 +1,11 @@
-﻿namespace IgiCore.SDK.Server.Configuration
+﻿using IgiCore.SDK.Core.Diagnostics;
+
+namespace IgiCore.SDK.Server.Configuration
 {
 	public static class ServerConfiguration
 	{
-		public static string DatabaseConnection { get; set; }
+		public static LogLevel LogLevel { get; set; } = LogLevel.Debug;
+
+		public static string DatabaseConnection { get; set; } = string.Empty;
 	}
 }

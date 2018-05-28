@@ -29,5 +29,10 @@ namespace IgiCore.Models.Player
 		public Guid UserId { get; set; }
 
 		public virtual User User { get; set; }
+
+		public Session()
+		{
+			this.Connected = DateTime.UtcNow;
+		}
 	}
 }

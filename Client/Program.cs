@@ -1,14 +1,15 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Client.Diagnostics;
-using IgiCore.Client.Services;
+using IgiCore.Client.Events;
+using IgiCore.Client.Rpc;
+using IgiCore.Models.Player;
 using IgiCore.SDK.Client;
 using IgiCore.SDK.Client.Services;
 using JetBrains.Annotations;
-using Newtonsoft.Json;
 
 namespace IgiCore.Client
 {
@@ -16,103 +17,53 @@ namespace IgiCore.Client
 	public class Program : BaseScript
 	{
 		/// <summary>
-		/// Gets or sets the global singleton instance reference.
-		/// </summary>
-		/// <value>
-		/// The singleton <see cref="Program"/> instance.
-		/// </value>
-		public static Program Instance { get; private set; }
-
-		public EventHandlerDictionary Handlers => this.EventHandlers;
-
-		public static Logger Logger => new Logger();
-
-		public EventsManager Events => new EventsManager();
-
-		public ServiceManager Services => new ServiceManager();
-
-		/// <summary>
 		/// Primary client entrypoint.
 		/// Initializes a new instance of the <see cref="Program"/> class.
 		/// </summary>
 		public Program()
 		{
-			Logger.Log("Init");
+			var logger = new Logger();
 
-			// Singleton
-			Instance = this;
+			// Setup RPC handlers
+			RpcManager.Configure(this.EventHandlers);
+
+			var ticks = new TickManager(c => this.Tick += c, c => this.Tick -= c);
+			var events = new EventManager();
 
 
+			//new StartupService(new Logger("Startup"), ticks, events, new RpcHandler());
 
 
-			var test = new OutboundMessage
+			new RpcHandler().Event("ready").On<User>((e, r) =>
 			{
-				Event = "test",
-				Payloads = new List<string>
-				{
-					JsonConvert.SerializeObject(true)
-				}
-			};
-
-			Logger.Log(test.Event);
-			TriggerServerEvent(test.Event, JsonConvert.SerializeObject(test));
+				e.Reply();
+				logger.Debug($"On: {r.Name}");
+			});
 
 
-			var test2 = new OutboundMessage
+			Task.Factory.StartNew(async () =>
 			{
-				Event = "test2",
-				Payloads = new List<string>
-				{
-					JsonConvert.SerializeObject(true),
-					JsonConvert.SerializeObject(DateTime.UtcNow),
-				}
-			};
-
-			Logger.Log(test2.Event);
-			TriggerServerEvent(test2.Event, JsonConvert.SerializeObject(test2));
-
-
-			var test3 = new OutboundMessage
-			{
-				Event = "test3"
-			};
-
-			Logger.Log(test3.Event);
-			TriggerServerEvent(test3.Event, JsonConvert.SerializeObject(test3));
-
-
-
+				logger.Debug("Request");
+				var r = await new RpcHandler().Event("ready").Request<User>("1.0.0");
+				logger.Debug($"Request: {r.Name}");
+			});
 
 
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				if (assembly.GetCustomAttribute<ClientPluginAttribute>() == null) continue;
 
-				Logger.Log(assembly.GetName().Name);
+				logger.Debug(assembly.GetName().Name);
 
 				foreach (var type in assembly.GetTypes().Where(t => !t.IsAbstract && t.IsSubclassOf(typeof(Service))))
 				{
-					Logger.Log("    " + type.FullName);
+					logger.Debug($"\t{type.FullName}");
 
-					var service = Activator.CreateInstance(type, new Logger(), this.Events) as Service;
-					this.Tick += service.Tick;
-
-					//this.Services.Add(service);
+					Activator.CreateInstance(type, new Logger($"Plugin|{type.Name}"), ticks, events, new RpcHandler());
 				}
 			}
 
-			Logger.Log("Done");
+			logger.Debug("Done");
 		}
-	}
-
-	public class OutboundMessage
-	{
-		public int Source { get; set; } = Game.Player.ServerId;
-
-		public string Event { get; set; }
-
-		public List<string> Payloads { get; set; } = new List<string>();
-
-		public DateTime Sent { get; set; } = DateTime.UtcNow;
 	}
 }

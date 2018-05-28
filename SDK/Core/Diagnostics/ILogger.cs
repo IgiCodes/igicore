@@ -8,12 +8,12 @@ namespace IgiCore.SDK.Core.Diagnostics
 
 		void Debug(string message);
 
-		void Log(string message);
-
 		void Info(string message);
 
 		void Warn(string message);
 
 		void Error(Exception exception);
+
+		void Log(string message, LogLevel level);
 	}
 }

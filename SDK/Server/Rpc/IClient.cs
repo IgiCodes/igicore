@@ -2,9 +2,13 @@
 {
 	public interface IClient
 	{
-		int Handle { get; set; }
+		int Handle { get; }
 
 		string Name { get; }
+
+		long SteamId { get; }
+
+		string EndPoint { get; }
 
 		int Ping { get; }
 

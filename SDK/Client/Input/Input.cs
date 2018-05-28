@@ -7,7 +7,7 @@ namespace IgiCore.SDK.Client.Input
 {
 	public static class Input
 	{
-		public static Dictionary<InputModifier, int> ModifierFlagToKeyCode => new Dictionary<InputModifier, int>()
+		public static Dictionary<InputModifier, int> ModifierFlagToKeyCode => new Dictionary<InputModifier, int>
 		{
 			[InputModifier.Ctrl] = 36,
 			[InputModifier.Alt] = 19,

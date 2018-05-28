@@ -20,6 +20,9 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowedReferenceRelatedFileExtensions>
+      .allowedextension
+    </AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +31,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowedReferenceRelatedFileExtensions>
+      .allowedextension
+    </AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
@@ -54,6 +60,8 @@
   <ItemGroup>
     <Compile Include="Configuration\ServerConfiguration.cs" />
     <Compile Include="Controllers\ConfigurableController.cs" />
+    <Compile Include="Events\IEvent.cs" />
+    <Compile Include="Events\IEventManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\IRpcAttach.cs" />
     <Compile Include="Rpc\IRpcEvent.cs" />
@@ -66,6 +74,10 @@
     <Compile Include="Storage\Contexts\EFContext.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Models\Models.csproj">
+      <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
+      <Name>IgiCore.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
       <Name>IgiCore.SDK.Core</Name>

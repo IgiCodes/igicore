@@ -1,14 +1,8 @@
 .vs/
 packages/
 obj/
-bin/
-/*.pdb
-/*.xml
-/*.dll
-/*.config
+*.dll
+*.pdb
 Interface/node_modules/
 Interface/dist/*
 !Interface/dist/index.html
-!System.Configuration.Install.dll
-!System.ComponentModel.DataAnnotations.dll
-!System.Numerics.dll

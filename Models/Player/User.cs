@@ -10,11 +10,10 @@ namespace IgiCore.Models.Player
 	public class User : IdentityModel
 	{
 		[Required]
-		[StringLength(15, MinimumLength = 15)] // TODO
-		public string SteamId { get; set; }
+		public long SteamId { get; set; }
 
 		[Required]
-		[StringLength(32, MinimumLength = 1)] // TODO
+		[StringLength(32, MinimumLength = 1)] // TODO: Confirm
 		public string Name { get; set; }
 
 		public DateTime? AcceptedRules { get; set; }

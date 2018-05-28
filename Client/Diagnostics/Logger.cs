@@ -1,4 +1,5 @@
 using System;
+using IgiCore.SDK.Client.Configuration;
 using IgiCore.SDK.Core.Diagnostics;
 
 namespace IgiCore.Client.Diagnostics
@@ -14,32 +15,29 @@ namespace IgiCore.Client.Diagnostics
 
 		public void Debug(string message)
 		{
-			WriteLine(message);
-		}
-
-		public void Log(string message)
-		{
-			WriteLine(message);
+			Log(message, LogLevel.Debug);
 		}
 
 		public void Info(string message)
 		{
-			WriteLine(message);
+			Log(message, LogLevel.Info);
 		}
 
 		public void Warn(string message)
 		{
-			WriteLine(message);
+			Log(message, LogLevel.Warn);
 		}
 
 		public void Error(Exception exception)
 		{
-			WriteLine($"ERROR: {exception.Message}");
+			Log($"ERROR: {exception.Message}", LogLevel.Error);
 		}
 
-		private void WriteLine(string message)
+		public void Log(string message, LogLevel level)
 		{
-			var output = $"{DateTime.Now:s}";
+			if (ClientConfiguration.LogLevel > level) return;
+
+			var output = $"{DateTime.Now:s} [{level}]";
 
 			if (!string.IsNullOrEmpty(this.Prefix)) output += $" [{this.Prefix}]";
 

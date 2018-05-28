@@ -5,18 +5,19 @@ using Banking.Core.Models;
 using IgiCore.Models.Player;
 using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Server.Controllers;
+using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;
 
 namespace Banking.Server
 {
-	public class BankingController : ConfigurableController<BankingConfiguration>
+	public class BankingController : ConfigurableController<Configuration>
 	{
-		public BankingController(ILogger logger, IRpcHandler rpc, BankingConfiguration configuration) : base(logger, rpc, configuration)
+		public BankingController(ILogger logger, IEventManager events, IRpcHandler rpc, Configuration configuration) : base(logger, events, rpc, configuration)
 		{
 			this.Rpc.Event("character:create").On<Character>(OnCharacterCreate);
 			this.Rpc.Event("igi:bank:atm:withdraw").On<Guid, Guid, double>(AtmWithdraw);
 
-			this.Logger.Log(this.Configuration.Test);
+			this.Logger.Debug(this.Configuration.Test);
 		}
 
 		public async void OnCharacterCreate(IRpcEvent e, Character character)

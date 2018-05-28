@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Banking.Core.Models;
 using CitizenFX.Core;
 using CitizenFX.Core.UI;
+using IgiCore.SDK.Client.Events;
 using IgiCore.SDK.Client.Extensions;
 using IgiCore.SDK.Client.Input;
 using IgiCore.SDK.Client.Rpc;
@@ -21,7 +22,7 @@ namespace Banking.Client
 		protected List<BankBranch> Branches;
 		protected Dictionary<BankBranch, Ped> Tellers = new Dictionary<BankBranch, Ped>();
 
-		public BranchService(ILogger logger, IEventsManager events) : base(logger, events)
+		public BranchService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc) : base(logger, ticks, events, rpc)
 		{
 			//Client.Instance.Controllers.First<ClientController>().OnClientReady += OnClientReady;
 			//Client.Instance.Controllers.First<CharacterController>().OnCharacterLoaded += OnCharacterLoaded;
@@ -31,7 +32,7 @@ namespace Banking.Client
 
 		//private async void OnCharacterLoaded(object s, CharacterEventArgs c) { this.CharLoaded = true; }
 
-		public override async Task Tick()
+		public async Task Tick()
 		{
 			if (!this.CharLoaded) return;
 
@@ -43,6 +44,7 @@ namespace Banking.Client
 					this.Tellers[bankBranch].Heading = bankBranch.Heading;
 					continue;
 				}
+
 				var tellerModel = new Model(PedHash.Bankman);
 				await tellerModel.Request(-1);
 				//this.Tellers[bankBranch] = await CitizenFX.Core.World.CreatePed(tellerModel, bankBranch.Position, bankBranch.Heading);
@@ -59,9 +61,9 @@ namespace Banking.Client
 			{
 				Game.Player.Character.Task.ClearAll();
 				Game.Player.Character.Task.ClearLookAt();
-				CitizenFX.Core.World.DestroyAllCameras();
+				World.DestroyAllCameras();
 				this.Camera = null;
-				CitizenFX.Core.World.RenderingCamera = null;
+				World.RenderingCamera = null;
 				this.InAnim = false;
 			}
 
@@ -96,13 +98,13 @@ namespace Banking.Client
 			ts.AddTask.AchieveHeading(bankTeller.Heading - 180);
 			ts.Close();
 			await Game.Player.Character.RunTaskSequence(ts);
-			this.Logger.Log("Task ended");
+			this.Logger.Debug("Task ended");
 			Game.Player.Character.Task.LookAt(bankTeller);
 			Game.Player.Character.Task.StandStill(-1);
 
 			// Camera
-			if (this.Camera == null) this.Camera = CitizenFX.Core.World.CreateCamera(GameplayCamera.Position, GameplayCamera.Rotation, GameplayCamera.FieldOfView);
-			CitizenFX.Core.World.RenderingCamera = this.Camera;
+			if (this.Camera == null) this.Camera = World.CreateCamera(GameplayCamera.Position, GameplayCamera.Rotation, GameplayCamera.FieldOfView);
+			World.RenderingCamera = this.Camera;
 
 			for (float t = 0; t < 1f; t += 0.01f)
 			{

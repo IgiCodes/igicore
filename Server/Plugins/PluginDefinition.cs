@@ -3,7 +3,7 @@ using JetBrains.Annotations;
 
 namespace IgiCore.Server.Plugins
 {
-	[UsedImplicitly]
+	[PublicAPI]
 	public class PluginDefinition
 	{
 		public string Name { get; set; }
@@ -27,6 +27,7 @@ namespace IgiCore.Server.Plugins
 		public ComponentDefinition Client { get; set; } = new ComponentDefinition();
 	}
 
+	[PublicAPI]
 	public enum PluginTypes
 	{
 		Plugin,
@@ -34,6 +35,7 @@ namespace IgiCore.Server.Plugins
 		LoadingScreen
 	}
 
+	[PublicAPI]
 	public class RepositoryDefinition
 	{
 		public string Type { get; set; }
@@ -41,6 +43,7 @@ namespace IgiCore.Server.Plugins
 		public string Url { get; set; }
 	}
 
+	[PublicAPI]
 	public class ComponentDefinition
 	{
 		public List<string> Main { get; set; } = new List<string>();

@@ -1,5 +1,6 @@
 ﻿using IgiCore.SDK.Core.Controllers;
 using IgiCore.SDK.Core.Diagnostics;
+using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;
 
 namespace IgiCore.SDK.Server.Controllers
@@ -8,7 +9,7 @@ namespace IgiCore.SDK.Server.Controllers
 	{
 		protected readonly T Configuration;
 
-		protected ConfigurableController(ILogger logger, IRpcHandler rpc, T configuration) : base(logger, rpc)
+		protected ConfigurableController(ILogger logger, IEventManager events, IRpcHandler rpc, T configuration) : base(logger, events, rpc)
 		{
 			this.Configuration = configuration;
 		}

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using IgiCore.SDK.Core.Rpc;
 using IgiCore.SDK.Server.Rpc;
 using IgiCore.Server.Diagnostics;
 
@@ -11,10 +12,10 @@ namespace IgiCore.Server.Rpc
 		private readonly string @event;
 		private readonly Logger logger;
 		private readonly ClientHandler handler;
-		private readonly ClientTrigger trigger;
+		private readonly RpcTrigger trigger;
 		private readonly Serializer serializer;
 
-		public Rpc(string @event, Logger logger, ClientHandler handler, ClientTrigger trigger, Serializer serializer)
+		public Rpc(string @event, Logger logger, ClientHandler handler, RpcTrigger trigger, Serializer serializer)
 		{
 			this.@event = @event;
 			this.logger = logger;
@@ -63,7 +64,7 @@ namespace IgiCore.Server.Rpc
 			Attach(callback, m => new object[]
 			{
 				this.serializer.Deserialize<T1>(m.Payloads[0]),
-				this.serializer.Deserialize<T2>(m.Payloads[1]),
+				this.serializer.Deserialize<T2>(m.Payloads[1])
 			});
 		}
 
@@ -113,18 +114,9 @@ namespace IgiCore.Server.Rpc
 				InboundMessage message = this.serializer.Deserialize<InboundMessage>(json);
 				message.Received = DateTime.UtcNow;
 
-				RpcEvent rpcEvent = new RpcEvent
-				{
-					Event = message.Event,
-					Client = new Client
-					{
-						Handle = message.Source
-					}
-				};
-
 				var args = new List<object>
 				{
-					rpcEvent
+					new RpcEvent(message.Event, new Client(message.Source))
 				};
 
 				args.AddRange(func(message));

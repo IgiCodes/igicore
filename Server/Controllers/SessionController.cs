@@ -4,6 +4,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Server.Controllers;
+using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;
 
 namespace IgiCore.Server.Controllers
@@ -14,7 +15,7 @@ namespace IgiCore.Server.Controllers
 
 		public Player CurrentHost { get; private set; }
 
-		public SessionController(ILogger logger, IRpcHandler rpc) : base(logger, rpc)
+		public SessionController(ILogger logger, IEventManager events, IRpcHandler rpc) : base(logger, events, rpc)
 		{
 			API.EnableEnhancedHostSupport(true);
 
