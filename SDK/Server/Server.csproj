@@ -60,7 +60,6 @@
   <ItemGroup>
     <Compile Include="Configuration\ServerConfiguration.cs" />
     <Compile Include="Controllers\ConfigurableController.cs" />
-    <Compile Include="Events\IEvent.cs" />
     <Compile Include="Events\IEventManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Rpc\IRpcAttach.cs" />

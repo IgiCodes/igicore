@@ -98,7 +98,6 @@
     <Compile Include="Configuration\DatabaseConfiguration.cs" />
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
-    <Compile Include="Events\Event.cs" />
     <Compile Include="Events\EventManager.cs" />
     <Compile Include="Migrations\201805301437354_Init.cs" />
     <Compile Include="Migrations\201805301437354_Init.Designer.cs">
