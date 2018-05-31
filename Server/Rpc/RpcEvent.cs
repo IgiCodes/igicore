@@ -25,6 +25,9 @@ namespace IgiCore.Server.Rpc
 			{
 				using (var context = new StorageContext())
 				{
+					context.Configuration.ProxyCreationEnabled = false;
+					context.Configuration.LazyLoadingEnabled = false;
+
 					return context.Users.Single(u => u.SteamId == this.Client.SteamId);
 				}
 			});

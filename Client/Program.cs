@@ -33,14 +33,6 @@ namespace IgiCore.Client
 
 			//new StartupService(new Logger("Startup"), ticks, events, new RpcHandler());
 
-
-			new RpcHandler().Event("ready").On<User>((e, r) =>
-			{
-				e.Reply();
-				logger.Debug($"On: {r.Name}");
-			});
-
-
 			Task.Factory.StartNew(async () =>
 			{
 				logger.Debug("Request");
