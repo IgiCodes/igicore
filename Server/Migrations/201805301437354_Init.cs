@@ -1,6 +1,7 @@
 namespace IgiCore.Server.Migrations
 {
-	using System.Data.Entity.Migrations;
+    using System;
+    using System.Data.Entity.Migrations;
     
     public partial class Init : DbMigration
     {
@@ -136,7 +137,8 @@ namespace IgiCore.Server.Migrations
                         Created = c.DateTime(nullable: false, precision: 0),
                         Deleted = c.DateTime(precision: 0),
                     })
-                .PrimaryKey(t => t.Id);
+                .PrimaryKey(t => t.Id)
+                .Index(t => t.SteamId, unique: true);
             
             CreateTable(
                 "dbo.Sessions",
@@ -227,6 +229,7 @@ namespace IgiCore.Server.Migrations
             DropIndex("dbo.GroupMembers", new[] { "GroupId" });
             DropIndex("dbo.GroupMembers", new[] { "CharacterId" });
             DropIndex("dbo.Sessions", new[] { "UserId" });
+            DropIndex("dbo.Users", new[] { "SteamId" });
             DropIndex("dbo.Skills", new[] { "CharacterId" });
             DropIndex("dbo.Characters", new[] { "StyleId" });
             DropIndex("dbo.Characters", new[] { "UserId" });
