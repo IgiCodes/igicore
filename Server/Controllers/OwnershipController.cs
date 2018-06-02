@@ -55,7 +55,8 @@ namespace IgiCore.Server.Controllers
 			var response = RpcResponse<int>.Parse(json);
 
 			int netId = response.Result;
-			T obj = Server.Db.Set<T>().First(c => c.NetId == netId);
+			T obj = Server.Db.Set<T>().FirstOrDefault(c => c.NetId == netId);
+			if (obj == null) return;
 			obj.TrackingUserId = Guid.Empty;
 			obj.Handle = null;
 			obj.NetId = null;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core.Native;
 using IgiCore.Client.Controllers.Player;
@@ -15,6 +16,7 @@ namespace IgiCore.Client.Controllers.Objects.Vehicles
 {
 	public class VehicleController : Controller
 	{
+
 		public VehicleController()
 		{
 			Server.Event(RpcEvents.CarSpawn).On<Car>(async c => await this.Spawn(c));
@@ -40,6 +42,7 @@ namespace IgiCore.Client.Controllers.Objects.Vehicles
 			Client.Log($"Spawning {vehToSpawn.Id}");
 
 			CitizenFX.Core.Vehicle spawnedVehicle = await vehToSpawn.ToCitizenVehicle();
+
 			API.VehToNet(spawnedVehicle.Handle);
 			API.NetworkRegisterEntityAsNetworked(spawnedVehicle.Handle);
 			var netId = API.NetworkGetNetworkIdFromEntity(spawnedVehicle.Handle);

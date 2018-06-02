@@ -44,94 +44,10 @@ namespace IgiCore.Server.Commands
 					IsCustom = false
 				},
 				PearescentColor = VehicleStockColor.HotPink,
-				Seats = new List<VehicleSeat>
-				{
-					new VehicleSeat
-					{
-						Index = VehicleSeatIndex.LeftFront
-					},
-					new VehicleSeat
-					{
-						Index = VehicleSeatIndex.RightFront
-					},
-					new VehicleSeat
-					{
-						Index = VehicleSeatIndex.LeftRear
-					},
-					new VehicleSeat
-					{
-						Index = VehicleSeatIndex.RightRear
-					}
-				},
-				Wheels = new List<VehicleWheel>
-				{
-					new VehicleWheel
-					{
-						Index = 0,
-						IsBurst = false,
-						Type = VehicleWheelType.Sport
-					},
-					new VehicleWheel
-					{
-						Index = 0,
-						IsBurst = false,
-						Type = VehicleWheelType.Sport
-					},
-					new VehicleWheel
-					{
-						Index = 0,
-						IsBurst = false,
-						Type = VehicleWheelType.Sport
-					},
-					new VehicleWheel
-					{
-						Index = 0,
-						IsBurst = false,
-						Type = VehicleWheelType.Sport
-					}
-				},
-				Windows = new List<VehicleWindow>
-				{
-					new VehicleWindow
-					{
-						Index = VehicleWindowIndex.FrontLeftWindow,
-						IsIntact = false,
-						IsRolledDown = false
-					},
-					new VehicleWindow
-					{
-						Index = VehicleWindowIndex.FrontRightWindow,
-						IsIntact = false,
-						IsRolledDown = false
-					},
-					new VehicleWindow
-					{
-						Index = VehicleWindowIndex.BackLeftWindow,
-						IsIntact = false,
-						IsRolledDown = false
-					},
-					new VehicleWindow
-					{
-						Index = VehicleWindowIndex.BackRightWindow,
-						IsIntact = false,
-						IsRolledDown = false
-					}
-				},
-				Doors = new List<VehicleDoor>
-				{
-					new VehicleDoor
-						{Index = VehicleDoorIndex.FrontLeftDoor},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.FrontRightDoor},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.BackLeftDoor},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.BackRightDoor},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.Hood},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.Trunk}
-				}
+				Seats = new List<VehicleSeat>(),
+				Wheels = new List<VehicleWheel>(),
+				Windows = new List<VehicleWindow>(),
+				Doors = new List<VehicleDoor>()
 			};
 
 			Server.Db.Cars.Add(car);

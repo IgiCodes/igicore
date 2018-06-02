@@ -61,6 +61,8 @@ namespace IgiCore.Core.Models.Objects.Vehicles
 		public bool IsRightHeadLightBroken { get; set; } = false;
 		public bool IsRadioEnabled { get; set; } = false;
 		public bool IsRoofOpen { get; set; } = false;
+		public bool HasRoof { get; set; } = true;
+		public bool IsVehicleConvertible { get; set; } = false;
 		public bool NeedsToBeHotwired { get; set; } = false;
 		public bool CanTiresBurst { get; set; } = true;
 		public VehicleColor PrimaryColor { get; set; } = new VehicleColor();

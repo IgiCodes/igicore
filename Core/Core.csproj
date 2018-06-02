@@ -65,7 +65,10 @@
     <Compile Include="Models\Groups\GroupMember.cs" />
     <Compile Include="Models\Groups\GroupRole.cs" />
     <Compile Include="Models\Model.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleBones.cs" />
     <Compile Include="Models\Objects\Vehicles\VehicleNeonLight.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleWheelBones.cs" />
+    <Compile Include="Models\Objects\Vehicles\VehicleWheelPosition.cs" />
     <Compile Include="Models\Player\Character.cs" />
     <Compile Include="Models\Player\ISession.cs" />
     <Compile Include="Models\Position.cs" />

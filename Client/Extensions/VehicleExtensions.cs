@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
@@ -8,14 +9,18 @@ using Model = CitizenFX.Core.Model;
 using RadioStation = CitizenFX.Core.RadioStation;
 using Vehicle = CitizenFX.Core.Vehicle;
 using VehicleColor = CitizenFX.Core.VehicleColor;
+using VehicleDoor = IgiCore.Core.Models.Objects.Vehicles.VehicleDoor;
 using VehicleHash = CitizenFX.Core.VehicleHash;
 using VehicleLockStatus = CitizenFX.Core.VehicleLockStatus;
+using VehicleSeat = IgiCore.Core.Models.Objects.Vehicles.VehicleSeat;
+using VehicleWindow = IgiCore.Core.Models.Objects.Vehicles.VehicleWindow;
 using VehicleWindowTint = CitizenFX.Core.VehicleWindowTint;
 
 namespace IgiCore.Client.Extensions
 {
 	public static class VehicleExtensions
 	{
+
 		public static async Task<Vehicle> ToCitizenVehicle(this Core.Models.Objects.Vehicles.Vehicle vehicle)
 		{
 			Vehicle citizenVehicle = await World.CreateVehicle(new Model((VehicleHash)vehicle.Hash), vehicle.Position, vehicle.Heading);
@@ -68,7 +73,8 @@ namespace IgiCore.Client.Extensions
 
 			citizenVehicle.Mods.WindowTint = (VehicleWindowTint)(int)vehicle.WindowTint;
 			citizenVehicle.LockStatus = (VehicleLockStatus)(int)vehicle.LockStatus;
-			citizenVehicle.RadioStation = (RadioStation)(int)vehicle.RadioStation;
+
+			//citizenVehicle.RadioStation = (RadioStation)(int)vehicle.RadioStation;
 
 			//TODO: Set vehicle Extras/Seats/Doors/Windows/Wheels/etc
 
@@ -79,12 +85,70 @@ namespace IgiCore.Client.Extensions
 		{
 			if (id == default(Guid)) id = Guid.NewGuid();
 
+			// Extras
 			List<VehicleExtra> vehicleExtras = new List<VehicleExtra>();
 			for (int i = 0; i < 100; i++)
 			{
 				if (vehicle.ExtraExists(i)) vehicleExtras.Add(new VehicleExtra { Index = i, IsOn = vehicle.IsExtraOn(i), Id = id });
 			}
 
+			// Wheels
+			List<Core.Models.Objects.Vehicles.VehicleWheel> vehicleWheels = new List<Core.Models.Objects.Vehicles.VehicleWheel>();
+			foreach (KeyValuePair<VehicleWheelPosition, string> wheelBoneName in VehicleWheelBones.Bones)
+			{
+				if (vehicle.Bones.HasBone(wheelBoneName.Value))
+				{
+					vehicleWheels.Add(new Core.Models.Objects.Vehicles.VehicleWheel
+					{
+						Type = (Core.Models.Objects.Vehicles.VehicleWheelType)(int)vehicle.Mods.WheelType,
+						Position = wheelBoneName.Key,
+						Index = vehicle.Wheels[(int)wheelBoneName.Key].Index
+					});
+				}
+			}
+
+			// Doors
+			List<Core.Models.Objects.Vehicles.VehicleDoor> vehicleDoors = new List<VehicleDoor>();
+			foreach (CitizenFX.Core.VehicleDoor vehicleDoor in vehicle.Doors)
+			{
+				vehicleDoors.Add(new VehicleDoor
+				{
+					Index = (Core.Models.Objects.Vehicles.VehicleDoorIndex)(int)vehicleDoor.Index,
+					IsBroken = vehicleDoor.IsBroken,
+					IsOpen = vehicleDoor.IsOpen,
+					Angle = vehicleDoor.AngleRatio
+				});
+			}
+			
+			List<Core.Models.Objects.Vehicles.VehicleWindow> vehicleWindows = new List<VehicleWindow>();
+			foreach (var value in Enum.GetValues(typeof(CitizenFX.Core.VehicleWindowIndex)))
+			{
+				CitizenFX.Core.VehicleWindow window = vehicle.Windows[(CitizenFX.Core.VehicleWindowIndex) value];
+				vehicleWindows.Add(new VehicleWindow
+				{
+					Index = (Core.Models.Objects.Vehicles.VehicleWindowIndex)value,
+					IsIntact = window.IsIntact,
+					//TODO: Window rolled down state (has to be self-tracked)
+				});
+			}
+
+			// TODO: Store player server IDs when communicating with the server and have the server assign a character
+			PlayerList players = new PlayerList();
+			List<Core.Models.Objects.Vehicles.VehicleSeat> vehicleSeats = new List<VehicleSeat>();
+			foreach (Ped vehicleOccupant in vehicle.Occupants)
+			{
+				foreach (Player player in players)
+				{
+					if (player.Handle == vehicleOccupant.Handle)
+					{
+						vehicleSeats.Add(new VehicleSeat
+						{
+							Index = (VehicleSeatIndex)(int)vehicleOccupant.SeatIndex,
+						});
+					}
+				}
+			}
+			
 			VehicleNeonPositions neonPositions = VehicleNeonPositions.None;
 			if (vehicle.Mods.IsNeonLightsOn(VehicleNeonLight.Back)) neonPositions |= VehicleNeonPositions.Back;
 			if (vehicle.Mods.IsNeonLightsOn(VehicleNeonLight.Front)) neonPositions |= VehicleNeonPositions.Front;
@@ -128,6 +192,8 @@ namespace IgiCore.Client.Extensions
 				LockStatus = (Core.Models.Objects.Vehicles.VehicleLockStatus)vehicle.LockStatus,
 				CanTiresBurst = vehicle.CanTiresBurst,
 				NeedsToBeHotwired = vehicle.NeedsToBeHotwired,
+				IsVehicleConvertible = vehicle.IsConvertible,
+				HasRoof = vehicle.HasRoof,
 				IsRoofOpen = vehicle.RoofState != VehicleRoofState.Closed,
 				IsRightHeadLightBroken = vehicle.IsRightHeadLightBroken,
 				IsLeftHeadLightBroken = vehicle.IsLeftHeadLightBroken,
@@ -143,7 +209,11 @@ namespace IgiCore.Client.Extensions
 				IsAlarmed = vehicle.IsAlarmSet,
 				IsAlarmSounding = vehicle.IsAlarmSounding,
 				LicensePlate = vehicle.Mods.LicensePlate,
-				Extras = vehicleExtras
+				Extras = vehicleExtras,
+				Wheels = vehicleWheels,
+				Doors = vehicleDoors,
+				Seats = vehicleSeats,
+				Windows = vehicleWindows
 			};
 		}
 

@@ -1,4 +1,6 @@
-﻿using System.Data.Entity;
+﻿using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
 using IgiCore.Core.Models.Appearance;
 using IgiCore.Core.Models.Economy.Banking;
 using IgiCore.Core.Models.Groups;
@@ -28,8 +30,14 @@ namespace IgiCore.Server.Storage.MySql
         public DbSet<Style> Styles { get; set; }
 
         public DbSet<Vehicle> Vehicles { get; set; }
+	    public DbSet<VehicleExtra> VehicleExtras { get; set; }
+	    public DbSet<VehicleWheel> VehicleWheels { get; set; }
+	    public DbSet<VehicleWindow> VehicleWindows { get; set; }
+	    public DbSet<VehicleMod> VehicleMods { get; set; }
+	    public DbSet<VehicleDoor> VehicleDoors { get; set; }
+	    public DbSet<VehicleSeat> VehicleSeats { get; set; }
 
-        public DbSet<Car> Cars { get; set; }
+		public DbSet<Car> Cars { get; set; }
         public DbSet<Bike> Bikes { get; set; }
 
         public DbSet<Inventory> Inventories { get; set; }
@@ -47,5 +55,28 @@ namespace IgiCore.Server.Storage.MySql
 			
 			//this.Database.Log = m => Server.Log(m);
 		}
+
+	    public void UpdatePropertyList<T>(List<dynamic> src, List<dynamic> dest) where T : class
+		{
+		    foreach (var item in dest.ToList())
+		    {
+			    if (src.All(i => i.Index != item.Index)) this.Set<T>().Remove(item);
+		    }
+
+		    foreach (var item in src)
+		    {
+			    var model = dest.SingleOrDefault(i => i.Index == item.Index);
+
+			    if (model != default(T))
+			    {
+				    item.Id = model.Id;
+				    Server.Db.Entry(model).CurrentValues.SetValues(item);
+			    }
+			    else
+			    {
+				    dest.Add(item);
+			    }
+		    }
+	    }
 	}
 }

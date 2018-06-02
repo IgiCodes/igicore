@@ -59,8 +59,8 @@ namespace IgiCore.Client.Interface.Hud
 			Client.Instance.Controllers.First<ClientController>().OnClientReady += OnClientReady;
 			Client.Instance.Controllers.First<CharacterController>().OnCharacterLoaded += OnCharacterLoaded;
 
-			//this.Elements.Add(new Location(this));
-			//this.Elements.Add(new Speedometer(this));
+			this.Elements.Add(new Location(this));
+			this.Elements.Add(new Speedometer(this));
 
 			this.Screens.Add(new CharacterSelectScreen());
 			//this.Screens.Add(new InventoryScreen());
