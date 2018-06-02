@@ -71,6 +71,7 @@
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data, Version=6.10.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.6.10.7\lib\net452\MySql.Data.dll</HintPath>
     </Reference>
@@ -97,6 +98,7 @@
     <Compile Include="Commands\PropCommand.cs" />
     <Compile Include="Commands\CarCommand.cs" />
     <Compile Include="Commands\GpsCommand.cs" />
+    <Compile Include="Commands\ReviveCommand.cs" />
     <Compile Include="Controllers\GroupController.cs" />
     <Compile Include="Extentions\CitizenExtentions.cs" />
     <Compile Include="Extentions\CharacterExtentions.cs" />

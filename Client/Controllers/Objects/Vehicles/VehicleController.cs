@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CitizenFX.Core.Native;
 using IgiCore.Client.Controllers.Player;
@@ -15,12 +16,14 @@ namespace IgiCore.Client.Controllers.Objects.Vehicles
 {
 	public class VehicleController : Controller
 	{
+
 		public VehicleController()
 		{
 			Server.Event(RpcEvents.CarSpawn).On<Car>(async c => await this.Spawn(c));
 			Server.Event(RpcEvents.CarClaim).On<Car>(async c => await this.ClaimVehicle(c));
 			Server.Event(RpcEvents.CarUnclaim).On<Car>(async c => await this.UnclaimVehicle(c));
 
+			Server.Event(RpcEvents.BikeSpawn).On<Bike>(async b => await this.Spawn(b));
 			Server.Event(RpcEvents.BikeClaim).On<Bike>(async b => await this.ClaimVehicle(b));
 			Server.Event(RpcEvents.BikeUnclaim).On<Bike>(async b => await this.UnclaimVehicle(b));
 		}
@@ -39,6 +42,7 @@ namespace IgiCore.Client.Controllers.Objects.Vehicles
 			Client.Log($"Spawning {vehToSpawn.Id}");
 
 			CitizenFX.Core.Vehicle spawnedVehicle = await vehToSpawn.ToCitizenVehicle();
+
 			API.VehToNet(spawnedVehicle.Handle);
 			API.NetworkRegisterEntityAsNetworked(spawnedVehicle.Handle);
 			var netId = API.NetworkGetNetworkIdFromEntity(spawnedVehicle.Handle);
@@ -46,8 +50,7 @@ namespace IgiCore.Client.Controllers.Objects.Vehicles
 
 			Client.Log($"Spawned {spawnedVehicle.Handle} with netId {netId}");
 
-			Vehicle vehicle = spawnedVehicle;
-			vehicle.Id = vehToSpawn.Id;
+			Vehicle vehicle = await spawnedVehicle.ToVehicle(vehToSpawn.Id);
 			vehicle.TrackingUserId = Client.Instance.Controllers.First<UserController>().User.Id;
 			vehicle.Handle = spawnedVehicle.Handle;
 			vehicle.NetId = netId;
@@ -59,7 +62,12 @@ namespace IgiCore.Client.Controllers.Objects.Vehicles
 				.Trigger();
 			//TriggerServerEvent($"igi:{typeof(T).VehicleType().Name}:save", JsonConvert.SerializeObject(vehicle, typeof(T), new JsonSerializerSettings()));
 
-			Client.Instance.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
+			Client.Instance.Services.First<VehicleService>().Tracked.Add(new VehicleService.TrackedVehicle
+			{
+				Id = vehicle.Id,
+				Type = typeof(T),
+				NetId = vehicle.NetId ?? 0
+			});
 
 			return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(vehicle));
 		}
@@ -86,7 +94,12 @@ namespace IgiCore.Client.Controllers.Objects.Vehicles
 				.Attach(vehicle.Id)
 				.Trigger();
 
-			Client.Instance.Services.First<VehicleService>().Tracked.Add(new Tuple<Type, int>(typeof(T), netId));
+			Client.Instance.Services.First<VehicleService>().Tracked.Add(new VehicleService.TrackedVehicle
+			{
+				Id = vehicle.Id,
+				Type = typeof(T),
+				NetId = vehicle.NetId ?? 0
+			});
 
 			Client.Log($"Tracked vehicle count in claim: {string.Join(", ", Client.Instance.Services.First<VehicleService>().Tracked)}");
 		}
@@ -98,7 +111,12 @@ namespace IgiCore.Client.Controllers.Objects.Vehicles
 			Client.Log($"Unclaiming car: {vehicle.Id} with NetId: {vehicle.NetId}");
 			Client.Log($"Currently tracking: {string.Join(", ", Client.Instance.Services.First<VehicleService>().Tracked)}");
 
-			Client.Instance.Services.First<VehicleService>().Tracked.Remove(new Tuple<Type, int>(typeof(T), vehicle.NetId ?? 0));
+			Client.Instance.Services.First<VehicleService>().Tracked.Remove(new VehicleService.TrackedVehicle
+			{
+				Id = vehicle.Id,
+				Type = typeof(T),
+				NetId = vehicle.NetId ?? 0
+			});
 
 			Client.Log($"Now tracking: {string.Join(", ", Client.Instance.Services.First<VehicleService>().Tracked)}");
 		}

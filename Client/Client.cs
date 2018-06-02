@@ -102,7 +102,7 @@ namespace IgiCore.Client
 		}
 
 		[Conditional("DEBUG")]
-		public static void Log(string message) => Debug.Write($"{DateTime.Now:s} [CLIENT]: {message}");
+		public static void Log(string message) => Debug.Write($"{DateTime.Now:s} [CLIENT]: {message}{Environment.NewLine}");
 
 		public void AttachTickHandler(Func<Task> task) => this.Tick += task;
 

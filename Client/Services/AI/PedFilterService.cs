@@ -37,8 +37,6 @@ namespace IgiCore.Client.Services.AI
 		{
 			foreach (var ped in new PedList().Where(p => !p.IsPlayer && p.Model.IsValid && this.IllicalPeds.Contains((PedHash)p.Model.Hash)))
 			{
-				Client.Log($"Filtered ped found: {ped.Handle} {ped.Model.Hash} {Enum.GetName(typeof(PedHash), ped.Model.Hash)} {ped.GetPositionOffset(Game.Player.Character.Position)}");
-
 				ped.Delete();
 			}
 		}

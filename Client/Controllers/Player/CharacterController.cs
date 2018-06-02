@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using CitizenFX.Core;
 using IgiCore.Client.Events;
 using IgiCore.Client.Models;
 using IgiCore.Client.Rpc;
@@ -22,6 +23,11 @@ namespace IgiCore.Client.Controllers.Player
 		public CharacterController()
 		{
 			Server.Event(RpcEvents.CharacterLoad).On<Character>(this.Load);
+			Server.Event(RpcEvents.GetCharacterPosition).On(() => Server.Event(RpcEvents.GetCharacterPosition)
+				.Attach(Game.PlayerPed.Position)
+				.Attach(Game.PlayerPed.Heading)
+				.Trigger()
+			);
 		}
 
 

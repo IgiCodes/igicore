@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Core;
 using IgiCore.Core.Extensions;
+using IgiCore.Core.Models;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Rpc;
 using IgiCore.Server.Rpc;
@@ -15,99 +18,36 @@ namespace IgiCore.Server.Commands
 
 		public override async Task RunCommand(Player player, List<string> args)
 		{
+			Tuple<Vector3, float> charPos = await player.Event(RpcEvents.GetCharacterPosition).Request<Vector3, float>();
+			VehicleHash carName = VehicleHash.Elegy;
+			var dict = Enum.GetValues(typeof(VehicleHash))
+				.Cast<VehicleHash>()
+				.ToDictionary(t => (uint)t, t => t.ToString().ToLower());
+			if (args.FirstOrDefault() != null) carName = dict.Where(d => d.Value == args[0].ToLower()).Select(d => d.Key).Cast<VehicleHash>().FirstOrDefault();
+			if (carName == 0) carName = VehicleHash.Elegy;
+			Server.Log(carName.ToString());
 			Car car = new Car
 			{
 				Id = GuidGenerator.GenerateTimeBasedGuid(),
-				Hash = (uint)VehicleHash.Elegy,
-				Position = new Vector3 { X = -1038.121f, Y = -2738.279f, Z = 20.16929f },
-				Seats = new List<VehicleSeat>
+				Hash = (uint)carName,
+				Position = charPos.Item1.GetPositionInFrontOfPed(charPos.Item2, 10f),
+				PrimaryColor = new VehicleColor
 				{
-					new VehicleSeat
-					{
-						Index = VehicleSeatIndex.LeftFront
-					},
-					new VehicleSeat
-					{
-						Index = VehicleSeatIndex.RightFront
-					},
-					new VehicleSeat
-					{
-						Index = VehicleSeatIndex.LeftRear
-					},
-					new VehicleSeat
-					{
-						Index = VehicleSeatIndex.RightRear
-					}
+					StockColor = VehicleStockColor.HotPink,
+					CustomColor = new Color(),
+					IsCustom = false
 				},
-				Wheels = new List<VehicleWheel>
+				SecondaryColor = new VehicleColor
 				{
-					new VehicleWheel
-					{
-						Index = 0,
-						IsBurst = false,
-						Type = VehicleWheelType.Sport
-					},
-					new VehicleWheel
-					{
-						Index = 0,
-						IsBurst = false,
-						Type = VehicleWheelType.Sport
-					},
-					new VehicleWheel
-					{
-						Index = 0,
-						IsBurst = false,
-						Type = VehicleWheelType.Sport
-					},
-					new VehicleWheel
-					{
-						Index = 0,
-						IsBurst = false,
-						Type = VehicleWheelType.Sport
-					}
+					StockColor = VehicleStockColor.MattePurple,
+					CustomColor = new Color(),
+					IsCustom = false
 				},
-				Windows = new List<VehicleWindow>
-				{
-					new VehicleWindow
-					{
-						Index = VehicleWindowIndex.FrontLeftWindow,
-						IsIntact = false,
-						IsRolledDown = false
-					},
-					new VehicleWindow
-					{
-						Index = VehicleWindowIndex.FrontRightWindow,
-						IsIntact = false,
-						IsRolledDown = false
-					},
-					new VehicleWindow
-					{
-						Index = VehicleWindowIndex.BackLeftWindow,
-						IsIntact = false,
-						IsRolledDown = false
-					},
-					new VehicleWindow
-					{
-						Index = VehicleWindowIndex.BackRightWindow,
-						IsIntact = false,
-						IsRolledDown = false
-					}
-				},
-				Doors = new List<VehicleDoor>
-				{
-					new VehicleDoor
-						{Index = VehicleDoorIndex.FrontLeftDoor},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.FrontRightDoor},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.BackLeftDoor},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.BackRightDoor},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.Hood},
-					new VehicleDoor
-						{Index = VehicleDoorIndex.Trunk}
-				}
+				PearescentColor = VehicleStockColor.HotPink,
+				Seats = new List<VehicleSeat>(),
+				Wheels = new List<VehicleWheel>(),
+				Windows = new List<VehicleWindow>(),
+				Doors = new List<VehicleDoor>()
 			};
 
 			Server.Db.Cars.Add(car);

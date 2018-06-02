@@ -131,6 +131,6 @@ namespace IgiCore.Server
         }
 
 		[Conditional("DEBUG")]
-		public static void Log(string message) => Debug.WriteLine($"{DateTime.Now:s} [SERVER]: {message}");
+		public static void Log(string message) => Debug.Write($"{DateTime.Now:s} [SERVER]: {message}{Environment.NewLine}");
 	}
 }

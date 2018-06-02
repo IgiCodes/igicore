@@ -24,6 +24,7 @@ namespace IgiCore.Server.Services
 			Register(new CarCommand());
 			Register(new BikeCommand());
 			Register(new GroupCommand());
+			Register(new ReviveCommand());
 		}
 
 		public void Register(Command command)

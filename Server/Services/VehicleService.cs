@@ -4,14 +4,12 @@ using System.Data.Entity.Migrations;
 using System.Linq;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
-using IgiCore.Core;
 using IgiCore.Core.Extensions;
 using IgiCore.Core.Models.Objects.Vehicles;
 using IgiCore.Core.Models.Player;
 using IgiCore.Core.Rpc;
 using IgiCore.Server.Models.Player;
 using IgiCore.Server.Rpc;
-using Newtonsoft.Json;
 
 namespace IgiCore.Server.Services
 {
@@ -44,7 +42,7 @@ namespace IgiCore.Server.Services
 			await Server.Db.SaveChangesAsync();
 		}
 
-		private async void ReassignTrackedVehicles([FromSource] Player disconnectedCitizen, string disconnectMessage, CallbackDelegate kickReason)
+		private static async void ReassignTrackedVehicles([FromSource] Player disconnectedCitizen, string disconnectMessage, CallbackDelegate kickReason)
 		{
 			Server.Log("ReassignTrackedVehicles called");
 
@@ -108,7 +106,10 @@ namespace IgiCore.Server.Services
 
 				foreach (Vehicle vehicle in vehicles)
 				{
-					if (hostClient != null) BaseScript.TriggerClientEvent(hostClient, "igi:entity:delete", vehicle.NetId, vehicle.Hash);
+					hostClient?.Event(RpcEvents.EntityDelete)
+						.Attach(vehicle.NetId)
+						.Attach(vehicle.Hash)
+						.Trigger();
 
 					vehicle.NetId = null;
 					vehicle.Handle = null;
@@ -131,22 +132,24 @@ namespace IgiCore.Server.Services
 		{
 			Server.Log($"Assinging vehicle to {citizen.Name} via event: 'igi:{vehicle.VehicleType().Name}:claim'");
 
-			BaseScript.TriggerClientEvent(citizen, $"igi:{vehicle.VehicleType().Name}:claim", JsonConvert.SerializeObject(vehicle));
+			citizen.Event($"igi:{vehicle.VehicleType().Name}:spawn")
+					.Attach(vehicle)
+					.Trigger();
 		}
 
 		private static void LoadNearbyVehicles([FromSource] Player citizen, string charJson)
 		{
-			Character character = JsonConvert.DeserializeObject<Character>(charJson);
-
-			Server.Log($"Checking nearby vehicles to spawn to position {character.Position.ToString()}");
+			var requestResponse = RpcResponse<Character>.Parse(charJson);
+			Character character = requestResponse.Result;
 
 			foreach (Vehicle vehicle in Server.Db.Vehicles.Where(v => v.Handle == null).ToArray())
 			{
-				Server.Log($"Checking {vehicle.Id} with position {vehicle.Position}");
 				if (!(Vector3.Distance(vehicle.Position, character.Position) < VehicleLoadDistance)) continue;
 
 				Server.Log($"Spawning vehicle to {citizen.Name} via event: 'igi:{vehicle.VehicleType().Name}:spawn'");
-				BaseScript.TriggerClientEvent(citizen, $"igi:{vehicle.VehicleType().Name}:spawn", JsonConvert.SerializeObject(vehicle));
+				citizen.Event($"igi:{vehicle.VehicleType().Name}:spawn")
+					.Attach(vehicle)
+					.Trigger();
 			}
 		}
 	}

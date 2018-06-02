@@ -10,6 +10,7 @@ namespace IgiCore.Core.Models.Objects.Vehicles
         public bool IsOpen { get; set; } = false;
         public bool IsClosed => !this.IsOpen;
         public bool IsBroken { get; set; } = false;
+		public float Angle { get; set; }
 
         public VehicleDoor() { this.Id = GuidGenerator.GenerateTimeBasedGuid(); }
     }
