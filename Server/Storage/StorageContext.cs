@@ -1,8 +1,13 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Data.Entity.Infrastructure.DependencyResolution;
+using System.IO;
 using IgiCore.Models.Appearance;
 using IgiCore.Models.Groups;
 using IgiCore.Models.Player;
 using IgiCore.SDK.Server.Storage.Contexts;
+using IgiCore.Server.Diagnostics;
 
 namespace IgiCore.Server.Storage
 {
@@ -26,7 +31,7 @@ namespace IgiCore.Server.Storage
 		{
 			Database.SetInitializer(new MigrateDatabaseToLatestVersion<StorageContext, Migrations.Configuration>());
 
-			//this.Database.Log = m => new Logger().Debug(m); // ;Logging=true
+			//this.Database.Log = m => new Logger().Debug(m);
 		}
 	}
 }

@@ -16,6 +16,6 @@ namespace IgiCore.Server.Configuration
 
 		public string Charset { get; set; } = "utf8mb4";
 
-		public override string ToString() => $"Host={this.Host};Port={this.Port};Database={this.Database};User Id={this.User};Password={this.Password};CharSet={this.Charset};SSL Mode=None";
+		public override string ToString() => $"Host={this.Host};Port={this.Port};Database={this.Database};User Id={this.User};Password={this.Password};CharSet={this.Charset};SSL Mode=None"; //;Logging=true";
 	}
 }

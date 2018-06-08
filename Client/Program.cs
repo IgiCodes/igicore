@@ -36,7 +36,7 @@ namespace IgiCore.Client
 			var handler = new RpcHandler();
 
 			//new StartupService(new Logger("Startup"), ticks, events, new RpcHandler());
-			
+
 			var user = await handler.Event("ready").Request<User>("1.0.0");
 			this.logger.Debug(user.Name);
 

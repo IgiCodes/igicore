@@ -27,7 +27,7 @@ namespace IgiCore.Server.Events
 			lock (this.subscriptions)
 			{
 				if (!this.subscriptions.ContainsKey(@event)) return;
-				
+
 				foreach (var subscription in this.subscriptions[@event])
 				{
 					subscription.Handle(message);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data.Entity;
-using System.Data.Entity.Migrations;
+using System.Dynamic;
+using System.IO;
 using System.Linq;
 using CitizenFX.Core;
 using IgiCore.Models.Player;
@@ -18,23 +19,26 @@ namespace IgiCore.Server.Controllers
 	{
 		public ClientController(ILogger logger, IEventManager events, IRpcHandler rpc) : base(logger, events, rpc)
 		{
-			this.Rpc.Event("playerConnecting").OnRaw(new Action<Player, string, CallbackDelegate>(Connecting));
+			this.Rpc.Event("playerConnecting").OnRaw(new Action<Player, string, CallbackDelegate, ExpandoObject>(Connecting));
 			this.Rpc.Event("playerDropped").OnRaw(new Action<Player, string, CallbackDelegate>(Dropped));
 			this.Rpc.Event("ready").On<string>(Ready);
 		}
 
-		public async void Connecting([FromSource] Player player, string playerName, CallbackDelegate drop)
+		public async void Connecting([FromSource] Player player, string playerName, CallbackDelegate drop, ExpandoObject deferrals)
 		{
 			var client = new Client(int.Parse(player.Handle));
 
-			await this.Events.RaiseAsync("clientConnecting", client);
+			await this.Events.RaiseAsync("clientConnecting", client); // TODO
 
 			using (var context = new StorageContext())
 			using (var transaction = context.Database.BeginTransaction())
 			{
+				context.Configuration.ProxyCreationEnabled = false;
+				context.Configuration.LazyLoadingEnabled = false;
+
 				try
 				{
-					var user = context.Users.SingleOrDefault(u => u.SteamId == client.SteamId); // TODO: Async crashes?!?
+					var user = context.Users.SingleOrDefault(u => u.SteamId == client.SteamId);
 
 					if (user == default(User))
 					{
@@ -53,7 +57,7 @@ namespace IgiCore.Server.Controllers
 						// Update name
 						user.Name = client.Name;
 					}
-					
+
 					// Create session
 					var session = new Session
 					{
@@ -82,7 +86,7 @@ namespace IgiCore.Server.Controllers
 		public async void Dropped([FromSource] Player player, string disconnectMessage, CallbackDelegate drop)
 		{
 			var client = new Client(int.Parse(player.Handle));
-			
+
 			using (var context = new StorageContext())
 			{
 				context.Configuration.LazyLoadingEnabled = false;
