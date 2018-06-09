@@ -47,7 +47,7 @@ namespace IgiCore.Client
 				{
 					this.logger.Info($"\t{type.FullName}");
 
-					Activator.CreateInstance(type, new Logger($"Plugin|{type.Name}"), ticks, events, handler);
+					Activator.CreateInstance(type, new Logger($"Plugin|{type.Name}"), ticks, events, handler, user);
 				}
 			}
 

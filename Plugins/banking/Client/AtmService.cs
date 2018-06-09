@@ -7,6 +7,7 @@ using Banking.Core.Models;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
+using IgiCore.Models.Player;
 using IgiCore.SDK.Client.Events;
 using IgiCore.SDK.Client.Extensions;
 using IgiCore.SDK.Client.Input;
@@ -22,7 +23,7 @@ namespace Banking.Client
 		private bool inAnimating = false;
 		private readonly List<BankAtm> atms;
 
-		public AtmService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc) : base(logger, ticks, events, rpc)
+		public AtmService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, User user) : base(logger, ticks, events, rpc, user)
 		{
 			// TODO: Get ATMs from server
 

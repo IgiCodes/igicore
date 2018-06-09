@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
+using IgiCore.Models.Player;
 using IgiCore.SDK.Client.Events;
 using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Core.Diagnostics;
@@ -15,13 +16,15 @@ namespace IgiCore.SDK.Client.Services
 		protected readonly ITickManager Ticks;
 		protected readonly IEventManager Events;
 		protected readonly IRpcHandler Rpc;
+		protected readonly User User;
 
-		protected Service(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc)
+		protected Service(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, User user)
 		{
 			this.Logger = logger;
 			this.Ticks = ticks;
 			this.Events = events;
 			this.Rpc = rpc;
+			this.User = user;
 		}
 
 		protected async Task Delay(int msec)
