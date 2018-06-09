@@ -18,7 +18,6 @@ client_scripts {
 
 files {
 	'Newtonsoft.Json.dll',
-	'EntityFramework.dll',
 	'System.ComponentModel.DataAnnotations.dll',
 
 	'IgiCore.Models.net.dll',

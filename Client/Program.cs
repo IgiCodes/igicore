@@ -5,6 +5,7 @@ using CitizenFX.Core;
 using IgiCore.Client.Diagnostics;
 using IgiCore.Client.Events;
 using IgiCore.Client.Rpc;
+using IgiCore.Models.Player;
 using IgiCore.SDK.Client;
 using IgiCore.SDK.Client.Services;
 using JetBrains.Annotations;
@@ -20,10 +21,7 @@ namespace IgiCore.Client
 		/// Primary client entrypoint.
 		/// Initializes a new instance of the <see cref="Program"/> class.
 		/// </summary>
-		public Program()
-		{
-			Startup();
-		}
+		public Program() => Startup();
 
 		private async void Startup()
 		{
@@ -34,10 +32,10 @@ namespace IgiCore.Client
 			var events = new EventManager();
 			var handler = new RpcHandler();
 
-			//new StartupService(new Logger("Startup"), ticks, events, new RpcHandler());
+			var user = await handler.Event("ready").Request<User>("1.0.0");
+			this.logger.Debug(user.Name);
 
-			//var user = await handler.Event("ready").Request<User>("1.0.0");
-			//this.logger.Debug(user.Name);
+			//new StartupService(new Logger("Startup"), ticks, events, new RpcHandler());
 
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{

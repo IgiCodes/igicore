@@ -30,5 +30,12 @@ namespace IgiCore.Server.Storage
 
 			//this.Database.Log = m => new Logger().Debug(m);
 		}
+
+		protected override void OnModelCreating(DbModelBuilder modelBuilder)
+		{
+			modelBuilder.Entity<User>().HasIndex(u => u.SteamId).IsUnique();
+
+			base.OnModelCreating(modelBuilder);
+		}
 	}
 }

@@ -10,7 +10,6 @@ namespace IgiCore.Models.Player
 	public class User : IdentityModel
 	{
 		[Required]
-		[Index(IsUnique = true)]
 		public long SteamId { get; set; }
 
 		[Required]
