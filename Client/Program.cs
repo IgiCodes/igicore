@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using CitizenFX.Core;
@@ -16,6 +17,7 @@ namespace IgiCore.Client
 	public class Program : BaseScript
 	{
 		private readonly Logger logger = new Logger();
+		private readonly List<Service> services = new List<Service>();
 
 		/// <summary>
 		/// Primary client entrypoint.
@@ -33,10 +35,7 @@ namespace IgiCore.Client
 			var handler = new RpcHandler();
 
 			var user = await handler.Event("ready").Request<User>("1.0.0");
-			this.logger.Debug(user.Name);
-
-			//new StartupService(new Logger("Startup"), ticks, events, new RpcHandler());
-
+			
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				if (assembly.GetCustomAttribute<ClientPluginAttribute>() == null) continue;
@@ -47,11 +46,18 @@ namespace IgiCore.Client
 				{
 					this.logger.Info($"\t{type.FullName}");
 
-					Activator.CreateInstance(type, new Logger($"Plugin|{type.Name}"), ticks, events, handler, user);
+					var service = (Service) Activator.CreateInstance(type, new Logger($"Plugin|{type.Name}"), ticks, events, handler, user);
+					await service.Loaded();
+
+					this.services.Add(service);
 				}
 			}
 
 			this.logger.Info("Plugins loaded");
+
+			foreach (var service in this.services) service.Started();
+
+			this.logger.Info("Plugins started");
 		}
 	}
 }

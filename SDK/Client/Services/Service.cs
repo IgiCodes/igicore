@@ -27,6 +27,10 @@ namespace IgiCore.SDK.Client.Services
 			this.User = user;
 		}
 
+		public virtual Task Loaded() => Task.FromResult(0);
+
+		public virtual Task Started() => Task.FromResult(0);
+
 		protected async Task Delay(int msec)
 		{
 			await BaseScript.Delay(msec);
