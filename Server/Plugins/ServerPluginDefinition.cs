@@ -29,6 +29,7 @@ namespace IgiCore.Server.Plugins
 
 			foreach (var plugin in graph.Definitions)
 			{
+				if (plugin.Definition.Server.Dependencies == null) continue;
 				foreach (var dependency in plugin.Definition.Server.Dependencies)
 				{
 					var dependencyPlugin = graph.Definitions.FirstOrDefault(p => p.Definition.Name == dependency.Key);

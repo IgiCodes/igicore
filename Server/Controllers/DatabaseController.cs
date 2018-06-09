@@ -20,9 +20,6 @@ namespace IgiCore.Server.Controllers
 			// Set global database connection string
 			ServerConfiguration.DatabaseConnection = this.Configuration.ToString();
 
-			// Use MySQL EF adapter
-			DbConfiguration.SetConfiguration(new MySqlEFConfiguration());
-
 			// Enable SQL query logging
 			MySqlTrace.Switch.Level = SourceLevels.All;
 			MySqlTrace.Listeners.Add(new ConsoleTraceListener());

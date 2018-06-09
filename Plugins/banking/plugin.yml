@@ -8,8 +8,6 @@ server:
   include:
   - Banking.Core
   dependencies:
-    something: ^1.0.0
-    extra-libs: ^1.0.0
 
 client:
   main:

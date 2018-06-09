@@ -8,9 +8,11 @@ using IgiCore.Models.Groups;
 using IgiCore.Models.Player;
 using IgiCore.SDK.Server.Storage.Contexts;
 using IgiCore.Server.Diagnostics;
+using MySql.Data.EntityFramework;
 
 namespace IgiCore.Server.Storage
 {
+	[DbConfigurationType(typeof(MySqlEFConfiguration))]
 	public class StorageContext : EFContext
 	{
 		public DbSet<Session> Sessions { get; set; }
