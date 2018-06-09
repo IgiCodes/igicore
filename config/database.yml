@@ -1,5 +1,5 @@
 # MySQL database connection
-host: harvest
+host: db
 port: 3306
 database: fivem
 user: root
