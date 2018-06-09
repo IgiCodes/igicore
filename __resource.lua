@@ -7,8 +7,8 @@ server_scripts {
 }
 
 client_scripts {
-	'Plugins/Banking/Banking.Core.net.dll',
-	'Plugins/Banking/Banking.Client.net.dll',
+	'Plugins/banking/Banking.Core.net.dll',
+	'Plugins/banking/Banking.Client.net.dll',
 
 	'IgiCore.Client.net.dll',
 }
