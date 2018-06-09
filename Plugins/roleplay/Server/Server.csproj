@@ -30,10 +30,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CitizenFX.Client">
-      <HintPath>..\..\..\lib\CitizenFX.Client.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
       <Private>False</Private>
@@ -48,22 +44,22 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Models\Models.csproj">
       <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
-      <Name>Models</Name>
+      <Name>IgiCore.Models</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Server\Server.csproj">
       <Project>{5a53d22b-87f1-4b16-b54b-d0a8aeac8e5d}</Project>
-      <Name>Server</Name>
+      <Name>IgiCore.SDK.Server</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Core\Core.csproj">
       <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
-      <Name>Core</Name>
+      <Name>IgiCore.SDK.Core</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{ebbaf8a2-40ff-435d-9549-a31e166d13ec}</Project>
-      <Name>Core</Name>
+      <Name>Roleplay.Core</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

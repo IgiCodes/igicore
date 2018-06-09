@@ -46,22 +46,22 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Models\Models.csproj">
       <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
-      <Name>Models</Name>
+      <Name>IgiCore.Models</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Client\Client.csproj">
       <Project>{f6aa79c1-4e08-4a75-a0b4-ffd2b33d89d7}</Project>
-      <Name>Client</Name>
+      <Name>IgiCore.SDK.Client</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Core\Core.csproj">
       <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
-      <Name>Core</Name>
+      <Name>IgiCore.SDK.Core</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{7621784d-d512-42d4-93bf-fa1c856ebcbb}</Project>
-      <Name>Core</Name>
+      <Name>Roleplay.Core</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

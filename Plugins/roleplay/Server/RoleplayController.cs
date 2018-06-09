@@ -12,6 +12,5 @@ namespace Roleplay.Server
 		{
 			this.Logger.Debug(this.Configuration.Test);
 		}
-
 	}
 }
