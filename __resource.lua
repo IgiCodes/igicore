@@ -7,6 +7,9 @@ server_scripts {
 }
 
 client_scripts {
+	'Plugins/roleplay/Roleplay.Core.net.dll',
+	'Plugins/roleplay/Roleplay.Client.net.dll',
+
 	'Plugins/banking/Banking.Core.net.dll',
 	'Plugins/banking/Banking.Client.net.dll',
 
