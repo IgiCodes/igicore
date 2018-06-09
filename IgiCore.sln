@@ -42,6 +42,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SDK", "SDK", "{1C310670-9791-4F0B-8F2E-6B89E2B7D51C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Roleplay", "Roleplay", "{1EECDF9E-27EE-4D3F-8DC1-FCED0F8D6FFB}"
+	ProjectSection(SolutionItems) = preProject
+		Plugins\roleplay\plugin.yml = Plugins\roleplay\plugin.yml
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Plugins\roleplay\Client\Client.csproj", "{41F2165E-0B25-4B3E-8EA7-41D7EFC50056}"
 EndProject
