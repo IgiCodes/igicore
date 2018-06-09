@@ -4,8 +4,7 @@ version: 1.0.0
 server:
   dependencies:
     banking: ^1.0.0
-    something: ^1.0.0
-    extra-libs: ^1.0.0
+    roleplay: ^1.0.0
 
 client:
   dependencies:

@@ -1,0 +1,17 @@
+name: roleplay
+version: 1.0.0
+type: plugin
+
+server:
+  main:
+  - Roleplay.Server
+  include:
+  - Roleplay.Core
+  dependencies:
+
+client:
+  main:
+  - Roleplay.Client
+  include:
+  - Roleplay.Core
+  dependencies:
