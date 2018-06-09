@@ -37,8 +37,8 @@ namespace IgiCore.Client
 
 			//new StartupService(new Logger("Startup"), ticks, events, new RpcHandler());
 
-			var user = await handler.Event("ready").Request<User>("1.0.0");
-			this.logger.Debug(user.Name);
+			//var user = await handler.Event("ready").Request<User>("1.0.0");
+			//this.logger.Debug(user.Name);
 
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
