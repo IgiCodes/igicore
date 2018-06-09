@@ -1,5 +1,4 @@
-﻿using System.Data.Entity;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Linq;
 using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Server.Configuration;
@@ -8,7 +7,6 @@ using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;
 using IgiCore.Server.Configuration;
 using IgiCore.Server.Storage;
-using MySql.Data.EntityFramework;
 using MySql.Data.MySqlClient;
 
 namespace IgiCore.Server.Controllers

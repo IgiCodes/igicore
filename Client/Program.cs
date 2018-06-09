@@ -5,7 +5,6 @@ using CitizenFX.Core;
 using IgiCore.Client.Diagnostics;
 using IgiCore.Client.Events;
 using IgiCore.Client.Rpc;
-using IgiCore.Models.Player;
 using IgiCore.SDK.Client;
 using IgiCore.SDK.Client.Services;
 using JetBrains.Annotations;

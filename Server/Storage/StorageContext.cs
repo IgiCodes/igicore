@@ -1,13 +1,8 @@
-﻿using System;
-using System.Data.Entity;
-using System.Data.Entity.Infrastructure;
-using System.Data.Entity.Infrastructure.DependencyResolution;
-using System.IO;
+﻿using System.Data.Entity;
 using IgiCore.Models.Appearance;
 using IgiCore.Models.Groups;
 using IgiCore.Models.Player;
 using IgiCore.SDK.Server.Storage.Contexts;
-using IgiCore.Server.Diagnostics;
 using MySql.Data.EntityFramework;
 
 namespace IgiCore.Server.Storage

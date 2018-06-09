@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Data.Entity;
 using System.Dynamic;
-using System.IO;
 using System.Linq;
 using CitizenFX.Core;
 using IgiCore.Models.Player;

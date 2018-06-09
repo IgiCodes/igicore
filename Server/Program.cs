@@ -13,21 +13,10 @@ using IgiCore.Server.Diagnostics;
 using IgiCore.Server.Events;
 using IgiCore.Server.Plugins;
 using IgiCore.Server.Rpc;
-using IgiCore.Server.Storage;
 using JetBrains.Annotations;
 
 namespace IgiCore.Server
 {
-	class Card
-	{
-		public string Name { get; set; }
-	}
-
-	class Movie
-	{
-		public string CardName { get; set; }
-	}
-
 	[UsedImplicitly]
 	public class Program : BaseScript
 	{
@@ -51,22 +40,11 @@ namespace IgiCore.Server
 
 			var events = new EventManager();
 
-			//events.On<string>("test", (s) => logger.Debug(s));
-
-			//logger.Debug("Start");
-			//events.Raise("test", "sync");
-			//events.RaiseAsync("test", "async");
-			//logger.Debug("End");
-
-
 
 			// Load core controllers
 			this.controllers.Add(new DatabaseController(new Logger("Database"), events, new RpcHandler(), ConfigurationManager.Load<DatabaseConfiguration>("database")));
 			this.controllers.Add(new SessionController(new Logger("Session"), events, new RpcHandler()));
 			this.controllers.Add(new ClientController(new Logger("Client"), events, new RpcHandler()));
-
-
-
 
 
 			// Parse the master plugin definition file
