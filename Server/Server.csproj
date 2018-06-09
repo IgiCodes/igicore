@@ -151,5 +151,7 @@
   <Target Name="CopyLinkedContentFiles" BeforeTargets="Build">
     <Copy SourceFiles="..\lib\I18N.dll" DestinationFiles="..\I18N.dll" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
     <Copy SourceFiles="..\lib\I18N.West.dll" DestinationFiles="..\I18N.West.dll" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="..\lib\Empty.dll" DestinationFiles="..\EntityFramework.resources.dll" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
+    <Copy SourceFiles="..\lib\System.Numerics.dll" DestinationFiles="..\System.Numerics.dll" SkipUnchangedFiles="true" OverwriteReadOnlyFiles="true" />
   </Target>
 </Project>
