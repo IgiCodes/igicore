@@ -36,7 +36,6 @@
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
@@ -45,6 +44,8 @@
     <Compile Include="ClientPluginAttribute.cs" />
     <Compile Include="Configuration\ClientConfiguration.cs" />
     <Compile Include="Events\ITickManager.cs" />
+    <Compile Include="Interface\INuiManager.cs" />
+    <Compile Include="Interface\NuiManager.cs" />
     <Compile Include="Rpc\IRpc.cs" />
     <Compile Include="Rpc\IRpcEvent.cs" />
     <Compile Include="Rpc\IRpcHandler.cs" />
@@ -74,6 +75,5 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

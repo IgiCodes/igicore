@@ -3,7 +3,7 @@ using IgiCore.SDK.Server.Controllers;
 using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;
 
-namespace Roleplay.Server
+namespace Roleplay.Server.Controllers
 {
 	public class RoleplayController : ConfigurableController<Configuration>
 	{

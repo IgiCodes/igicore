@@ -10,11 +10,11 @@ namespace IgiCore.Models.Groups
 	[PublicAPI]
 	public class GroupMember : IdentityModel
 	{
-		[Required]
-		[ForeignKey("Character")]
-		public Guid CharacterId { get; set; }
+		//[Required]
+		//[ForeignKey("Character")]
+		//public Guid CharacterId { get; set; }
 
-		public virtual Character Character { get; set; }
+		//public virtual Character Character { get; set; }
 
 		[Required]
 		[ForeignKey("Group")]

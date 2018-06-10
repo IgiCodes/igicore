@@ -8,49 +8,72 @@ namespace IgiCore.Server.Migrations
         public override void Up()
         {
             CreateTable(
-                "dbo.Characters",
+                "dbo.GroupMembers",
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        Forename = c.String(nullable: false, maxLength: 100, unicode: false),
-                        Middlename = c.String(maxLength: 100, unicode: false),
-                        Surname = c.String(nullable: false, maxLength: 100, unicode: false),
-                        DateOfBirth = c.DateTime(nullable: false, precision: 0),
-                        Gender = c.Short(nullable: false),
-                        Alive = c.Boolean(nullable: false),
-                        Health = c.Int(nullable: false),
-                        Armor = c.Int(nullable: false),
-                        Ssn = c.String(nullable: false, maxLength: 9, unicode: false),
-                        Position_X = c.Single(nullable: false),
-                        Position_Y = c.Single(nullable: false),
-                        Position_Z = c.Single(nullable: false),
-                        Model = c.String(nullable: false, maxLength: 200, unicode: false),
-                        WalkingStyle = c.String(nullable: false, maxLength: 200, unicode: false),
-                        LastPlayed = c.DateTime(precision: 0),
-                        UserId = c.Guid(nullable: false),
-                        StyleId = c.Guid(nullable: false),
+                        GroupId = c.Guid(nullable: false),
                         Created = c.DateTime(nullable: false, precision: 0),
                         Deleted = c.DateTime(precision: 0),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Styles", t => t.StyleId, cascadeDelete: true)
-                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId)
-                .Index(t => t.StyleId);
+                .ForeignKey("dbo.Groups", t => t.GroupId, cascadeDelete: true)
+                .Index(t => t.GroupId);
             
             CreateTable(
-                "dbo.Skills",
+                "dbo.Groups",
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        Type = c.Int(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 20, unicode: false),
-                        Value = c.Single(nullable: false),
-                        CharacterId = c.Guid(nullable: false),
+                        Name = c.String(nullable: false, maxLength: 200, unicode: false),
+                        Created = c.DateTime(nullable: false, precision: 0),
+                        Deleted = c.DateTime(precision: 0),
+                    })
+                .PrimaryKey(t => t.Id);
+            
+            CreateTable(
+                "dbo.GroupRoles",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false),
+                        Name = c.String(nullable: false, maxLength: 200, unicode: false),
+                        Rank = c.Int(nullable: false),
+                        GroupId = c.Guid(nullable: false),
+                        Created = c.DateTime(nullable: false, precision: 0),
+                        Deleted = c.DateTime(precision: 0),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Characters", t => t.CharacterId, cascadeDelete: true)
-                .Index(t => t.CharacterId);
+                .ForeignKey("dbo.Groups", t => t.GroupId, cascadeDelete: true)
+                .Index(t => t.GroupId);
+            
+            CreateTable(
+                "dbo.Sessions",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false),
+                        IpAddress = c.String(nullable: false, maxLength: 15, unicode: false),
+                        Connected = c.DateTime(nullable: false, precision: 0),
+                        Disconnected = c.DateTime(precision: 0),
+                        DisconnectReason = c.String(maxLength: 200, unicode: false),
+                        UserId = c.Guid(nullable: false),
+                    })
+                .PrimaryKey(t => t.Id)
+                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
+                .Index(t => t.UserId);
+            
+            CreateTable(
+                "dbo.Users",
+                c => new
+                    {
+                        Id = c.Guid(nullable: false),
+                        SteamId = c.Long(nullable: false),
+                        Name = c.String(nullable: false, maxLength: 32, unicode: false),
+                        AcceptedRules = c.DateTime(precision: 0),
+                        Created = c.DateTime(nullable: false, precision: 0),
+                        Deleted = c.DateTime(precision: 0),
+                    })
+                .PrimaryKey(t => t.Id)
+                .Index(t => t.SteamId, unique: true);
             
             CreateTable(
                 "dbo.Styles",
@@ -127,77 +150,6 @@ namespace IgiCore.Server.Migrations
                 .PrimaryKey(t => t.Id);
             
             CreateTable(
-                "dbo.Users",
-                c => new
-                    {
-                        Id = c.Guid(nullable: false),
-                        SteamId = c.Long(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 32, unicode: false),
-                        AcceptedRules = c.DateTime(precision: 0),
-                        Created = c.DateTime(nullable: false, precision: 0),
-                        Deleted = c.DateTime(precision: 0),
-                    })
-                .PrimaryKey(t => t.Id)
-                .Index(t => t.SteamId, unique: true);
-            
-            CreateTable(
-                "dbo.Sessions",
-                c => new
-                    {
-                        Id = c.Guid(nullable: false),
-                        IpAddress = c.String(nullable: false, maxLength: 15, unicode: false),
-                        Connected = c.DateTime(nullable: false, precision: 0),
-                        Disconnected = c.DateTime(precision: 0),
-                        DisconnectReason = c.String(maxLength: 200, unicode: false),
-                        UserId = c.Guid(nullable: false),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Users", t => t.UserId, cascadeDelete: true)
-                .Index(t => t.UserId);
-            
-            CreateTable(
-                "dbo.GroupMembers",
-                c => new
-                    {
-                        Id = c.Guid(nullable: false),
-                        CharacterId = c.Guid(nullable: false),
-                        GroupId = c.Guid(nullable: false),
-                        Created = c.DateTime(nullable: false, precision: 0),
-                        Deleted = c.DateTime(precision: 0),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Characters", t => t.CharacterId, cascadeDelete: true)
-                .ForeignKey("dbo.Groups", t => t.GroupId, cascadeDelete: true)
-                .Index(t => t.CharacterId)
-                .Index(t => t.GroupId);
-            
-            CreateTable(
-                "dbo.Groups",
-                c => new
-                    {
-                        Id = c.Guid(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 200, unicode: false),
-                        Created = c.DateTime(nullable: false, precision: 0),
-                        Deleted = c.DateTime(precision: 0),
-                    })
-                .PrimaryKey(t => t.Id);
-            
-            CreateTable(
-                "dbo.GroupRoles",
-                c => new
-                    {
-                        Id = c.Guid(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 200, unicode: false),
-                        Rank = c.Int(nullable: false),
-                        GroupId = c.Guid(nullable: false),
-                        Created = c.DateTime(nullable: false, precision: 0),
-                        Deleted = c.DateTime(precision: 0),
-                    })
-                .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Groups", t => t.GroupId, cascadeDelete: true)
-                .Index(t => t.GroupId);
-            
-            CreateTable(
                 "dbo.GroupRoleGroupMembers",
                 c => new
                     {
@@ -214,34 +166,24 @@ namespace IgiCore.Server.Migrations
         
         public override void Down()
         {
+            DropForeignKey("dbo.Sessions", "UserId", "dbo.Users");
             DropForeignKey("dbo.GroupRoles", "GroupId", "dbo.Groups");
             DropForeignKey("dbo.GroupRoleGroupMembers", "GroupMember_Id", "dbo.GroupMembers");
             DropForeignKey("dbo.GroupRoleGroupMembers", "GroupRole_Id", "dbo.GroupRoles");
             DropForeignKey("dbo.GroupMembers", "GroupId", "dbo.Groups");
-            DropForeignKey("dbo.GroupMembers", "CharacterId", "dbo.Characters");
-            DropForeignKey("dbo.Sessions", "UserId", "dbo.Users");
-            DropForeignKey("dbo.Characters", "UserId", "dbo.Users");
-            DropForeignKey("dbo.Characters", "StyleId", "dbo.Styles");
-            DropForeignKey("dbo.Skills", "CharacterId", "dbo.Characters");
             DropIndex("dbo.GroupRoleGroupMembers", new[] { "GroupMember_Id" });
             DropIndex("dbo.GroupRoleGroupMembers", new[] { "GroupRole_Id" });
+            DropIndex("dbo.Users", new[] { "SteamId" });
+            DropIndex("dbo.Sessions", new[] { "UserId" });
             DropIndex("dbo.GroupRoles", new[] { "GroupId" });
             DropIndex("dbo.GroupMembers", new[] { "GroupId" });
-            DropIndex("dbo.GroupMembers", new[] { "CharacterId" });
-            DropIndex("dbo.Sessions", new[] { "UserId" });
-            DropIndex("dbo.Users", new[] { "SteamId" });
-            DropIndex("dbo.Skills", new[] { "CharacterId" });
-            DropIndex("dbo.Characters", new[] { "StyleId" });
-            DropIndex("dbo.Characters", new[] { "UserId" });
             DropTable("dbo.GroupRoleGroupMembers");
+            DropTable("dbo.Styles");
+            DropTable("dbo.Users");
+            DropTable("dbo.Sessions");
             DropTable("dbo.GroupRoles");
             DropTable("dbo.Groups");
             DropTable("dbo.GroupMembers");
-            DropTable("dbo.Sessions");
-            DropTable("dbo.Users");
-            DropTable("dbo.Styles");
-            DropTable("dbo.Skills");
-            DropTable("dbo.Characters");
         }
     }
 }

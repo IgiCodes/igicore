@@ -20,8 +20,5 @@ namespace IgiCore.Models.Player
 
 		[InverseProperty("User")]
 		public virtual List<Session> Sessions { get; set; }
-
-		[InverseProperty("User")]
-		public virtual List<Character> Characters { get; set; }
 	}
 }

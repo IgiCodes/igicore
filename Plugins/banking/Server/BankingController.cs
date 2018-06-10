@@ -7,6 +7,7 @@ using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Server.Controllers;
 using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;
+using Roleplay.Core.Models.Player;
 
 namespace Banking.Server
 {

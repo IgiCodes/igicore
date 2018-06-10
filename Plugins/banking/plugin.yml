@@ -8,6 +8,7 @@ server:
   include:
   - Banking.Core
   dependencies:
+    roleplay: ^1.0.0
 
 client:
   main:

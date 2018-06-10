@@ -2,8 +2,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using IgiCore.Models;
-using IgiCore.Models.Player;
 using JetBrains.Annotations;
+using Roleplay.Core.Models.Player;
 
 namespace Banking.Core.Models
 {

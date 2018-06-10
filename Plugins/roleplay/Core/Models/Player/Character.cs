@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using IgiCore.Models;
 using IgiCore.Models.Appearance;
+using IgiCore.Models.Player;
 using IgiCore.Models.Player.Skills;
 using JetBrains.Annotations;
 
-namespace IgiCore.Models.Player
+namespace Roleplay.Core.Models.Player
 {
 	[PublicAPI]
 	public class Character : IdentityModel
@@ -63,8 +65,8 @@ namespace IgiCore.Models.Player
 
 		public virtual User User { get; set; }
 
-		[InverseProperty("Character")]
-		public virtual List<Skill> Skills { get; set; }
+		//[InverseProperty("Character")]
+		//public virtual List<Skill> Skills { get; set; }
 
 		[Required]
 		[ForeignKey("Style")]

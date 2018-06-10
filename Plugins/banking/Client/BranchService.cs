@@ -9,6 +9,7 @@ using IgiCore.Models.Player;
 using IgiCore.SDK.Client.Events;
 using IgiCore.SDK.Client.Extensions;
 using IgiCore.SDK.Client.Input;
+using IgiCore.SDK.Client.Interface;
 using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Client.Services;
 using IgiCore.SDK.Core.Diagnostics;
@@ -23,7 +24,7 @@ namespace Banking.Client
 		protected List<BankBranch> Branches;
 		protected Dictionary<BankBranch, Ped> Tellers = new Dictionary<BankBranch, Ped>();
 
-		public BranchService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, User user) : base(logger, ticks, events, rpc, user)
+		public BranchService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, INuiManager nui, User user) : base(logger, ticks, events, rpc, nui, user)
 		{
 			//Client.Instance.Controllers.First<ClientController>().OnClientReady += OnClientReady;
 			//Client.Instance.Controllers.First<CharacterController>().OnCharacterLoaded += OnCharacterLoaded;

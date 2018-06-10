@@ -11,6 +11,7 @@ using IgiCore.Models.Player;
 using IgiCore.SDK.Client.Events;
 using IgiCore.SDK.Client.Extensions;
 using IgiCore.SDK.Client.Input;
+using IgiCore.SDK.Client.Interface;
 using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Client.Services;
 using IgiCore.SDK.Core.Diagnostics;
@@ -23,7 +24,7 @@ namespace Banking.Client
 		private bool inAnimating = false;
 		private readonly List<BankAtm> atms;
 
-		public AtmService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, User user) : base(logger, ticks, events, rpc, user)
+		public AtmService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, INuiManager nui, User user) : base(logger, ticks, events, rpc, nui, user)
 		{
 			// TODO: Get ATMs from server
 

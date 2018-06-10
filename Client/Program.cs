@@ -8,6 +8,7 @@ using IgiCore.Client.Events;
 using IgiCore.Client.Rpc;
 using IgiCore.Models.Player;
 using IgiCore.SDK.Client;
+using IgiCore.SDK.Client.Interface;
 using IgiCore.SDK.Client.Services;
 using JetBrains.Annotations;
 
@@ -32,9 +33,10 @@ namespace IgiCore.Client
 
 			var ticks = new TickManager(c => this.Tick += c, c => this.Tick -= c);
 			var events = new EventManager();
-			var handler = new RpcHandler();
+			var rpc = new RpcHandler();
+			var nui = new NuiManager(this.EventHandlers);
 
-			var user = await handler.Event("ready").Request<User>("1.0.0");
+			var user = await rpc.Event("ready").Request<User>("1.0.0");
 			
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
@@ -46,7 +48,7 @@ namespace IgiCore.Client
 				{
 					this.logger.Info($"\t{type.FullName}");
 
-					var service = (Service) Activator.CreateInstance(type, new Logger($"Plugin|{type.Name}"), ticks, events, handler, user);
+					var service = (Service) Activator.CreateInstance(type, new Logger($"Plugin|{type.Name}"), ticks, events, rpc, nui, user);
 					await service.Loaded();
 
 					this.services.Add(service);

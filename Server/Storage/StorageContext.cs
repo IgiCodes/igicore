@@ -14,8 +14,6 @@ namespace IgiCore.Server.Storage
 
 		public DbSet<User> Users { get; set; }
 
-		public DbSet<Character> Characters { get; set; }
-
 		public DbSet<Group> Groups { get; set; }
 
 		public DbSet<GroupMember> GroupMembers { get; set; }

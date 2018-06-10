@@ -1,9 +1,11 @@
 ﻿using System.Data.Entity;
 using Banking.Core.Models;
 using IgiCore.SDK.Server.Storage.Contexts;
+using MySql.Data.EntityFramework;
 
 namespace Banking.Server
 {
+	[DbConfigurationType(typeof(MySqlEFConfiguration))]
 	public class BankingContext : EFContext
 	{
 		public DbSet<Bank> Banks { get; set; }

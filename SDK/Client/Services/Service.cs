@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using CitizenFX.Core;
 using IgiCore.Models.Player;
 using IgiCore.SDK.Client.Events;
+using IgiCore.SDK.Client.Interface;
 using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Core.Diagnostics;
 using JetBrains.Annotations;
@@ -16,14 +17,16 @@ namespace IgiCore.SDK.Client.Services
 		protected readonly ITickManager Ticks;
 		protected readonly IEventManager Events;
 		protected readonly IRpcHandler Rpc;
+		protected readonly INuiManager Nui;
 		protected readonly User User;
 
-		protected Service(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, User user)
+		protected Service(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, INuiManager nui, User user)
 		{
 			this.Logger = logger;
 			this.Ticks = ticks;
 			this.Events = events;
 			this.Rpc = rpc;
+			this.Nui = nui;
 			this.User = user;
 		}
 

@@ -36,8 +36,8 @@
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
-      <Private>False</Private>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
@@ -62,9 +62,8 @@
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
-      <Project>{7621784d-d512-42d4-93bf-fa1c856ebcbb}</Project>
-      <Name>Roleplay.Core</Name>
-      <Private>False</Private>
+      <Project>{ebbaf8a2-40ff-435d-9549-a31e166d13ec}</Project>
+      <Name>Core</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
