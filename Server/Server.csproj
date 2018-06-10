@@ -11,13 +11,10 @@
     <AssemblyName>IgiCore.Server.net</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -28,7 +25,8 @@
     </AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -37,24 +35,6 @@
     <AllowedReferenceRelatedFileExtensions>
       .allowedextension
     </AllowedReferenceRelatedFileExtensions>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CitizenFX.Server">
@@ -67,15 +47,14 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-    </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.8.0.11\lib\net452\MySql.Data.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="MySql.Data.EntityFramework, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\packages\MySql.Data.EntityFramework.8.0.11\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
@@ -84,19 +63,9 @@
       <HintPath>..\packages\SemanticVersioning.1.1.0\lib\net45\SemVer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
     <Reference Include="YamlDotNet, Version=4.3.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\YamlDotNet.4.3.1\lib\net45\YamlDotNet.dll</HintPath>
     </Reference>
@@ -110,9 +79,9 @@
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
     <Compile Include="Events\EventManager.cs" />
-    <Compile Include="Migrations\201805301437354_Init.cs" />
-    <Compile Include="Migrations\201805301437354_Init.Designer.cs">
-      <DependentUpon>201805301437354_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201806101939255_Init.cs" />
+    <Compile Include="Migrations\201806101939255_Init.Designer.cs">
+      <DependentUpon>201806101939255_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Rpc\Client.cs" />
     <Compile Include="Rpc\Rpc.cs" />
@@ -154,8 +123,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201805301437354_Init.resx">
-      <DependentUpon>201805301437354_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806101939255_Init.resx">
+      <DependentUpon>201806101939255_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity.Migrations;
+using System.Data.Entity.Migrations.Infrastructure;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -7,6 +9,7 @@ using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.SDK.Server.Configuration;
 using IgiCore.SDK.Server.Controllers;
+using IgiCore.SDK.Server.Migrations;
 using IgiCore.Server.Configuration;
 using IgiCore.Server.Controllers;
 using IgiCore.Server.Diagnostics;
@@ -20,11 +23,11 @@ namespace IgiCore.Server
 	[UsedImplicitly]
 	public class Program : BaseScript
 	{
+		private readonly Logger logger = new Logger();
 		private readonly List<Controller> controllers = new List<Controller>();
 
 		public Program()
 		{
-			Logger logger = new Logger();
 
 			// Set the AppDomain working directory to the current resource root
 			Environment.CurrentDirectory = FileManager.ResolveResourcePath();
@@ -71,8 +74,26 @@ namespace IgiCore.Server
 					string mainFile = Path.Combine(plugin.Location, $"{mainName}.net.dll");
 					if (!File.Exists(mainFile)) throw new FileNotFoundException(mainFile);
 
+					var assembly = Assembly.LoadFrom(mainFile);
+					var types = Assembly.LoadFrom(mainFile).GetTypes().Where(t => !t.IsAbstract && t.IsClass).ToList();
+
+					//logger.Debug($"{mainName}: {types.Count} {string.Join(Environment.NewLine, types)}");
+
+					// Find migrations
+					foreach (Type migrationType in types.Where(t => t.BaseType != null && t.BaseType.IsGenericType && t.BaseType.GetGenericTypeDefinition() == typeof(MigrationConfiguration<>)))
+					{
+						var configuration = (DbMigrationsConfiguration)Activator.CreateInstance(migrationType);
+						var migrator = new DbMigrator(configuration);
+
+						if (!migrator.GetPendingMigrations().Any()) continue;
+
+						if (!ServerConfiguration.AutomaticMigrations) throw new MigrationsPendingException($"Plugin {plugin.Definition.Name}@{plugin.Definition.Version} has pending migrations but automatic migrations are disabled");
+						
+						migrator.Update();
+					}
+
 					// Find controllers
-					foreach (Type controllerType in Assembly.LoadFrom(mainFile).GetTypes().Where(t => !t.IsAbstract && (t.IsSubclassOf(typeof(Controller)) || t.IsSubclassOf(typeof(ConfigurableController<>)))))
+					foreach (Type controllerType in types.Where(t => t.IsSubclassOf(typeof(Controller)) || t.IsSubclassOf(typeof(ConfigurableController<>))))
 					{
 						List<object> constructorArgs = new List<object>
 						{
@@ -104,7 +125,7 @@ namespace IgiCore.Server
 				}
 			}
 
-			logger.Info($"Plugins loaded, {this.controllers.Count} controller(s) created");
+			this.logger.Info($"Plugins loaded, {this.controllers.Count} controller(s) created");
 		}
 	}
 }

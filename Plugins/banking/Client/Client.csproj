@@ -13,8 +13,8 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -22,7 +22,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -36,6 +37,7 @@
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Runtime.Serialization" />
@@ -64,6 +66,11 @@
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{7621784d-d512-42d4-93bf-fa1c856ebcbb}</Project>
       <Name>Banking.Core</Name>
+      <Private>False</Private>
+    </ProjectReference>
+    <ProjectReference Include="..\..\roleplay\Core\Core.csproj">
+      <Project>{ebbaf8a2-40ff-435d-9549-a31e166d13ec}</Project>
+      <Name>Roleplay.Core</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

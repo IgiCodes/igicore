@@ -13,7 +13,7 @@ namespace IgiCore.Server.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201805301437354_Init"; }
+            get { return "201806101939255_Init"; }
         }
         
         string IMigrationMetadata.Source

@@ -7,5 +7,7 @@ namespace IgiCore.SDK.Server.Configuration
 		public static LogLevel LogLevel { get; set; } = LogLevel.Debug;
 
 		public static string DatabaseConnection { get; set; } = "Host=localhost";
+
+		public static bool AutomaticMigrations { get; set; }
 	}
 }

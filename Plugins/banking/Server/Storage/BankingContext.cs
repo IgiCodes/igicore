@@ -1,12 +1,10 @@
 ﻿using System.Data.Entity;
 using Banking.Core.Models;
-using IgiCore.SDK.Server.Storage.Contexts;
-using MySql.Data.EntityFramework;
+using IgiCore.SDK.Server.Storage;
 
-namespace Banking.Server
+namespace Banking.Server.Storage
 {
-	[DbConfigurationType(typeof(MySqlEFConfiguration))]
-	public class BankingContext : EFContext
+	public class BankingContext : EFContext<BankingContext>
 	{
 		public DbSet<Bank> Banks { get; set; }
 
@@ -19,10 +17,5 @@ namespace Banking.Server
 		public DbSet<BankAccountCard> BankAccountCards { get; set; }
 
 		public DbSet<BankAccountMember> BankAccountMembers { get; set; }
-
-		public BankingContext()
-		{
-			Database.SetInitializer(new MigrateDatabaseToLatestVersion<BankingContext, Migrations.Configuration>());
-		}
 	}
 }

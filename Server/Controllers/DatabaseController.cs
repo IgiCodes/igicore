@@ -15,8 +15,9 @@ namespace IgiCore.Server.Controllers
 	{
 		public DatabaseController(ILogger logger, IEventManager events, IRpcHandler rpc, DatabaseConfiguration configuration) : base(logger, events, rpc, configuration)
 		{
-			// Set global database connection string
-			ServerConfiguration.DatabaseConnection = this.Configuration.ToString();
+			// Set global database options
+			ServerConfiguration.DatabaseConnection = this.Configuration.Connection.ToString();
+			ServerConfiguration.AutomaticMigrations = this.Configuration.Migrations.Automatic;
 
 			// Enable SQL query logging
 			MySqlTrace.Switch.Level = SourceLevels.All;
@@ -27,7 +28,7 @@ namespace IgiCore.Server.Controllers
 				// Create database if needed
 				if (!context.Database.Exists())
 				{
-					this.Logger.Info($"No existing database found, creating new database \"{this.Configuration.Database}\"");
+					this.Logger.Info($"No existing database found, creating new database \"{this.Configuration.Connection.Database}\"");
 
 					context.Database.CreateIfNotExists();
 				}

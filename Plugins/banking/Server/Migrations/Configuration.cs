@@ -1,17 +1,13 @@
 using System;
-using System.Data.Entity.Migrations;
 using System.Linq;
 using Banking.Core.Models;
+using Banking.Server.Storage;
+using IgiCore.SDK.Server.Migrations;
 
 namespace Banking.Server.Migrations
 {
-	internal sealed class Configuration : DbMigrationsConfiguration<BankingContext>
+	internal sealed class Configuration : MigrationConfiguration<BankingContext>
 	{
-		public Configuration()
-		{
-			this.AutomaticMigrationsEnabled = true;
-		}
-
 		protected override void Seed(BankingContext context)
 		{
 			if (context.Banks.Any()) return;

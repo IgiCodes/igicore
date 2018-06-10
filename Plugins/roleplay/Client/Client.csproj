@@ -13,21 +13,28 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowedReferenceRelatedFileExtensions>
+      .allowedextension
+    </AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowedReferenceRelatedFileExtensions>
+      .allowedextension
+    </AllowedReferenceRelatedFileExtensions>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CitizenFX.Client">
@@ -36,6 +43,7 @@
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System" />
@@ -64,6 +72,7 @@
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{ebbaf8a2-40ff-435d-9549-a31e166d13ec}</Project>
       <Name>Core</Name>
+      <Private>False</Private>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,15 +1,7 @@
-using System;
-using System.Data.Entity.Migrations;
+using IgiCore.SDK.Server.Migrations;
 using Roleplay.Server.Storage;
 
 namespace Roleplay.Server.Migrations
 {
-	internal sealed class Configuration : DbMigrationsConfiguration<CharacterContext>
-	{
-		public Configuration()
-		{
-			//this.AutomaticMigrationsEnabled = true;
-			AutomaticMigrationsEnabled = false;
-		}
-	}
+	public sealed class Configuration : MigrationConfiguration<CharacterContext> { }
 }

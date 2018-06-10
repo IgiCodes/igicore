@@ -13,8 +13,8 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
@@ -22,7 +22,8 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -32,46 +33,34 @@
   <ItemGroup>
     <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
-    </Reference>
-    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
-    </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=11.1.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\JetBrains.Annotations.11.1.0\lib\net20\JetBrains.Annotations.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="MySql.Data, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\MySql.Data.8.0.11\lib\net452\MySql.Data.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="MySql.Data.EntityFramework, Version=8.0.11.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\MySql.Data.EntityFramework.8.0.11\lib\net452\MySql.Data.EntityFramework.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration.cs" />
-    <Compile Include="BankingContext.cs" />
-    <Compile Include="BankingController.cs" />
-    <Compile Include="Migrations\201805211754281_Init.cs" />
-    <Compile Include="Migrations\201805211754281_Init.Designer.cs">
-      <DependentUpon>201805211754281_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201806101947142_Init.cs" />
+    <Compile Include="Migrations\201806101947142_Init.Designer.cs">
+      <DependentUpon>201806101947142_Init.cs</DependentUpon>
     </Compile>
+    <Compile Include="Storage\BankingContext.cs" />
+    <Compile Include="Controllers\BankingController.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -93,7 +82,8 @@
     </ProjectReference>
     <ProjectReference Include="..\..\roleplay\Core\Core.csproj">
       <Project>{ebbaf8a2-40ff-435d-9549-a31e166d13ec}</Project>
-      <Name>Core</Name>
+      <Name>Roleplay.Core</Name>
+      <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{7621784d-d512-42d4-93bf-fa1c856ebcbb}</Project>
@@ -105,9 +95,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201805211754281_Init.resx">
-      <DependentUpon>201805211754281_Init.cs</DependentUpon>
-      <SubType>Designer</SubType>
+    <EmbeddedResource Include="Migrations\201806101947142_Init.resx">
+      <DependentUpon>201806101947142_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

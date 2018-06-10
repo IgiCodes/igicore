@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using IgiCore.Models;
 using IgiCore.Models.Appearance;
 using IgiCore.Models.Player;
-using IgiCore.Models.Player.Skills;
 using JetBrains.Annotations;
 
 namespace Roleplay.Core.Models.Player

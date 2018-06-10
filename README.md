@@ -40,3 +40,13 @@ This resource currently replaces *all* stock server resources; make sure you rem
 6. Edit ``config\database.yml`` with your database connection information as needed.
 
 Note: For full Unicode support you will need to manually preconfigure your MySQL server's default character set. For MySQL/MariaDB add ``--character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_520_ci`` to the server arguments before the database is created.
+
+### Migrations
+1. Drop the database.
+
+2. Open the Package Manager Console in Visual Studio: `View > Other Windows > Package Manager Console`
+
+3. Run following command with your database connection information:
+  ```
+  Add-Migration -Name Init -Force -ProjectName Server -ConnectionString "Host=db;Port=3306;Database=fivem;User Id=root;Password=password;CharSet=utf8mb4;SSL Mode=None" -ConnectionProviderName MySql.Data.MySqlClient
+  ```

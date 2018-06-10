@@ -1,3 +1,4 @@
+// ReSharper disable All
 namespace Banking.Server.Migrations
 {
     using System;
@@ -12,8 +13,8 @@ namespace Banking.Server.Migrations
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 200, storeType: "nvarchar"),
-                        Number = c.String(nullable: false, maxLength: 12, storeType: "nvarchar"),
+                        Name = c.String(nullable: false, maxLength: 200, unicode: false),
+                        Number = c.String(nullable: false, maxLength: 12, unicode: false),
                         Pin = c.Int(nullable: false),
                         AccountId = c.Guid(nullable: false),
                         Created = c.DateTime(nullable: false, precision: 0),
@@ -28,8 +29,8 @@ namespace Banking.Server.Migrations
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 200, storeType: "nvarchar"),
-                        AccountNumber = c.String(nullable: false, maxLength: 15, storeType: "nvarchar"),
+                        Name = c.String(nullable: false, maxLength: 200, unicode: false),
+                        AccountNumber = c.String(nullable: false, maxLength: 15, unicode: false),
                         Type = c.Int(nullable: false),
                         Balance = c.Double(nullable: false),
                         Locked = c.Boolean(nullable: false),
@@ -46,7 +47,7 @@ namespace Banking.Server.Migrations
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 200, storeType: "nvarchar"),
+                        Name = c.String(nullable: false, maxLength: 200, unicode: false),
                         Created = c.DateTime(nullable: false, precision: 0),
                         Deleted = c.DateTime(precision: 0),
                     })
@@ -57,7 +58,7 @@ namespace Banking.Server.Migrations
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 200, storeType: "nvarchar"),
+                        Name = c.String(nullable: false, maxLength: 200, unicode: false),
                         Hash = c.Long(nullable: false),
                         Position_X = c.Single(nullable: false),
                         Position_Y = c.Single(nullable: false),
@@ -75,7 +76,7 @@ namespace Banking.Server.Migrations
                 c => new
                     {
                         Id = c.Guid(nullable: false),
-                        Name = c.String(nullable: false, maxLength: 200, storeType: "nvarchar"),
+                        Name = c.String(nullable: false, maxLength: 200, unicode: false),
                         Position_X = c.Single(nullable: false),
                         Position_Y = c.Single(nullable: false),
                         Position_Z = c.Single(nullable: false),
@@ -113,14 +114,14 @@ namespace Banking.Server.Migrations
             DropForeignKey("dbo.BankBranches", "BankId", "dbo.Banks");
             DropForeignKey("dbo.BankAtms", "BankId", "dbo.Banks");
             DropForeignKey("dbo.BankAccounts", "BankId", "dbo.Banks");
-            
+
             DropIndex("dbo.BankAccountMembers", new[] { "AccountId" });
             DropIndex("dbo.BankAccountMembers", new[] { "MemberId" });
             DropIndex("dbo.BankBranches", new[] { "BankId" });
             DropIndex("dbo.BankAtms", new[] { "BankId" });
             DropIndex("dbo.BankAccounts", new[] { "BankId" });
             DropIndex("dbo.BankAccountCards", new[] { "AccountId" });
-           
+
             DropTable("dbo.BankAccountMembers");
             DropTable("dbo.BankBranches");
             DropTable("dbo.BankAtms");

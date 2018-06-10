@@ -6,12 +6,17 @@ using IgiCore.SDK.Server.Configuration;
 using JetBrains.Annotations;
 using MySql.Data.EntityFramework;
 
-namespace IgiCore.SDK.Server.Storage.Contexts
+namespace IgiCore.SDK.Server.Storage
 {
 	[PublicAPI]
 	[DbConfigurationType(typeof(MySqlEFConfiguration))]
-	public abstract class EFContext : DbContext
+	public abstract class EFContext<TContext> : DbContext where TContext : DbContext
 	{
+		static EFContext()
+		{
+			Database.SetInitializer<TContext>(null);
+		}
+
 		protected EFContext() : base(ServerConfiguration.DatabaseConnection) { }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)

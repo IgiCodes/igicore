@@ -2,7 +2,6 @@
 packages/
 obj/
 *.dll
-*.pdb
 !lib/*.dll
 Interface/node_modules/
 Interface/dist/*

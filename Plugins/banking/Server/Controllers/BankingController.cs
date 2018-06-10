@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
+using System.Linq;
 using Banking.Core.Models;
-using IgiCore.Models.Player;
+using Banking.Server.Storage;
 using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Server.Controllers;
 using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;
 using Roleplay.Core.Models.Player;
 
-namespace Banking.Server
+namespace Banking.Server.Controllers
 {
 	public class BankingController : ConfigurableController<Configuration>
 	{
@@ -17,8 +19,6 @@ namespace Banking.Server
 		{
 			this.Rpc.Event("character:create").On<Character>(OnCharacterCreate);
 			this.Rpc.Event("igi:bank:atm:withdraw").On<Guid, Guid, double>(AtmWithdraw);
-
-			this.Logger.Debug(this.Configuration.Test);
 		}
 
 		public async void OnCharacterCreate(IRpcEvent e, Character character)
