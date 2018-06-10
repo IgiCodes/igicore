@@ -1,7 +1,0 @@
-name: extra-libs
-version: 1.0.0
-type: library
-
-server:
-  include:
-  - Empty
