@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace IgiCore.Models.Appearance
+namespace Roleplay.Core.Models.Appearance
 {
 	[PublicAPI]
 	public enum PropTypes

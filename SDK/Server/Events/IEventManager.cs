@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace IgiCore.SDK.Server.Events
 {
+	[PublicAPI]
 	public interface IEventManager
 	{
 		void On(string @event, Action action);

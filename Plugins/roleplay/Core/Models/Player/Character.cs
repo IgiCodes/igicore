@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using IgiCore.Models;
-using IgiCore.Models.Appearance;
-using IgiCore.Models.Player;
+using IgiCore.SDK.Core.Models;
+using IgiCore.SDK.Core.Models.Player;
 using JetBrains.Annotations;
+using Roleplay.Core.Models.Appearance;
+using Roleplay.Core.Models.Player.Skills;
 
 namespace Roleplay.Core.Models.Player
 {
@@ -63,8 +65,8 @@ namespace Roleplay.Core.Models.Player
 
 		public virtual User User { get; set; }
 
-		//[InverseProperty("Character")]
-		//public virtual List<Skill> Skills { get; set; }
+		[InverseProperty("Character")]
+		public virtual List<Skill> Skills { get; set; }
 
 		[Required]
 		[ForeignKey("Style")]

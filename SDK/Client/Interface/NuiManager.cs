@@ -22,7 +22,7 @@ namespace IgiCore.SDK.Client.Interface
 		{
 			API.RegisterNuiCallbackType(type);
 
-			events[$"__cfx_nui:{type}"] += callback; // TODO: Dispose
+			this.events[$"__cfx_nui:{type}"] += callback; // TODO: Dispose
 		}
 	}
 }

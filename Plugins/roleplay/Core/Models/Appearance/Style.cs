@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using JetBrains.Annotations;
 
-namespace IgiCore.Models.Appearance
+namespace Roleplay.Core.Models.Appearance
 {
 	[PublicAPI]
 	public class Style

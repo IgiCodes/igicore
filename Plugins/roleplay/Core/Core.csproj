@@ -45,15 +45,23 @@
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Appearance\Component.cs" />
+    <Compile Include="Models\Appearance\ComponentTypes.cs" />
+    <Compile Include="Models\Appearance\Prop.cs" />
+    <Compile Include="Models\Appearance\PropTypes.cs" />
+    <Compile Include="Models\Appearance\Style.cs" />
+    <Compile Include="Models\Audio\RadioStation.cs" />
+    <Compile Include="Models\Groups\Group.cs" />
+    <Compile Include="Models\Groups\GroupMember.cs" />
+    <Compile Include="Models\Groups\GroupRole.cs" />
     <Compile Include="Models\Player\Character.cs" />
+    <Compile Include="Models\Player\Skills\MentalSkillType.cs" />
+    <Compile Include="Models\Player\Skills\PhysicalSkillType.cs" />
+    <Compile Include="Models\Player\Skills\Skill.cs" />
+    <Compile Include="Models\Player\Skills\SkillType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Models\Models.csproj">
-      <Project>{275637EC-6B60-4BD4-953C-F9596EFFE964}</Project>
-      <Name>IgiCore.Models</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Core\Core.csproj">
       <Project>{1ED39A02-E017-407D-8D32-FEE8A1E29264}</Project>
       <Name>IgiCore.SDK.Core</Name>

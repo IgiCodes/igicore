@@ -11,8 +11,8 @@ using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Client.Services;
 using IgiCore.SDK.Core.Diagnostics;
 using CitizenFX.Core.UI;
-using IgiCore.Models.Player;
 using IgiCore.SDK.Client.Interface;
+using IgiCore.SDK.Core.Models.Player;
 using IgiCore.SDK.Core.Rpc;
 using JetBrains.Annotations;
 
@@ -34,13 +34,14 @@ namespace Roleplay.Client
 
 		public override async Task Loaded()
 		{
-			
 			// NUI events
 			this.Nui.Attach("rules-agreed", OnNuiRulesAgreed);
 			this.Nui.Attach("character-create", OnNuiCharacterCreate);
 			this.Nui.Attach("character-load", OnNuiCharacterLoad);
 			this.Nui.Attach("character-delete", OnNuiCharacterDelete);
 			this.Nui.Attach("disconnect", OnNuiDisconnect);
+
+			await Task.FromResult(0);
 		}
 
 		public override async Task Started()
@@ -63,7 +64,7 @@ namespace Roleplay.Client
 
 			API.ShutdownLoadingScreen();
 
-			await Show();
+			Show();
 
 			this.Nui.Send("user", this.User);
 			this.Nui.Send("characters", this.Characters);
@@ -94,7 +95,7 @@ namespace Roleplay.Client
 			
 			OnCharacterCreated(newCharacter);
 
-			await Show();
+			Show();
 
 			callback("ok");
 		}
@@ -117,7 +118,7 @@ namespace Roleplay.Client
 			this.Characters.Remove(character);
 			this.Events.Raise("roleplay.characters.deleted", character);
 			this.Nui.Send("characters", this.Characters);
-			await Show();
+			Show();
 
 			callback("ok");
 		}
@@ -137,7 +138,7 @@ namespace Roleplay.Client
 			this.Nui.Send("characters", this.Characters);
 		}
 
-		public async Task Show()
+		public void Show()
 		{
 			this.Logger.Debug("Show called!");
 			// HUD

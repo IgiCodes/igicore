@@ -79,9 +79,9 @@
     <Compile Include="Controllers\DatabaseController.cs" />
     <Compile Include="Controllers\SessionController.cs" />
     <Compile Include="Events\EventManager.cs" />
-    <Compile Include="Migrations\201806101939255_Init.cs" />
-    <Compile Include="Migrations\201806101939255_Init.Designer.cs">
-      <DependentUpon>201806101939255_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201806120038097_Init.cs" />
+    <Compile Include="Migrations\201806120038097_Init.Designer.cs">
+      <DependentUpon>201806120038097_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Rpc\Client.cs" />
     <Compile Include="Rpc\Rpc.cs" />
@@ -103,11 +103,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Models\Models.csproj">
-      <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
-      <Name>IgiCore.Models</Name>
-      <Private>True</Private>
-    </ProjectReference>
     <ProjectReference Include="..\SDK\Core\Core.csproj">
       <Project>{1ED39A02-E017-407D-8D32-FEE8A1E29264}</Project>
       <Name>IgiCore.SDK.Core</Name>
@@ -123,8 +118,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201806101939255_Init.resx">
-      <DependentUpon>201806101939255_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806120038097_Init.resx">
+      <DependentUpon>201806120038097_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

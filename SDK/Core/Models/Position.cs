@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using JetBrains.Annotations;
 
-namespace IgiCore.Models
+namespace IgiCore.SDK.Core.Models
 {
 	[PublicAPI]
 	[ComplexType]

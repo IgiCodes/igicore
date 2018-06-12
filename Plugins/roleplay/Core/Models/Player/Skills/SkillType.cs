@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace IgiCore.Models.Player.Skills
+namespace Roleplay.Core.Models.Player.Skills
 {
 	[PublicAPI]
 	public enum SkillType

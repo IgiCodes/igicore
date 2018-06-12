@@ -1,7 +1,9 @@
 ﻿using System;
+using JetBrains.Annotations;
 
 namespace IgiCore.SDK.Core.Diagnostics
 {
+	[PublicAPI]
 	public interface ILogger
 	{
 		string Prefix { get; }

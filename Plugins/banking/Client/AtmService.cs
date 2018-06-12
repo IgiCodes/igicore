@@ -7,7 +7,6 @@ using Banking.Core.Models;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using CitizenFX.Core.UI;
-using IgiCore.Models.Player;
 using IgiCore.SDK.Client.Events;
 using IgiCore.SDK.Client.Extensions;
 using IgiCore.SDK.Client.Input;
@@ -15,6 +14,7 @@ using IgiCore.SDK.Client.Interface;
 using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Client.Services;
 using IgiCore.SDK.Core.Diagnostics;
+using IgiCore.SDK.Core.Models.Player;
 using IgiCore.SDK.Core.Rpc;
 
 namespace Banking.Client

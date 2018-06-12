@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using CitizenFX.Core;
-using IgiCore.Models.Player;
 using IgiCore.SDK.Client.Events;
 using IgiCore.SDK.Client.Interface;
 using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Core.Diagnostics;
+using IgiCore.SDK.Core.Models.Player;
 using JetBrains.Annotations;
 
 namespace IgiCore.SDK.Client.Services

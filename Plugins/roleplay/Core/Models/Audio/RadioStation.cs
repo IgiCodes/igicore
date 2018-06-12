@@ -1,6 +1,6 @@
 ﻿using JetBrains.Annotations;
 
-namespace IgiCore.Models.Audio
+namespace Roleplay.Core.Models.Audio
 {
 	[PublicAPI]
 	public enum RadioStation

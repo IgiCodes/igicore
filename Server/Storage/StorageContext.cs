@@ -1,7 +1,5 @@
 ﻿using System.Data.Entity;
-using IgiCore.Models.Appearance;
-using IgiCore.Models.Groups;
-using IgiCore.Models.Player;
+using IgiCore.SDK.Core.Models.Player;
 using IgiCore.SDK.Server.Storage;
 
 namespace IgiCore.Server.Storage
@@ -11,14 +9,6 @@ namespace IgiCore.Server.Storage
 		public DbSet<Session> Sessions { get; set; }
 
 		public DbSet<User> Users { get; set; }
-
-		public DbSet<Group> Groups { get; set; }
-
-		public DbSet<GroupMember> GroupMembers { get; set; }
-
-		public DbSet<GroupRole> GroupRoles { get; set; }
-
-		public DbSet<Style> Styles { get; set; }
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{

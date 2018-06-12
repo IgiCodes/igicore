@@ -26,6 +26,7 @@ namespace IgiCore.SDK.Core.Helpers
 			Buffer.BlockCopy(timestampBytes, 2, guidBytes, 0, 6);
 			Buffer.BlockCopy(randomBytes, 0, guidBytes, 6, 10);
 
+			// ReSharper disable once InvertIf
 			if (BitConverter.IsLittleEndian)
 			{
 				Array.Reverse(guidBytes, 0, 4);

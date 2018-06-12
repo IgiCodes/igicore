@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using IgiCore.Models.Player;
+using IgiCore.SDK.Core.Models.Player;
 using IgiCore.SDK.Server.Rpc;
 using IgiCore.Server.Storage;
 

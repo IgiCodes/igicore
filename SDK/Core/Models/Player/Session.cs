@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using JetBrains.Annotations;
 
-namespace IgiCore.Models.Player
+namespace IgiCore.SDK.Core.Models.Player
 {
 	[PublicAPI]
 	public class Session

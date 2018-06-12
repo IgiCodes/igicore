@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using IgiCore.SDK.Core.Models;
 using JetBrains.Annotations;
 
-namespace IgiCore.Models.Groups
+namespace Roleplay.Core.Models.Groups
 {
 	[PublicAPI]
 	public class GroupRole : IdentityModel

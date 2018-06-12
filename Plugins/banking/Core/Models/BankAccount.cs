@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using IgiCore.Models;
+using IgiCore.SDK.Core.Models;
 using JetBrains.Annotations;
 
 namespace Banking.Core.Models

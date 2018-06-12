@@ -2,9 +2,9 @@
 using System.Dynamic;
 using System.Linq;
 using CitizenFX.Core;
-using IgiCore.Models.Player;
 using IgiCore.SDK.Core.Diagnostics;
 using IgiCore.SDK.Core.Helpers;
+using IgiCore.SDK.Core.Models.Player;
 using IgiCore.SDK.Server.Controllers;
 using IgiCore.SDK.Server.Events;
 using IgiCore.SDK.Server.Rpc;

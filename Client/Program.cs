@@ -6,10 +6,10 @@ using CitizenFX.Core;
 using IgiCore.Client.Diagnostics;
 using IgiCore.Client.Events;
 using IgiCore.Client.Rpc;
-using IgiCore.Models.Player;
 using IgiCore.SDK.Client;
 using IgiCore.SDK.Client.Interface;
 using IgiCore.SDK.Client.Services;
+using IgiCore.SDK.Core.Models.Player;
 using JetBrains.Annotations;
 
 namespace IgiCore.Client
@@ -57,7 +57,9 @@ namespace IgiCore.Client
 
 			this.logger.Info("Plugins loaded");
 
+#pragma warning disable 4014
 			foreach (var service in this.services) service.Started();
+#pragma warning restore 4014
 
 			this.logger.Info("Plugins started");
 		}

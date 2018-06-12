@@ -1,8 +1,9 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using JetBrains.Annotations;
 
-namespace IgiCore.Models.Player.Skills
+namespace Roleplay.Core.Models.Player.Skills
 {
 	[PublicAPI]
 	public class Skill
@@ -23,10 +24,10 @@ namespace IgiCore.Models.Player.Skills
 		[Range(0, 100)] // TODO
 		public float Value { get; set; }
 
-		//[Required]
-		//[ForeignKey("Character")]
-		//public Guid CharacterId { get; set; }
+		[Required]
+		[ForeignKey("Character")]
+		public Guid CharacterId { get; set; }
 
-		//public virtual Character Character { get; set; }
+		public virtual Character Character { get; set; }
 	}
 }

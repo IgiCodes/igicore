@@ -1,7 +1,9 @@
-﻿using Newtonsoft.Json;
+﻿using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace IgiCore.SDK.Core.Rpc
 {
+	[PublicAPI]
 	public class Serializer
 	{
 		public string Serialize(object obj) => JsonConvert.SerializeObject(obj);

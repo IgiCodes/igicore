@@ -71,11 +71,6 @@
     <Compile Include="Storage\CharacterContext.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Models\Models.csproj">
-      <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
-      <Name>IgiCore.Models</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Server\Server.csproj">
       <Project>{5a53d22b-87f1-4b16-b54b-d0a8aeac8e5d}</Project>
       <Name>IgiCore.SDK.Server</Name>

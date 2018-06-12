@@ -48,11 +48,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Models\Models.csproj">
-      <Project>{275637ec-6b60-4bd4-953c-f9596effe964}</Project>
-      <Name>IgiCore.Models</Name>
-      <Private>False</Private>
-    </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Client\Client.csproj">
       <Project>{f6aa79c1-4e08-4a75-a0b4-ffd2b33d89d7}</Project>
       <Name>IgiCore.SDK.Client</Name>

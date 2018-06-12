@@ -2,15 +2,15 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using JetBrains.Annotations;
 
-namespace IgiCore.Models.Appearance
+namespace Roleplay.Core.Models.Appearance
 {
 	[PublicAPI]
 	[ComplexType]
-	public class Prop
+	public class Component
 	{
 		[Required]
-		[Range(0, 9)]
-		public PropTypes Type { get; set; }
+		[Range(0, 11)]
+		public ComponentTypes Type { get; set; }
 
 		[Required]
 		[Range(0, 100)] // TODO

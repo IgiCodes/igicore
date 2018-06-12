@@ -1,4 +1,4 @@
-﻿using IgiCore.Models.Player;
+﻿using IgiCore.SDK.Core.Models.Player;
 
 namespace IgiCore.SDK.Server.Rpc
 {
