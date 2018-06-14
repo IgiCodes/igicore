@@ -4,7 +4,6 @@ version: 1.0.0
 server:
   dependencies:
     roleplay: ^1.0.0
-    banking: ^1.0.0
 
 client:
   dependencies:

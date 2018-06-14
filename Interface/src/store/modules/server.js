@@ -1,5 +1,5 @@
 const state = {
-	resource: '',
+	resource: 'igicore',
 	name: ''
 }
 

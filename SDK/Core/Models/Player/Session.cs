@@ -2,6 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 
 namespace IgiCore.SDK.Core.Models.Player
 {
@@ -28,6 +29,7 @@ namespace IgiCore.SDK.Core.Models.Player
 		[ForeignKey("User")]
 		public Guid UserId { get; set; }
 
+		[JsonIgnore]
 		public virtual User User { get; set; }
 
 		public Session()

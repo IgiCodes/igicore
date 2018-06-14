@@ -1,10 +1,8 @@
-﻿using System.Threading.Tasks;
-using CitizenFX.Core;
-using static CitizenFX.Core.Native.API;
+﻿using CitizenFX.Core;
 
-namespace IgiCore.Client.Extensions
+namespace IgiCore.SDK.Client.Extensions
 {
-	public static class PlayerExtensions
+	public static class PlayerExtentions
 	{
 		/// <summary>
 		/// Freezes the specified player in place.
@@ -27,33 +25,5 @@ namespace IgiCore.Client.Extensions
 		/// <see cref="Freeze"/>
 		/// <param name="player">The player to unfreeze.</param>
 		public static void Unfreeze(this Player player) => player.Freeze(false);
-
-		/// <summary>
-		/// Spawns the player at the specified position.
-		/// </summary>
-		/// <param name="player">The player to spawn.</param>
-		/// <param name="position">The position to spawn at.</param>
-		/// <returns></returns>
-		public static async Task Spawn(this Player player, Vector3 position)
-		{
-			player.Freeze();
-
-			// Load map
-			LoadScene(position.X, position.Y, position.Z);
-			RequestCollisionAtCoord(position.X, position.Y, position.Z);
-
-			// Swap model
-			while (!await player.ChangeModel(new Model(PedHash.FreemodeMale01))) await BaseScript.Delay(10);
-
-			// Not naked
-			player.Character.Style.SetDefaultClothes();
-
-			player.Character.Position = position;
-			player.Character.ClearBloodDamage();
-			player.Character.Weapons.Drop();
-			player.WantedLevel = 0;
-			
-			player.Unfreeze();
-		}
 	}
 }

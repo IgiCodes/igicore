@@ -1,4 +1,3 @@
-// ReSharper disable All
 namespace IgiCore.Server.Migrations
 {
     using System;
@@ -36,6 +35,7 @@ namespace IgiCore.Server.Migrations
                     })
                 .PrimaryKey(t => t.Id)
                 .Index(t => t.SteamId, unique: true);
+            
         }
         
         public override void Down()

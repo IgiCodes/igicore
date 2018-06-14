@@ -60,6 +60,7 @@
     <Compile Include="Models\Player\Skills\Skill.cs" />
     <Compile Include="Models\Player\Skills\SkillType.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rpc\RpcEvents.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\SDK\Core\Core.csproj">

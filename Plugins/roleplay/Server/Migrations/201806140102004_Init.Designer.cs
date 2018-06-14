@@ -13,7 +13,7 @@ namespace Roleplay.Server.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201806101934126_Init"; }
+            get { return "201806140102004_Init"; }
         }
         
         string IMigrationMetadata.Source

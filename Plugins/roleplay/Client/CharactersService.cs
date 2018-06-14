@@ -15,6 +15,8 @@ using IgiCore.SDK.Client.Interface;
 using IgiCore.SDK.Core.Models.Player;
 using IgiCore.SDK.Core.Rpc;
 using JetBrains.Annotations;
+using RpcEvents = Roleplay.Core.Rpc.RpcEvents;
+using SdkRpcEvents = IgiCore.SDK.Core.Rpc.RpcEvents;
 
 namespace Roleplay.Client
 {
@@ -29,6 +31,7 @@ namespace Roleplay.Client
 		protected DateTime Time => new DateTime(DateTime.Now.Year, 1, 1, 12, 0, 0); // Noon
 		protected Weather Weather => Weather.ExtraSunny;
 		protected List<Character> Characters = new List<Character>();
+		protected Character ActiveCharacter;
 
 		public CharactersService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, INuiManager nui, User user) : base(logger, ticks, events, rpc, nui, user) { }
 
@@ -50,7 +53,7 @@ namespace Roleplay.Client
 
 			this.Logger.Debug($"Got {this.Characters.Count} characters");
 
-			this.Events.Raise("characters:loaded", this.Characters);
+			await this.Events.RaiseAsync("characters:loaded", this.Characters);
 
 			this.Ticks.Attach(Render);
 
@@ -100,23 +103,15 @@ namespace Roleplay.Client
 			callback("ok");
 		}
 
-		protected void OnNuiCharacterLoad(dynamic id, CallbackDelegate callback)
-		{
-			this.Rpc
-				.Event(RpcEvents.CharacterLoad)
-				.Trigger(id);
-
-			callback("ok");
-		}
-
 		protected async void OnNuiCharacterDelete(dynamic id, CallbackDelegate callback)
 		{
-			Guid deletedId = await this.Rpc.Event(RpcEvents.CharacterDelete)
-				.Request<Guid>(new Guid(id.ToString()));
+			Guid guid = new Guid(id.ToString());
+			this.Rpc.Event(RpcEvents.CharacterDelete)
+				.Trigger(guid);
 
-			Character character = this.Characters.First(c => c.Id == deletedId);
+			Character character = this.Characters.First(c => c.Id == guid);
 			this.Characters.Remove(character);
-			this.Events.Raise("roleplay.characters.deleted", character);
+			await this.Events.RaiseAsync("roleplay.characters.deleted", character);
 			this.Nui.Send("characters", this.Characters);
 			Show();
 
@@ -126,16 +121,88 @@ namespace Roleplay.Client
 		protected void OnNuiDisconnect(dynamic _, CallbackDelegate callback)
 		{
 			this.Rpc
-				.Event(RpcEvents.ClientDisconnect)
+				.Event(SdkRpcEvents.ClientDisconnect)
 				.Trigger();
 
 			callback("ok");
 		}
 
-		protected void OnCharacterCreated(Character newCharacter)
+		protected async void OnCharacterCreated(Character newCharacter)
 		{
-			this.Events.Raise("roleplay.character.created", newCharacter);
+			this.Characters.Add(newCharacter);
+			await this.Events.RaiseAsync("roleplay.character.created", newCharacter);
 			this.Nui.Send("characters", this.Characters);
+		}
+
+		protected async void OnNuiCharacterLoad(dynamic id, CallbackDelegate callback)
+		{
+			Guid guid = new Guid(id.ToString());
+			await this.Rpc
+				.Event(RpcEvents.CharacterLoad)
+				.Request(guid);
+
+			Character loadedCharacter = this.Characters.FirstOrDefault(c => c.Id == guid);
+			if (loadedCharacter == null) return; // TODO: Handle trying to load character with invalid GUID
+			this.ActiveCharacter = loadedCharacter;
+			await this.Events.RaiseAsync("roleplay.characters.loaded", loadedCharacter);
+
+			await this.Spawn();
+			this.Hide();
+
+			callback("ok");
+
+			await this.Events.RaiseAsync("roleplay.characters.spawned", loadedCharacter);
+
+		}
+
+		public async Task Spawn()
+		{
+			Game.Player.Freeze();
+
+			await this.Sync();
+
+			// Load map
+			API.LoadScene(this.ActiveCharacter.Position.X, this.ActiveCharacter.Position.Y, this.ActiveCharacter.Position.Z);
+			API.RequestCollisionAtCoord(this.ActiveCharacter.Position.X, this.ActiveCharacter.Position.Y, this.ActiveCharacter.Position.Z);
+
+			// Set Defaults
+			Game.PlayerPed.Style.SetDefaultClothes();
+			Game.PlayerPed.ClearBloodDamage();
+			Game.PlayerPed.Weapons.Drop();
+			Game.Player.WantedLevel = 0;
+
+			Game.Player.Unfreeze();
+		}
+
+		public async Task Sync()
+		{
+			Game.Player.Character.Position = this.ActiveCharacter.Position.ToVector3();
+
+			while (!await Game.Player.ChangeModel(new Model(this.ActiveCharacter.Model))) await BaseScript.Delay(10);
+
+			Game.Player.Character.Style[PedComponents.Face].SetVariation(this.ActiveCharacter.Style.Face.Index, this.ActiveCharacter.Style.Face.Texture);
+			Game.Player.Character.Style[PedComponents.Head].SetVariation(this.ActiveCharacter.Style.Head.Index, this.ActiveCharacter.Style.Head.Texture);
+			Game.Player.Character.Style[PedComponents.Hair].SetVariation(this.ActiveCharacter.Style.Hair.Index, this.ActiveCharacter.Style.Hair.Texture);
+			Game.Player.Character.Style[PedComponents.Torso].SetVariation(this.ActiveCharacter.Style.Torso.Index, this.ActiveCharacter.Style.Torso.Texture);
+			Game.Player.Character.Style[PedComponents.Legs].SetVariation(this.ActiveCharacter.Style.Legs.Index, this.ActiveCharacter.Style.Legs.Texture);
+			Game.Player.Character.Style[PedComponents.Hands].SetVariation(this.ActiveCharacter.Style.Hands.Index, this.ActiveCharacter.Style.Hands.Texture);
+			Game.Player.Character.Style[PedComponents.Shoes].SetVariation(this.ActiveCharacter.Style.Shoes.Index, this.ActiveCharacter.Style.Shoes.Texture);
+			Game.Player.Character.Style[PedComponents.Special1].SetVariation(this.ActiveCharacter.Style.Special1.Index, this.ActiveCharacter.Style.Special1.Texture);
+			Game.Player.Character.Style[PedComponents.Special2].SetVariation(this.ActiveCharacter.Style.Special2.Index, this.ActiveCharacter.Style.Special2.Texture);
+			Game.Player.Character.Style[PedComponents.Special3].SetVariation(this.ActiveCharacter.Style.Special3.Index, this.ActiveCharacter.Style.Special3.Texture);
+			Game.Player.Character.Style[PedComponents.Textures].SetVariation(this.ActiveCharacter.Style.Textures.Index, this.ActiveCharacter.Style.Textures.Texture);
+			Game.Player.Character.Style[PedComponents.Torso2].SetVariation(this.ActiveCharacter.Style.Torso2.Index, this.ActiveCharacter.Style.Torso2.Texture);
+
+			Game.Player.Character.Style[PedProps.Hats].SetVariation(this.ActiveCharacter.Style.Hat.Index, this.ActiveCharacter.Style.Hat.Texture);
+			Game.Player.Character.Style[PedProps.Glasses].SetVariation(this.ActiveCharacter.Style.Glasses.Index, this.ActiveCharacter.Style.Glasses.Texture);
+			Game.Player.Character.Style[PedProps.EarPieces].SetVariation(this.ActiveCharacter.Style.EarPiece.Index, this.ActiveCharacter.Style.EarPiece.Texture);
+			Game.Player.Character.Style[PedProps.Unknown3].SetVariation(this.ActiveCharacter.Style.Unknown3.Index, this.ActiveCharacter.Style.Unknown3.Texture);
+			Game.Player.Character.Style[PedProps.Unknown4].SetVariation(this.ActiveCharacter.Style.Unknown4.Index, this.ActiveCharacter.Style.Unknown4.Texture);
+			Game.Player.Character.Style[PedProps.Unknown5].SetVariation(this.ActiveCharacter.Style.Unknown5.Index, this.ActiveCharacter.Style.Unknown5.Texture);
+			Game.Player.Character.Style[PedProps.Watches].SetVariation(this.ActiveCharacter.Style.Watch.Index, this.ActiveCharacter.Style.Watch.Texture);
+			Game.Player.Character.Style[PedProps.Wristbands].SetVariation(this.ActiveCharacter.Style.Wristband.Index, this.ActiveCharacter.Style.Wristband.Texture);
+			Game.Player.Character.Style[PedProps.Unknown8].SetVariation(this.ActiveCharacter.Style.Unknown8.Index, this.ActiveCharacter.Style.Unknown8.Texture);
+			Game.Player.Character.Style[PedProps.Unknown9].SetVariation(this.ActiveCharacter.Style.Unknown9.Index, this.ActiveCharacter.Style.Unknown9.Texture);
 		}
 
 		public void Show()
@@ -152,7 +219,7 @@ namespace Roleplay.Client
 			Game.Player.Character.Position = Vector3.Zero;
 
 			// Freeze
-			//Game.Player.Freeze();
+			Game.Player.Freeze();
 
 			// Time
 			World.CurrentDayTime = this.Time.TimeOfDay;
@@ -180,9 +247,6 @@ namespace Roleplay.Client
 			// HUD
 			//Client.Instance.Managers.First<HudManager>().Visible = true;
 			API.SetNuiFocus(false, false);
-
-			// Freeze
-			//Game.Player.Unfreeze();
 
 			// Weather
 			API.ClearOverrideWeather();

@@ -1,4 +1,3 @@
-// ReSharper disable All
 namespace Roleplay.Server.Migrations
 {
     using System;
@@ -21,7 +20,7 @@ namespace Roleplay.Server.Migrations
                         Alive = c.Boolean(nullable: false),
                         Health = c.Int(nullable: false),
                         Armor = c.Int(nullable: false),
-                        Ssn = c.String(nullable: false, maxLength: 9, unicode: false),
+                        Ssn = c.Int(nullable: false),
                         Position_X = c.Single(nullable: false),
                         Position_Y = c.Single(nullable: false),
                         Position_Z = c.Single(nullable: false),
@@ -178,6 +177,7 @@ namespace Roleplay.Server.Migrations
                 .ForeignKey("dbo.GroupMembers", t => t.GroupMember_Id, cascadeDelete: true)
                 .Index(t => t.GroupRole_Id)
                 .Index(t => t.GroupMember_Id);
+            
         }
         
         public override void Down()
@@ -187,13 +187,13 @@ namespace Roleplay.Server.Migrations
             DropForeignKey("dbo.GroupRoleGroupMembers", "GroupRole_Id", "dbo.GroupRoles");
             DropForeignKey("dbo.GroupMembers", "GroupId", "dbo.Groups");
             DropForeignKey("dbo.Characters", "UserId", "dbo.Users");
+            DropForeignKey("dbo.Sessions", "UserId", "dbo.Users");
             DropForeignKey("dbo.Characters", "StyleId", "dbo.Styles");
             DropForeignKey("dbo.Skills", "CharacterId", "dbo.Characters");
             DropIndex("dbo.GroupRoleGroupMembers", new[] { "GroupMember_Id" });
             DropIndex("dbo.GroupRoleGroupMembers", new[] { "GroupRole_Id" });
             DropIndex("dbo.GroupRoles", new[] { "GroupId" });
             DropIndex("dbo.GroupMembers", new[] { "GroupId" });
-            DropIndex("dbo.Sessions", new[] { "UserId" });
             DropIndex("dbo.Skills", new[] { "CharacterId" });
             DropIndex("dbo.Characters", new[] { "StyleId" });
             DropIndex("dbo.Characters", new[] { "UserId" });

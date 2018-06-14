@@ -56,14 +56,15 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration.cs" />
     <Compile Include="Controllers\CharacterController.cs" />
-    <Compile Include="Migrations\201806101934126_Init.cs" />
-    <Compile Include="Migrations\201806101934126_Init.Designer.cs">
-      <DependentUpon>201806101934126_Init.cs</DependentUpon>
+    <Compile Include="Migrations\201806140102004_Init.cs" />
+    <Compile Include="Migrations\201806140102004_Init.Designer.cs">
+      <DependentUpon>201806140102004_Init.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -96,8 +97,8 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\201806101934126_Init.resx">
-      <DependentUpon>201806101934126_Init.cs</DependentUpon>
+    <EmbeddedResource Include="Migrations\201806140102004_Init.resx">
+      <DependentUpon>201806140102004_Init.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

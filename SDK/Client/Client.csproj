@@ -52,6 +52,8 @@
     <Compile Include="ClientPluginAttribute.cs" />
     <Compile Include="Configuration\ClientConfiguration.cs" />
     <Compile Include="Events\ITickManager.cs" />
+    <Compile Include="Extensions\PlayerExtensions.cs" />
+    <Compile Include="Extensions\PositionExtensions.cs" />
     <Compile Include="Interface\INuiManager.cs" />
     <Compile Include="Interface\NuiManager.cs" />
     <Compile Include="Rpc\IRpc.cs" />

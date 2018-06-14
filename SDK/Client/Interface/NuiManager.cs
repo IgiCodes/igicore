@@ -21,7 +21,7 @@ namespace IgiCore.SDK.Client.Interface
 		public void Attach(string type, Action<dynamic, CallbackDelegate> callback)
 		{
 			API.RegisterNuiCallbackType(type);
-
+			
 			this.events[$"__cfx_nui:{type}"] += callback; // TODO: Dispose
 		}
 	}

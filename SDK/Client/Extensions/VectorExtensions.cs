@@ -1,6 +1,7 @@
 ﻿using System;
 using CitizenFX.Core;
 using IgiCore.SDK.Client.Helpers;
+using IgiCore.SDK.Core.Models;
 
 namespace IgiCore.SDK.Client.Extensions
 {
