@@ -1,0 +1,18 @@
+name: roleplay-vehicles
+version: 1.0.0
+type: plugin
+
+server:
+  main:
+  - Roleplay.Vehicles.Server
+  include:
+  - Roleplay.Vehicles.Core
+  dependencies:
+    roleplay: ^1.0.0
+
+client:
+  main:
+  - Roleplay.Vehicles.Client
+  include:
+  - Roleplay.Vehicles.Core
+  dependencies:

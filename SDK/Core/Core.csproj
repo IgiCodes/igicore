@@ -54,6 +54,8 @@
     <Compile Include="Helpers\Guid.cs" />
     <Compile Include="Exceptions\ModelException.cs" />
     <Compile Include="Controllers\IControllerConfiguration.cs" />
+    <Compile Include="Models\Audio\RadioStation.cs" />
+    <Compile Include="Models\Color.cs" />
     <Compile Include="Models\IdentityModel.cs" />
     <Compile Include="Models\Player\Session.cs" />
     <Compile Include="Models\Player\User.cs" />

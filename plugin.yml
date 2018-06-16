@@ -4,6 +4,7 @@ version: 1.0.0
 server:
   dependencies:
     roleplay: ^1.0.0
+    roleplay-vehicles: ^1.0.0
 
 client:
   dependencies:

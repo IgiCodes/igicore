@@ -62,6 +62,7 @@ namespace IgiCore.Client
 #pragma warning restore 4014
 
 			this.logger.Info("Plugins started");
+
 		}
 	}
 }

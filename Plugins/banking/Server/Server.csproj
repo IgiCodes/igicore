@@ -67,22 +67,22 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\SDK\Server\Server.csproj">
       <Project>{5a53d22b-87f1-4b16-b54b-d0a8aeac8e5d}</Project>
-      <Name>IgiCore.SDK.Server</Name>
+      <Name>Server</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\..\SDK\Core\Core.csproj">
       <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
-      <Name>IgiCore.SDK.Core</Name>
+      <Name>Core</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\roleplay\Core\Core.csproj">
       <Project>{ebbaf8a2-40ff-435d-9549-a31e166d13ec}</Project>
-      <Name>Roleplay.Core</Name>
+      <Name>Core</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{7621784d-d512-42d4-93bf-fa1c856ebcbb}</Project>
-      <Name>Banking.Core</Name>
+      <Name>Core</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

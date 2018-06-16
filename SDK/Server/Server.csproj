@@ -74,7 +74,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
       <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
-      <Name>IgiCore.SDK.Core</Name>
+      <Name>Core</Name>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

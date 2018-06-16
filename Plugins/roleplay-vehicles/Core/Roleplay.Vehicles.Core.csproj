@@ -1,0 +1,106 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{DC2E9FEB-AE4B-4BD5-985C-FB1249EF0AFD}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Roleplay.Vehicles.Core</RootNamespace>
+    <AssemblyName>Roleplay.Vehicles.Core.net</AssemblyName>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowedReferenceRelatedFileExtensions>
+      .allowedextension
+    </AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowedReferenceRelatedFileExtensions>
+      .allowedextension
+    </AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Extensions\VehicleExtensions.cs" />
+    <Compile Include="Models\Bike.cs" />
+    <Compile Include="Models\Car.cs" />
+    <Compile Include="Models\IAerialVehicle.cs" />
+    <Compile Include="Models\IAirship.cs" />
+    <Compile Include="Models\IBike.cs" />
+    <Compile Include="Models\IBikePlane.cs" />
+    <Compile Include="Models\IBoat.cs" />
+    <Compile Include="Models\ICar.cs" />
+    <Compile Include="Models\IHelicopter.cs" />
+    <Compile Include="Models\IMotorbike.cs" />
+    <Compile Include="Models\IObject.cs" />
+    <Compile Include="Models\IPedalBike.cs" />
+    <Compile Include="Models\IPlane.cs" />
+    <Compile Include="Models\IRoadVehicle.cs" />
+    <Compile Include="Models\ISeaPlane.cs" />
+    <Compile Include="Models\ISeaVehicle.cs" />
+    <Compile Include="Models\ISubmersible.cs" />
+    <Compile Include="Models\ITrailer.cs" />
+    <Compile Include="Models\IVehicle.cs" />
+    <Compile Include="Models\Trailer.cs" />
+    <Compile Include="Models\Vehicle.cs" />
+    <Compile Include="Models\VehicleBones.cs" />
+    <Compile Include="Models\VehicleClass.cs" />
+    <Compile Include="Models\VehicleColor.cs" />
+    <Compile Include="Models\VehicleDoor.cs" />
+    <Compile Include="Models\VehicleDoorIndex.cs" />
+    <Compile Include="Models\VehicleExtra.cs" />
+    <Compile Include="Models\VehicleHash.cs" />
+    <Compile Include="Models\VehicleLockStatus.cs" />
+    <Compile Include="Models\VehicleMod.cs" />
+    <Compile Include="Models\VehicleModType.cs" />
+    <Compile Include="Models\VehicleNeonLight.cs" />
+    <Compile Include="Models\VehicleSeat.cs" />
+    <Compile Include="Models\VehicleSeatIndex.cs" />
+    <Compile Include="Models\VehicleStockColor.cs" />
+    <Compile Include="Models\VehicleWheel.cs" />
+    <Compile Include="Models\VehicleWheelBones.cs" />
+    <Compile Include="Models\VehicleWheelPosition.cs" />
+    <Compile Include="Models\VehicleWheelType.cs" />
+    <Compile Include="Models\VehicleWindow.cs" />
+    <Compile Include="Models\VehicleWindowIndex.cs" />
+    <Compile Include="Models\VehicleWindowTint.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\SDK\Core\Core.csproj">
+      <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\roleplay\Core\Roleplay.Core.csproj">
+      <Project>{ebbaf8a2-40ff-435d-9549-a31e166d13ec}</Project>
+      <Name>Roleplay.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

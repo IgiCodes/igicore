@@ -51,12 +51,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\SDK\Core\Core.csproj">
       <Project>{1ED39A02-E017-407D-8D32-FEE8A1E29264}</Project>
-      <Name>IgiCore.SDK.Core</Name>
+      <Name>Core</Name>
       <Private>False</Private>
     </ProjectReference>
     <ProjectReference Include="..\..\roleplay\Core\Core.csproj">
       <Project>{ebbaf8a2-40ff-435d-9549-a31e166d13ec}</Project>
-      <Name>Roleplay.Core</Name>
+      <Name>Core</Name>
       <Private>False</Private>
     </ProjectReference>
   </ItemGroup>

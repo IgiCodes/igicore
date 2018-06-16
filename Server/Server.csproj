@@ -105,12 +105,12 @@
   <ItemGroup>
     <ProjectReference Include="..\SDK\Core\Core.csproj">
       <Project>{1ED39A02-E017-407D-8D32-FEE8A1E29264}</Project>
-      <Name>IgiCore.SDK.Core</Name>
+      <Name>Core</Name>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\SDK\Server\Server.csproj">
       <Project>{5a53d22b-87f1-4b16-b54b-d0a8aeac8e5d}</Project>
-      <Name>IgiCore.SDK.Server</Name>
+      <Name>Server</Name>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

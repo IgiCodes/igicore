@@ -10,6 +10,9 @@ client_scripts {
 	'Plugins/roleplay/Roleplay.Core.net.dll',
 	'Plugins/roleplay/Roleplay.Client.net.dll',
 
+	'Plugins/roleplay-vehicles/Roleplay.Vehicles.Core.net.dll',
+	'Plugins/roleplay-vehicles/Roleplay.Vehicles.Client.net.dll',
+
 	'Plugins/banking/Banking.Core.net.dll',
 	'Plugins/banking/Banking.Client.net.dll',
 

@@ -67,12 +67,12 @@
   <ItemGroup>
     <ProjectReference Include="..\SDK\Client\Client.csproj">
       <Project>{f6aa79c1-4e08-4a75-a0b4-ffd2b33d89d7}</Project>
-      <Name>IgiCore.SDK.Client</Name>
+      <Name>Client</Name>
       <Private>True</Private>
     </ProjectReference>
     <ProjectReference Include="..\SDK\Core\Core.csproj">
       <Project>{1ed39a02-e017-407d-8d32-fee8a1e29264}</Project>
-      <Name>IgiCore.SDK.Core</Name>
+      <Name>Core</Name>
       <Private>True</Private>
     </ProjectReference>
   </ItemGroup>

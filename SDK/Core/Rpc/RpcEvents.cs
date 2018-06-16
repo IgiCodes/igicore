@@ -30,6 +30,7 @@
 		public const string CarClaim = "igi:car:claim";
 		public const string CarUnclaim = "igi:car:unclaim";
 
+		public const string BikeCreate = "igi:bike:create";
 		public const string BikeSpawn = "igi:bike:spawn";
 		public const string BikeSave = "igi:bike:save";
 		public const string BikeTransfer = "igi:bike:transfer";
