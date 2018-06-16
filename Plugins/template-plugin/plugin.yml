@@ -1,0 +1,17 @@
+name: template-plugin
+version: 1.0.0
+type: plugin
+
+server:
+  main:
+  - TemplatePlugin.Server
+  include:
+  - TemplatePlugin.Core
+  dependencies:
+
+client:
+  main:
+  - TemplatePlugin.Client
+  include:
+  - TemplatePlugin.Core
+  dependencies:
