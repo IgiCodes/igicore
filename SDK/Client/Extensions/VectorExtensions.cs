@@ -26,5 +26,7 @@ namespace IgiCore.SDK.Client.Extensions
 				MathHelpers.Lerp(pos1.Y, pos2.Y, normalizedInterval),
 				MathHelpers.Lerp(pos1.Z, pos2.Z, normalizedInterval)
 			);
+
+		public static Position ToPosition(this Vector3 vector3) => new Position(vector3.X, vector3.Y, vector3.Z);
 	}
 }

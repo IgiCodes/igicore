@@ -8,6 +8,15 @@ namespace IgiCore.SDK.Core.Models
 	[ComplexType]
 	public class Position
 	{
+		public Position() { }
+
+		public Position(float x, float y, float z)
+		{
+			this.X = x;
+			this.Y = y;
+			this.Z = z;
+		}
+
 		[Required]
 		// TODO: Range
 		public float X { get; set; }
