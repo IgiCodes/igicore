@@ -18,6 +18,7 @@ using JetBrains.Annotations;
 using Roleplay.Vehicles.Client.Extensions;
 using Roleplay.Vehicles.Core.Extensions;
 using Roleplay.Vehicles.Core.Models;
+using Roleplay.Vehicles.Core.Rpc;
 using Vehicle = Roleplay.Vehicles.Core.Models.Vehicle;
 
 namespace Roleplay.Vehicles.Client
@@ -121,6 +122,7 @@ namespace Roleplay.Vehicles.Client
 
 		private async Task Save()
 		{
+			VehicleListCollection vehsToSave = new VehicleListCollection();
 			foreach (TrackedVehicle trackedVehicle in this.Tracked)
 			{
 				int vehicleHandle = API.NetToVeh(trackedVehicle.NetId);
@@ -136,18 +138,25 @@ namespace Roleplay.Vehicles.Client
 				switch (trackedVehicle.Type.VehicleType().Name)
 				{
 					case "Car":
-						//Car car = new Car(vehicle);
-						// Add car specific props...
-						this.Rpc.Event($"igi:{trackedVehicle.Type.VehicleType().Name}:save")
-							.Trigger(vehicle);
+						Car car = new Car(vehicle);
+						//Add car specific props...
+						vehsToSave.Cars.Add(car);
+						//this.Rpc.Event($"igi:{trackedVehicle.Type.VehicleType().Name}:save")
+						//	.Trigger(vehicle);
 						break;
 
 					default:
-						this.Rpc.Event($"igi:{trackedVehicle.Type.VehicleType().Name}:save")
-							.Trigger(vehicle);
+						vehsToSave.Vehicles.Add(vehicle);
+						//this.Rpc.Event($"igi:{trackedVehicle.Type.VehicleType().Name}:save")
+						//	.Trigger(vehicle);
 						break;
 				}
+
+				await this.Delay(TimeSpan.FromMilliseconds(20));
 			}
+
+			this.Rpc.Event(VehicleRpcEvents.VehicleSave)
+				.Trigger(vehsToSave);
 		}
 
 		public async Task Create<T>(T vehToCreate) where T : Vehicle

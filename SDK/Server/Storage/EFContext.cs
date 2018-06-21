@@ -21,6 +21,8 @@ namespace IgiCore.SDK.Server.Storage
 
 		protected override void OnModelCreating(DbModelBuilder modelBuilder)
 		{
+			base.OnModelCreating(modelBuilder);
+			modelBuilder.Properties<bool>().Configure(c => c.HasColumnType("bit"));
 			modelBuilder
 				.Properties()
 				.Where(x => x.PropertyType == typeof(string) && !x.GetCustomAttributes(false).OfType<ColumnAttribute>().Any(q => q.TypeName != null && q.TypeName.Equals("varchar", StringComparison.InvariantCultureIgnoreCase)))

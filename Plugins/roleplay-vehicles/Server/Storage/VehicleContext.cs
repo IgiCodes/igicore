@@ -7,6 +7,7 @@ namespace Roleplay.Vehicles.Server.Storage
 	public class VehicleContext : EFContext<VehicleContext>
 	{
 		public DbSet<Vehicle> Vehicles { get; set; }
+		public DbSet<Car> Cars { get; set; }
 		public DbSet<VehicleExtra> VehicleExtras { get; set; }
 		public DbSet<VehicleWheel> VehicleWheels { get; set; }
 		public DbSet<VehicleWindow> VehicleWindows { get; set; }

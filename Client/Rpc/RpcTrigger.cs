@@ -8,6 +8,8 @@ namespace IgiCore.Client.Rpc
 	{
 		private readonly Logger logger;
 		private readonly Serializer serializer;
+		private static int bandwidth;
+		private static int bandwidthTime;
 
 		public RpcTrigger(Logger logger, Serializer serializer)
 		{
@@ -17,9 +19,17 @@ namespace IgiCore.Client.Rpc
 
 		public void Fire(OutboundMessage message)
 		{
-			this.logger.Debug($"Fire: \"{message.Event}\" with {message.Payloads.Count} payload(s): {string.Join(", ", message.Payloads)}");
+			var serializedMessage = this.serializer.Serialize(message);
+			var serializedMessageSize = serializedMessage.Length * 16;
+			//this.logger.Debug($"Fire: \"{message.Event}\" with {message.Payloads.Count} payload(s) ({serialzedMessage.Length * 16} bits): {string.Join(", ", message.Payloads)}");
+			bandwidth += serializedMessageSize;
+			this.logger.Debug($"Fire: \"{message.Event}\" with {message.Payloads.Count} payload(s) of total size '{serializedMessageSize}' bits");
+			BaseScript.TriggerServerEvent(message.Event, serializedMessage);
 
-			BaseScript.TriggerServerEvent(message.Event, this.serializer.Serialize(message));
+			if (Game.GameTime <= bandwidthTime + 1000) return;
+			bandwidthTime = Game.GameTime;
+			this.logger.Debug($"RPC bits per second: {bandwidth}");
+			bandwidth = 0;
 		}
 	}
 }

@@ -61,6 +61,7 @@
     <Compile Include="Models\Vehicle.cs" />
     <Compile Include="Models\VehicleBones.cs" />
     <Compile Include="Models\VehicleClass.cs" />
+    <Compile Include="Models\VehicleListCollection.cs" />
     <Compile Include="Models\VehicleColor.cs" />
     <Compile Include="Models\VehicleDoor.cs" />
     <Compile Include="Models\VehicleDoorIndex.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="Models\VehicleWindowIndex.cs" />
     <Compile Include="Models\VehicleWindowTint.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Rpc\VehicleRpcEvents.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\SDK\Core\Core.csproj">
