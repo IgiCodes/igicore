@@ -66,6 +66,10 @@
     <Compile Include="Migrations\201806140102004_Init.Designer.cs">
       <DependentUpon>201806140102004_Init.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201806232358407_Update.cs" />
+    <Compile Include="Migrations\201806232358407_Update.Designer.cs">
+      <DependentUpon>201806232358407_Update.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Controllers\RoleplayController.cs" />
@@ -98,6 +102,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201806140102004_Init.resx">
       <DependentUpon>201806140102004_Init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201806232358407_Update.resx">
+      <DependentUpon>201806232358407_Update.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

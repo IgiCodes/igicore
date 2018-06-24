@@ -1,4 +1,5 @@
 ﻿using System;
+using IgiCore.SDK.Core.Models;
 
 namespace Roleplay.Vehicles.Core.Models
 {
@@ -9,9 +10,7 @@ namespace Roleplay.Vehicles.Core.Models
         int? Handle { get; set; }
         Guid TrackingUserId { get; set; }
         int? NetId { get; set; }
-        float PosX { get; set; }
-        float PosY { get; set; }
-        float PosZ { get; set; }
+        Position Position { get; set; }
         float Heading { get; set; }
     }
 }

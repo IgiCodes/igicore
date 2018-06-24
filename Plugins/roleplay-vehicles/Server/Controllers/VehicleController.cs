@@ -4,6 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Threading.Tasks;
 using IgiCore.SDK.Core.Diagnostics;
+using IgiCore.SDK.Core.Models;
 using IgiCore.SDK.Core.Rpc;
 using IgiCore.SDK.Server.Controllers;
 using IgiCore.SDK.Server.Events;
@@ -22,7 +23,7 @@ namespace Roleplay.Vehicles.Server.Controllers
 		{
 			this.Logger.Debug(this.Configuration.Test);
 
-			this.Rpc.Event(VehicleRpcEvents.VehicleSave).On<VehicleListCollection>(SaveAll);
+			this.Rpc.Event(VehicleRpcEvents.VehicleSave).On<VehicleListUpdateCollection>(SaveAll);
 
 			this.Rpc.Event(VehicleRpcEvents.CarCreate).On<Car>(Create);
 			this.Rpc.Event(VehicleRpcEvents.CarSave).On<Car>(Save);
@@ -51,14 +52,31 @@ namespace Roleplay.Vehicles.Server.Controllers
 			}
 		}
 
-		public async void SaveAll(IRpcEvent e, VehicleListCollection vehicles) // Has no ID
+		public async void SaveAll(IRpcEvent e, VehicleListUpdateCollection updates) // Has no ID
 		{
+			// TODO: Use https://github.com/sportingsolutions/ObjectDiffer
+
 			using (var context = new VehicleContext())
 			{
-				foreach (Car vehiclesCar in vehicles.Cars) await Save(context, vehiclesCar);
+				foreach (DeltaUpdate<Car> update in updates.Cars) await SaveProp(context, update);
 
 				await context.SaveChangesAsync();
 			}
+		}
+
+		public async Task SaveProp<T>(VehicleContext context, DeltaUpdate<T> update) where T : Vehicle
+		{
+			T dbVeh = await context.Set<T>()
+				.Include(v => v.Extras)
+				.Include(v => v.Wheels)
+				.Include(v => v.Doors)
+				.Include(v => v.Windows)
+				.Include(v => v.Seats)
+				.Include(v => v.Mods)
+				.FirstOrDefaultAsync(c => c.Id == update.Id);
+			this.Logger.Debug($"Update received for {update.Id}:");
+			this.Logger.Debug(new Serializer().Serialize(update));
+			context.Entry(dbVeh).Property(update.Property).CurrentValue = update.Value;
 		}
 
 		public async Task Save<T>(VehicleContext context, T vehicle) where T : Vehicle

@@ -67,6 +67,7 @@
     <Compile Include="Models\VehicleDoorIndex.cs" />
     <Compile Include="Models\VehicleExtra.cs" />
     <Compile Include="Models\VehicleHash.cs" />
+    <Compile Include="Models\VehicleListUpdateCollection.cs" />
     <Compile Include="Models\VehicleLockStatus.cs" />
     <Compile Include="Models\VehicleMod.cs" />
     <Compile Include="Models\VehicleModType.cs" />

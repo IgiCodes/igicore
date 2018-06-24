@@ -79,7 +79,7 @@ namespace Roleplay.Vehicles.Client.Extensions
 			return citizenVehicle;
 		}
 
-		public static async Task<Core.Models.Vehicle> ToVehicle(this Vehicle vehicle, Guid id = default(Guid))
+		public static async Task<T> ToVehicle<T>(this Vehicle vehicle, Guid id = default(Guid)) where T : IVehicle, new()
 		{
 			if (id == default(Guid)) id = Guid.NewGuid();
 
@@ -153,7 +153,7 @@ namespace Roleplay.Vehicles.Client.Extensions
 			if (vehicle.Mods.IsNeonLightsOn(VehicleNeonLight.Right)) neonPositions |= VehicleNeonPositions.Right;
 			if (vehicle.Mods.IsNeonLightsOn(VehicleNeonLight.Left)) neonPositions |= VehicleNeonPositions.Left;
 
-			return new Core.Models.Vehicle
+			return new T
 			{
 				Id = id,
 				Hash = vehicle.Model.Hash,
@@ -215,20 +215,7 @@ namespace Roleplay.Vehicles.Client.Extensions
 			};
 		}
 
-		public static Car ToCar(this Vehicle vehicle) => new Car
-		{
-			Id = Guid.Empty,
-			Hash = vehicle.Model.Hash,
-			Handle = vehicle.Handle,
-			Position = vehicle.Position.ToPosition(),
-			Heading = vehicle.Heading,
-			BodyHealth = vehicle.BodyHealth,
-			EngineHealth = vehicle.EngineHealth,
-			DirtLevel = vehicle.DirtLevel,
-			FuelLevel = vehicle.FuelLevel,
-			OilLevel = vehicle.OilLevel,
-			PetrolTankHealth = vehicle.PetrolTankHealth
-		};
+		public static async Task<Car> ToCar(this Vehicle vehicle) => await vehicle.ToVehicle<Car>();
 
 		public static void ToggleEngine(this Vehicle vehicle, bool value, bool instant, bool otherwise) => API.SetVehicleEngineOn(vehicle.Handle, value, instant, otherwise);
 	}

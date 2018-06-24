@@ -194,7 +194,7 @@ namespace Roleplay.Vehicles.Server.Migrations
             DropForeignKey("dbo.VehicleWheels", "Vehicle_Id", "dbo.Vehicles");
             DropForeignKey("dbo.VehicleSeats", "Vehicle_Id", "dbo.Vehicles");
             DropForeignKey("dbo.VehicleSeats", "Character_Id", "dbo.Characters");
-            DropForeignKey("dbo.VehicleMods", "Vehicle_Id", "dbo.Vehicles");
+			DropForeignKey("dbo.VehicleMods", "Vehicle_Id", "dbo.Vehicles");
             DropForeignKey("dbo.VehicleExtras", "VehicleId", "dbo.Vehicles");
             DropForeignKey("dbo.VehicleDoors", "Vehicle_Id", "dbo.Vehicles");
             DropIndex("dbo.VehicleWindows", new[] { "Vehicle_Id" });

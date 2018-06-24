@@ -35,7 +35,9 @@ namespace Roleplay.Vehicles.Core.Models
         bool IsRightHeadLightBroken { get; set; }
         bool IsRadioEnabled { get; set; }
         bool IsRoofOpen { get; set; }
-        bool NeedsToBeHotwired { get; set; }
+	    bool HasRoof { get; set; }
+		bool IsVehicleConvertible { get; set; }
+		bool NeedsToBeHotwired { get; set; }
         bool CanTiresBurst { get; set; }
         VehicleColor PrimaryColor { get; set; }
         VehicleColor SecondaryColor { get; set; }
