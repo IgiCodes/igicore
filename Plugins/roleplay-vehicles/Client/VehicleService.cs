@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
 using CitizenFX.Core;
 using CitizenFX.Core.Native;
 using IgiCore.SDK.Client.Events;
 using IgiCore.SDK.Client.Extensions;
+using IgiCore.SDK.Client.Input;
 using IgiCore.SDK.Client.Interface;
 using IgiCore.SDK.Client.Rpc;
 using IgiCore.SDK.Client.Services;
@@ -29,6 +31,7 @@ namespace Roleplay.Vehicles.Client
 	{
 		private const int VehicleLoadDistance = 500;
 		public VehicleListCollection Tracked { get; set; } = new VehicleListCollection();
+		public Dictionary<int, CitizenFX.Core.Vehicle> CitTracked { get; set; } = new Dictionary<int, CitizenFX.Core.Vehicle>();
 
 		public VehicleService(ILogger logger, ITickManager ticks, IEventManager events, IRpcHandler rpc, INuiManager nui, User user) : base(logger, ticks, events, rpc, nui, user) { }
 
@@ -86,7 +89,7 @@ namespace Roleplay.Vehicles.Client
 			await Update();
 			await Save();
 
-			await BaseScript.Delay(10000);
+			await BaseScript.Delay(1000);
 		}
 
 		private async Task Update()
@@ -124,68 +127,46 @@ namespace Roleplay.Vehicles.Client
 		private async Task Save()
 		{
 			this.Logger.Debug("Save() Called");
-			VehicleListUpdateCollection updateList = new VehicleListUpdateCollection
+
+			// TODO: Batching
+
+			this.Tracked.Cars.ForEach(c =>
 			{
-				Cars = await SaveList(this.Tracked.Cars),
-				Bikes = await SaveList(this.Tracked.Bikes)
-			};
+				SaveVehicle(c);
+				//  Extra car specific checks
+			});
+			this.Tracked.Bikes.ForEach(c =>
+			{
+				SaveVehicle(c);
+				//  Extra bike specific checks
+			});
 
-			this.Logger.Debug("Save() updateList:");
-			this.Logger.Debug(new Serializer().Serialize(updateList));
-
-			this.Rpc.Event(VehicleRpcEvents.VehicleSave)
-				.Trigger(updateList);
+			await Task.FromResult(0);
 		}
 
-		private async Task<List<DeltaUpdate<T>>> SaveList<T>(List<T> listToSave) where T : Vehicle, new()
+		private async void SaveVehicle<T>(T vehicle) where T : Vehicle
 		{
-
-			// TODO: Use https://github.com/sportingsolutions/ObjectDiffer
-
-			this.Logger.Debug($"SaveList<{typeof(T).VehicleType().Name}>() Called");
-			this.Logger.Debug("SaveList<{typeof(T).VehicleType().Name}>() tracked list:");
-			this.Logger.Debug(new Serializer().Serialize(listToSave));
-			List<DeltaUpdate<T>> updateList = new List<DeltaUpdate<T>>();
-			//return updateList;
-			foreach (T trackedVehicle in listToSave)
+			if (!CitTracked.TryGetValue(vehicle.Handle ?? 0, out var citVeh))
 			{
-				int vehicleHandle = API.NetToVeh(trackedVehicle.NetId ?? 0);
-				var citVeh = new CitizenFX.Core.Vehicle(vehicleHandle);
-				int netId = API.NetworkGetNetworkIdFromEntity(citVeh.Handle);
-
-				T vehicle = await citVeh.ToVehicle<T>(trackedVehicle.Id);
-
-				vehicle.TrackingUserId = this.User.Id;
-				vehicle.NetId = netId;
-				vehicle.Hash = citVeh.Model.Hash;
-
-
-
-				var props = typeof(T).GetProperties(BindingFlags.Public | BindingFlags.Instance);
-				this.Logger.Debug($"Comparing {props.Length} props...");
-				//foreach (PropertyInfo prop in props)
-				//{
-				//	this.Logger.Debug($"props comp: {prop.Name}");
-				//	if (prop.GetValue(trackedVehicle) != prop.GetValue(vehicle)) updateList.Add(new DeltaUpdate<T>()
-				//	{
-				//		Id = trackedVehicle.Id,
-				//		Property = prop.Name,
-				//		Value = prop.GetValue(vehicle),
-				//	});
-				//}
-				updateList.AddRange(
-					props
-						.Where(p => p.GetValue(trackedVehicle, null) != p.GetValue(vehicle, null))
-						.Select(p => new DeltaUpdate<T>
-						{
-							Id = trackedVehicle.Id,
-							Property = p.Name,
-							Value = p.GetValue(vehicle, null),
-						})
-				);
+				citVeh = new CitizenFX.Core.Vehicle(vehicle.Handle ?? 0);
+				CitTracked.Add(citVeh.Handle, citVeh);
 			}
 
-			return updateList;
+			if (vehicle.Position != citVeh.Position.ToPosition()) vehicle.Position = await SaveProp(vehicle.Id, citVeh.Position.ToPosition(), VehicleRpcEvents.SavePosition);
+			if (Math.Abs(vehicle.Heading - citVeh.Heading) > 0.01) vehicle.Heading = await SaveProp(vehicle.Id, citVeh.Heading, VehicleRpcEvents.SaveHeading);
+			if (Math.Abs(vehicle.BodyHealth - citVeh.BodyHealth) > 0.01) vehicle.BodyHealth = await SaveProp(vehicle.Id, citVeh.BodyHealth, VehicleRpcEvents.SaveBodyHealth);
+			if (Math.Abs(vehicle.EngineHealth - citVeh.EngineHealth) > 0.01) vehicle.EngineHealth = await SaveProp(vehicle.Id, citVeh.EngineHealth, VehicleRpcEvents.SaveEngineHealth);
+			if (Math.Abs(vehicle.PetrolTankHealth - citVeh.PetrolTankHealth) > 0.01) vehicle.PetrolTankHealth = await SaveProp(vehicle.Id, citVeh.PetrolTankHealth, VehicleRpcEvents.SavePetrolTankHealth);
+			if (Math.Abs(vehicle.DirtLevel - citVeh.DirtLevel) > 0.01) vehicle.DirtLevel = await SaveProp(vehicle.Id, citVeh.DirtLevel, VehicleRpcEvents.SaveDirtLevel);
+			if (Math.Abs(vehicle.FuelLevel - citVeh.FuelLevel) > 0.01) vehicle.FuelLevel = await SaveProp(vehicle.Id, citVeh.FuelLevel, VehicleRpcEvents.SaveFuelLevel);
+			if (Math.Abs(vehicle.OilLevel - citVeh.OilLevel) > 0.01) vehicle.OilLevel = await SaveProp(vehicle.Id, citVeh.OilLevel, VehicleRpcEvents.SaveOilLevel);
+		}
+
+		private async Task<T> SaveProp<T>(Guid id, T newVal, string rpcEvent)
+		{
+			this.Rpc.Event(rpcEvent)
+				.Trigger(id, newVal);
+			return await Task.FromResult(newVal);
 		}
 
 		public async Task Create<T>(T vehToCreate) where T : Vehicle, new()
@@ -220,6 +201,7 @@ namespace Roleplay.Vehicles.Client
 				.Trigger(vehicle);
 
 			this.Tracked.Set<T>().Add(vehicle);
+			this.CitTracked.Add(spawnedVehicle.Handle, spawnedVehicle);
 			this.Logger.Debug($"Added {vehicle.Id} to {typeof(T).VehicleType().Name} list");
 			this.Logger.Debug("Tracked list is now:");
 			this.Logger.Debug(new Serializer().Serialize(this.Tracked.Set<T>()));

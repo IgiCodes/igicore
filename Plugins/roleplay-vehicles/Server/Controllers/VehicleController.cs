@@ -23,7 +23,14 @@ namespace Roleplay.Vehicles.Server.Controllers
 		{
 			this.Logger.Debug(this.Configuration.Test);
 
-			this.Rpc.Event(VehicleRpcEvents.VehicleSave).On<VehicleListUpdateCollection>(SaveAll);
+			this.Rpc.Event(VehicleRpcEvents.SavePosition).On<Guid, Position>(SavePosition);
+			this.Rpc.Event(VehicleRpcEvents.SaveHeading).On<Guid, float>(SaveHeading);
+			this.Rpc.Event(VehicleRpcEvents.SaveBodyHealth).On<Guid, float>(SaveBodyHealth);
+			this.Rpc.Event(VehicleRpcEvents.SaveBodyHealth).On<Guid, float>(SaveEngineHealth);
+			this.Rpc.Event(VehicleRpcEvents.SavePetrolTankHealth).On<Guid, float>(SavePetrolTankHealth);
+			this.Rpc.Event(VehicleRpcEvents.SaveDirtLevel).On<Guid, float>(SaveDirtLevel);
+			this.Rpc.Event(VehicleRpcEvents.SaveFuelLevel).On<Guid, float>(SaveFuelLevel);
+			this.Rpc.Event(VehicleRpcEvents.SaveOilLevel).On<Guid, float>(SaveOilLevel);
 
 			this.Rpc.Event(VehicleRpcEvents.CarCreate).On<Car>(Create);
 			this.Rpc.Event(VehicleRpcEvents.CarSave).On<Car>(Save);
@@ -52,31 +59,26 @@ namespace Roleplay.Vehicles.Server.Controllers
 			}
 		}
 
-		public async void SaveAll(IRpcEvent e, VehicleListUpdateCollection updates) // Has no ID
-		{
-			// TODO: Use https://github.com/sportingsolutions/ObjectDiffer
+		public void SavePosition<T>(IRpcEvent e, Guid vehicleId, T value) => SaveProp(vehicleId, "Position", value);
+		public void SaveHeading<T>(IRpcEvent e, Guid vehicleId, T value) => SaveProp(vehicleId, "Heading", value);
+		public void SaveBodyHealth<T>(IRpcEvent e, Guid vehicleId, T value) => SaveProp(vehicleId, "BodyHealth", value);
+		public void SaveEngineHealth<T>(IRpcEvent e, Guid vehicleId, T value) => SaveProp(vehicleId, "EngineHealth", value);
+		public void SavePetrolTankHealth<T>(IRpcEvent e, Guid vehicleId, T value) => SaveProp(vehicleId, "PetrolTankHealth", value);
+		public void SaveDirtLevel<T>(IRpcEvent e, Guid vehicleId, T value) => SaveProp(vehicleId, "DirtLevel", value);
+		public void SaveFuelLevel<T>(IRpcEvent e, Guid vehicleId, T value) => SaveProp(vehicleId, "FuelLevel", value);
+		public void SaveOilLevel<T>(IRpcEvent e, Guid vehicleId, T value) => SaveProp(vehicleId, "OilLevel", value);
 
+		public async void SaveProp<T>(Guid vehicleId, string property, T value)
+		{
+			this.Logger.Debug($"SaveProp called for ID {vehicleId}: Prop - {property} | value - {value}");
 			using (var context = new VehicleContext())
 			{
-				foreach (DeltaUpdate<Car> update in updates.Cars) await SaveProp(context, update);
-
+				var vehicle = (await context.Vehicles.FirstOrDefaultAsync(v => v.Id == vehicleId));
+				if (vehicle == null) return;
+				this.Logger.Debug($"Old value: {context.Entry(vehicle).Property(property).CurrentValue}");
+				context.Entry(vehicle).Property(property).CurrentValue = value;
 				await context.SaveChangesAsync();
 			}
-		}
-
-		public async Task SaveProp<T>(VehicleContext context, DeltaUpdate<T> update) where T : Vehicle
-		{
-			T dbVeh = await context.Set<T>()
-				.Include(v => v.Extras)
-				.Include(v => v.Wheels)
-				.Include(v => v.Doors)
-				.Include(v => v.Windows)
-				.Include(v => v.Seats)
-				.Include(v => v.Mods)
-				.FirstOrDefaultAsync(c => c.Id == update.Id);
-			this.Logger.Debug($"Update received for {update.Id}:");
-			this.Logger.Debug(new Serializer().Serialize(update));
-			context.Entry(dbVeh).Property(update.Property).CurrentValue = update.Value;
 		}
 
 		public async Task Save<T>(VehicleContext context, T vehicle) where T : Vehicle

@@ -21,7 +21,7 @@ namespace IgiCore.SDK.Client.Input
 			if (modifier == InputModifier.Any) return true;
 
 			InputModifier bitMask = 0;
-
+			
 			ModifierFlagToKeyCode.ToList().ForEach(w =>
 			{
 				if (Game.IsControlPressed(0, (Control)w.Value)) bitMask = bitMask | w.Key;

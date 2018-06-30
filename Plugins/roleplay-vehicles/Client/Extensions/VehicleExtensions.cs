@@ -81,6 +81,7 @@ namespace Roleplay.Vehicles.Client.Extensions
 
 		public static async Task<T> ToVehicle<T>(this Vehicle vehicle, Guid id = default(Guid)) where T : IVehicle, new()
 		{
+			await Task.FromResult(0);
 			if (id == default(Guid)) id = Guid.NewGuid();
 
 			// Extras
