@@ -1,3 +1,5 @@
+# THIS PROJECT IS DEPRECATED AND NO LONGER MAINTAINED. PLEASE SEE [NFive](https://github.com/NFive) FOR THE NEW PROJECT.
+
 # igicore
 [![License](https://img.shields.io/github/license/Igirisujin/igicore.svg)](LICENSE)
 
